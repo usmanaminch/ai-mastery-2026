@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running on Sun: How Pakistan's Consumer Revolution Could Break the Oil Trap Forever</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --green:#01411C;--green-mid:#0F6E56;--green-light:#1D9E75;--green-pale:#E1F5EE;
+    --gold:#C8992A;--gold-light:#F5C842;--gold-pale:#FDF6E3;
+    --red:#C0392B;--red-pale:#FDECEA;
+    --ink:#1A1A1A;--ink-soft:#3D3D3D;--ink-muted:#666;--rule:#E0DDD6;--bg:#FAFAF8;--white:#FFFFFF;
+    --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+    --max:720px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{font-size:18px;scroll-behavior:smooth;}
+  body{font-family:var(--serif);background:var(--bg);color:var(--ink);line-height:1.75;}
+  .hero{background:var(--green);color:white;padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.025) 40px,rgba(255,255,255,.025) 41px);}
+  .hero-eyebrow{font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);margin-bottom:1.5rem;position:relative;}
+  .hero h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;max-width:800px;margin:0 auto 1.5rem;position:relative;}
+  .hero h1 em{font-style:italic;color:var(--gold-light);}
+  .hero-sub{font-family:var(--serif);font-size:1.1rem;font-weight:300;color:rgba(255,255,255,.75);max-width:580px;margin:0 auto 2.5rem;line-height:1.6;position:relative;}
+  .hero-meta{font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;color:rgba(255,255,255,.4);position:relative;}
+  .author-bar{background:#0a3318;border-top:1px solid rgba(255,255,255,.1);padding:1rem 2rem;display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;}
+  .author-avatar{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:1rem;color:#0a3318;flex-shrink:0;}
+  .author-info{text-align:left;}
+  .author-name{font-family:var(--display);font-size:.95rem;font-weight:700;color:white;line-height:1.2;}
+  .author-name a{color:white;text-decoration:none;border-bottom:1px solid rgba(200,153,42,.5);}
+  .author-name a:hover{border-bottom-color:var(--gold-light);}
+  .author-creds{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:.2rem;}
+  .author-disclaimer{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;color:rgba(255,255,255,.3);font-style:italic;text-align:center;max-width:400px;}
+
+  .infographic-wrap{background:var(--green);padding:2rem 0 2rem;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .infographic-wrap .ig-inner{max-width:900px;margin:0 auto;padding:0 1rem;min-width:320px;}
+
+  .tldr{background:var(--gold-pale);border-top:3px solid var(--gold);padding:2rem 2.5rem;}
+  .tldr-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.75rem;}
+  .tldr ul{list-style:none;}
+  .tldr ul li{font-family:var(--serif);font-size:.95rem;color:var(--ink-soft);padding:.3rem 0 .3rem 1.1rem;position:relative;line-height:1.55;}
+  .tldr ul li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:.45rem;}
+  .container{max-width:var(--max);margin:0 auto;padding:0 1.5rem;}
+  .article-body{padding:3rem 0 4rem;}
+  h2{font-family:var(--display);font-size:1.75rem;font-weight:700;color:var(--ink);margin:3rem 0 1rem;line-height:1.25;}
+  h3{font-family:var(--display);font-size:1.2rem;font-weight:700;font-style:italic;color:var(--ink-soft);margin:2rem 0 .75rem;}
+  p{margin-bottom:1.25rem;color:var(--ink-soft);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--ink);font-weight:600;}
+  sup{font-size:.6rem;color:var(--green-mid);font-family:var(--mono);vertical-align:super;line-height:0;}
+  sup a{color:var(--green-mid);text-decoration:none;}
+  sup a:hover{text-decoration:underline;}
+  .lead{font-size:1.15rem;font-weight:300;color:var(--ink);line-height:1.8;border-left:3px solid var(--green-light);padding-left:1.25rem;margin-bottom:2rem;}
+  .pull-quote{margin:2.5rem 0;padding:1.75rem 2rem;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);text-align:center;}
+  .pull-quote p{font-family:var(--display);font-size:1.4rem;font-style:italic;font-weight:700;color:var(--ink);line-height:1.4;margin:0;}
+  .pull-quote cite{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-top:.75rem;font-style:normal;}
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:2.5rem 0;overflow:hidden;border-radius:4px;}
+  .stat-card{background:var(--white);padding:1.25rem 1rem;text-align:center;}
+  .stat-card .num{font-family:var(--display);font-size:2rem;font-weight:900;color:var(--green);line-height:1;display:block;margin-bottom:.35rem;}
+  .stat-card .num.red{color:var(--red);}
+  .stat-card .num.gold{color:var(--gold);}
+  .stat-card .label{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);line-height:1.4;}
+  .chart-wrap{background:var(--white);border:1px solid var(--rule);border-radius:6px;padding:1.5rem 1.5rem 1rem;margin:2.5rem 0;}
+  .chart-title{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;}
+  .chart-headline{font-family:var(--display);font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:1rem;line-height:1.3;}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:.75rem;font-family:var(--mono);font-size:.56rem;letter-spacing:.05em;color:var(--ink-muted);}
+  .chart-legend span{display:flex;align-items:center;gap:5px;}
+  .chart-legend i{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0;}
+  .chart-note{font-family:var(--mono);font-size:.54rem;color:var(--ink-muted);margin-top:.75rem;line-height:1.55;letter-spacing:.02em;}
+  .callout{background:var(--green-pale);border-left:4px solid var(--green-light);padding:1.25rem 1.5rem;margin:2rem 0;border-radius:0 4px 4px 0;}
+  .callout.red{background:var(--red-pale);border-left-color:var(--red);}
+  .callout.gold{background:var(--gold-pale);border-left-color:var(--gold);}
+  .callout p{color:var(--ink-soft);font-size:.9rem;margin-bottom:.5rem;}
+  .callout p:last-child{margin-bottom:0;}
+  .section-break{text-align:center;margin:3rem 0;color:var(--rule);font-size:1.5rem;letter-spacing:.5rem;}
+  .kw-calc{background:var(--white);border:1px solid var(--rule);border-radius:6px;padding:1.5rem;margin:2rem 0;}
+  .kw-calc-title{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem;}
+  .kw-calc h4{font-family:var(--display);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:1rem;}
+  .kw-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+  .kw-box{background:var(--bg);border-radius:4px;padding:1rem;}
+  .kw-box-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem;}
+  .kw-box-val{font-family:var(--display);font-size:1.5rem;font-weight:900;color:var(--green);line-height:1;}
+  .kw-box-val.red{color:var(--red);}
+  .kw-box-sub{font-size:.72rem;color:var(--ink-muted);margin-top:.3rem;font-family:var(--mono);line-height:1.5;}
+  .kw-steps{list-style:none;margin-top:.75rem;}
+  .kw-steps li{font-size:.8rem;color:var(--ink-soft);padding:.3rem 0;border-bottom:.5px solid var(--rule);font-family:var(--mono);display:flex;justify-content:space-between;}
+  .kw-steps li:last-child{border-bottom:none;}
+  .kw-steps li span{color:var(--green);font-weight:500;}
+  .kw-verdict{background:var(--green);color:white;border-radius:4px;padding:.85rem 1rem;margin-top:1rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;line-height:1.7;}
+  .kw-verdict strong{color:var(--gold-light);}
+  .local-mfg{margin:2rem 0;}
+  .mfg-phase{display:flex;gap:1rem;margin-bottom:1.25rem;align-items:flex-start;}
+  .mfg-badge{background:var(--green);color:white;font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;padding:.35rem .6rem;border-radius:3px;flex-shrink:0;white-space:nowrap;margin-top:.15rem;}
+  .mfg-badge.mid{background:var(--green-mid);}
+  .mfg-badge.gold{background:var(--gold);}
+  .mfg-content p{font-size:.88rem;color:var(--ink-soft);margin:0;line-height:1.6;}
+  .timeline{margin:2.5rem 0;}
+  .timeline-item{display:flex;gap:1.25rem;margin-bottom:1.5rem;position:relative;}
+  .timeline-item::after{content:'';position:absolute;left:23px;top:48px;bottom:-1.5rem;width:1px;background:var(--rule);}
+  .timeline-item:last-child::after{display:none;}
+  .timeline-dot{width:46px;height:46px;border-radius:50%;background:var(--green);color:white;font-family:var(--mono);font-size:.56rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-align:center;line-height:1.2;font-weight:500;}
+  .timeline-dot.gold{background:var(--gold);}
+  .timeline-dot.mid{background:var(--green-mid);}
+  .timeline-content h4{font-family:var(--display);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.35rem;}
+  .timeline-content p{font-size:.84rem;color:var(--ink-muted);margin:0;line-height:1.6;}
+  .policy-list{list-style:none;margin:1.5rem 0;}
+  .policy-list li{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1rem;font-size:.95rem;color:var(--ink-soft);}
+  .policy-list li::before{content:'→';color:var(--green-light);font-weight:700;flex-shrink:0;margin-top:.05rem;}
+  .value-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:2rem 0;}
+  .value-card{border:1px solid var(--rule);border-radius:6px;padding:1.1rem;background:var(--white);}
+  .value-card .vc-icon{font-size:1.1rem;margin-bottom:.4rem;display:block;}
+  .value-card .vc-title{font-family:var(--display);font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;}
+  .value-card .vc-body{font-size:.78rem;color:var(--ink-muted);line-height:1.55;margin:0;}
+  .citizen-section{background:var(--green);padding:3rem 0 4rem;}
+  .citizen-section h2{color:white;margin-top:0;}
+  .citizen-section h3{color:rgba(255,255,255,.7);}
+  .citizen-section p{color:rgba(255,255,255,.65);}
+  .citizen-section strong{color:white;}
+  .persona-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin:2rem 0;}
+  .persona-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:1.25rem 1.4rem;}
+  .persona-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid rgba(255,255,255,.1);}
+  .persona-avatar{width:40px;height:40px;border-radius:50%;background:rgba(200,153,42,.25);border:1px solid rgba(200,153,42,.4);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .persona-name{font-family:var(--display);font-size:.95rem;font-weight:700;color:white;margin-bottom:.1rem;}
+  .persona-desc{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:rgba(255,255,255,.35);}
+  .persona-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.75rem 0;}
+  .persona-stat{background:rgba(0,0,0,.2);border-radius:4px;padding:.6rem .75rem;}
+  .persona-stat-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.2rem;}
+  .persona-stat-val{font-family:var(--display);font-size:1.1rem;font-weight:700;}
+  .persona-stat-val.red{color:#f08080;}
+  .persona-stat-val.green{color:#5DCAA5;}
+  .persona-stat-sub{font-family:var(--mono);font-size:.54rem;color:rgba(255,255,255,.3);margin-top:.15rem;line-height:1.4;}
+  .persona-saving{background:rgba(29,158,117,.15);border:1px solid rgba(29,158,117,.3);border-radius:4px;padding:.6rem .75rem;margin-top:.5rem;font-family:var(--mono);font-size:.62rem;color:#9FE1CB;letter-spacing:.03em;line-height:1.5;}
+  .agg-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;margin:2rem 0;}
+  .agg-card{background:rgba(0,0,0,.25);padding:1.1rem 1rem;text-align:center;}
+  .agg-num{font-family:var(--display);font-size:1.8rem;font-weight:900;color:#5DCAA5;line-height:1;display:block;margin-bottom:.3rem;}
+  .agg-num.gold{color:var(--gold-light);}
+  .agg-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);line-height:1.4;}
+  .sources-section{background:var(--white);border-top:2px solid var(--rule);padding:3rem 0 4rem;}
+
+  .part-header{margin:3.5rem 0 0;padding:1.25rem 0 1rem;border-top:3px solid var(--green);position:relative;}
+  .part-num{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green-light);font-weight:500;margin-bottom:.3rem;}
+  .part-title{font-family:var(--display);font-size:1.5rem;font-weight:900;color:var(--green);line-height:1.2;margin-bottom:.4rem;}
+  .part-desc{font-family:var(--serif);font-size:.9rem;color:var(--ink-muted);font-style:italic;line-height:1.5;}
+  .sources-section h2{font-size:1.2rem;margin-top:0;margin-bottom:1.5rem;}
+  .sources-list{list-style:none;}
+  .sources-list li{font-family:var(--mono);font-size:.58rem;letter-spacing:.02em;color:var(--ink-muted);padding:.6rem 0;border-bottom:.5px solid var(--rule);line-height:1.7;display:flex;gap:.75rem;}
+  .sources-list li:last-child{border-bottom:none;}
+  .src-num{color:var(--green-mid);font-weight:500;flex-shrink:0;min-width:1.5rem;}
+  .src-body a{color:var(--green-mid);word-break:break-all;}
+  .article-footer{border-top:1px solid var(--rule);padding:2rem 0;font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;color:var(--ink-muted);text-align:center;line-height:1.8;}
+  @media(max-width:600px){
+    html{font-size:16px;}
+    .hero{padding:3rem 1.25rem 2.5rem;}
+    .tldr{padding:1.5rem;}
+    .stat-row{grid-template-columns:1fr 1fr;}
+    .value-grid{grid-template-columns:1fr;}
+    .kw-row{grid-template-columns:1fr;}
+    .persona-stat-row{grid-template-columns:1fr;}
+    .chart-wrap{padding:1rem .75rem .75rem;}
+    h2{font-size:1.4rem;}
+    .pull-quote p{font-size:1.1rem;}
+    .timeline-content h4{font-size:.95rem;}
+    .agg-row{grid-template-columns:1fr 1fr;}
+    .local-mfg .mfg-phase{flex-direction:column;}
+    .author-bar{flex-direction:column;text-align:center;gap:.75rem;}
+    .author-disclaimer{max-width:100%;}
+  }
+  /* Mobile: wider breakpoint for pie charts and infographic */
+  @media(max-width:750px){
+    .infographic-wrap{padding:1.5rem 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .infographic-wrap .ig-inner{min-width:600px;}
+  }
+</style>
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(1,65,28,0.95);backdrop-filter:blur(8px);padding:0.6rem 2rem;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);">
+  <a href="index.html" style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:rgba(255,255,255,0.7);text-decoration:none;letter-spacing:0.05em;display:flex;align-items:center;gap:6px;">← Back to usmanaminch.com</a>
+</div>
+<div style="height:42px"></div>
+
+
+<header class="hero">
+  <p class="hero-eyebrow">Energy · Economics · Pakistan</p>
+  <h1>Running on Sun:<br><em>How Pakistan's Consumer Revolution<br>Could Break the Oil Trap Forever</em></h1>
+  <p class="hero-sub">Pakistan has accidentally launched one of the fastest energy transitions in the developing world — entirely without government planning. The economic prize is historic.</p>
+  <p class="hero-meta">April 2026 &nbsp;·&nbsp; 16 min read</p>
+</header>
+
+<!-- AUTHOR BAR -->
+<div class="author-bar">
+  <div class="author-avatar">UC</div>
+  <div class="author-info">
+    <p class="author-name"><a href="https://www.linkedin.com/in/usmanchaudhary/" target="_blank">Usman Chaudhary</a></p>
+    <p class="author-creds">Concerned Overseas Pakistani &nbsp;·&nbsp; MS-Engr. &nbsp;·&nbsp; MBA</p>
+  </div>
+  <p class="author-disclaimer">Not an energy expert — just a Pakistani who cares, runs the numbers, and connects the dots.</p>
+</div>
+
+<!-- INFOGRAPHIC -->
+<div class="infographic-wrap">
+<div class="ig-inner">
+<svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Infographic: Pakistan's oil trap and solar escape — showing $17.5B oil import problem, 8GW solar already deployed, per-kW oil savings math, three-phase transition timeline, and prize of $12-15B savings and 5-7% GDP growth" style="width:100%;display:block;">
+  <title>Pakistan's Oil Trap &amp; Solar Escape</title>
+
+  <!-- BACKGROUND -->
+  <rect width="900" height="580" fill="#01411C"/>
+  <!-- subtle grid -->
+  <line x1="0" y1="580" x2="900" y2="580" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+
+  <!-- TOP LABEL -->
+  <text x="450" y="28" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="3" fill="rgba(245,200,66,.7)" text-transform="uppercase">PAKISTAN'S ENERGY RECKONING — APRIL 2026</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ROW 1: THREE MAIN PANELS               -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <!-- PANEL 1: THE PROBLEM -->
+  <rect x="16" y="40" width="270" height="165" rx="6" fill="rgba(192,57,43,.18)" stroke="#C0392B" stroke-width="1"/>
+  <text x="32" y="62" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="2" fill="#f0a090">THE PROBLEM</text>
+  <text x="32" y="94" font-family="'Playfair Display',Georgia,serif" font-size="34" font-weight="900" fill="white">$17.5B</text>
+  <text x="32" y="112" font-family="'Source Serif 4',Georgia,serif" font-size="11" fill="rgba(255,255,255,.65)">leaves Pakistan every year</text>
+  <text x="32" y="127" font-family="'Source Serif 4',Georgia,serif" font-size="11" fill="rgba(255,255,255,.65)">to import oil — 5% of GDP</text>
+  <line x1="32" y1="142" x2="272" y2="142" stroke="rgba(192,57,43,.4)" stroke-width="1"/>
+  <text x="32" y="158" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#f0a090">$10B</text>
+  <text x="80" y="158" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">transport fuel</text>
+  <text x="32" y="174" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#f0a090">$5B</text>
+  <text x="80" y="174" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">power generation</text>
+  <text x="32" y="190" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#f0a090">$2.5B</text>
+  <text x="80" y="190" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">irreducible (aviation, marine)</text>
+
+  <!-- PANEL 2: ALREADY HAPPENING -->
+  <rect x="314" y="40" width="272" height="165" rx="6" fill="rgba(29,158,117,.15)" stroke="#1D9E75" stroke-width="1"/>
+  <text x="330" y="62" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="2" fill="rgba(93,202,165,.8)">ALREADY HAPPENING</text>
+  <text x="330" y="94" font-family="'Playfair Display',Georgia,serif" font-size="34" font-weight="900" fill="white">8 GW</text>
+  <text x="330" y="112" font-family="'Source Serif 4',Georgia,serif" font-size="11" fill="rgba(255,255,255,.65)">net-metered solar — confirmed</text>
+  <text x="330" y="127" font-family="'Source Serif 4',Georgia,serif" font-size="11" fill="rgba(255,255,255,.65)">by Energy Minister, Apr 2026</text>
+  <line x1="330" y1="142" x2="570" y2="142" stroke="rgba(29,158,117,.4)" stroke-width="1"/>
+  <text x="330" y="158" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#5DCAA5">27–33 GW</text>
+  <text x="406" y="158" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">total estimated deployed</text>
+  <text x="330" y="174" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#5DCAA5">51.5 GW</text>
+  <text x="399" y="174" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">modules imported cumulatively</text>
+  <text x="330" y="190" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#5DCAA5">2,000 MW</text>
+  <text x="407" y="190" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">grid injection preventing loadshedding</text>
+
+  <!-- PANEL 3: THE MATH -->
+  <rect x="614" y="40" width="270" height="165" rx="6" fill="rgba(200,153,42,.12)" stroke="#C8992A" stroke-width="1"/>
+  <text x="630" y="62" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="2" fill="rgba(245,200,66,.75)">THE KEY NUMBER</text>
+  <text x="630" y="90" font-family="'Playfair Display',Georgia,serif" font-size="28" font-weight="900" fill="white">1 kW solar</text>
+  <text x="630" y="109" font-family="'Source Serif 4',Georgia,serif" font-size="11" fill="rgba(255,255,255,.5)">installed on a rooftop</text>
+  <!-- arrow -->
+  <line x1="630" y1="120" x2="860" y2="120" stroke="rgba(245,200,66,.3)" stroke-width="1" stroke-dasharray="3,3"/>
+  <polygon points="860,116 868,120 860,124" fill="rgba(245,200,66,.6)"/>
+  <text x="630" y="138" font-family="'Playfair Display',Georgia,serif" font-size="22" font-weight="900" fill="#F5C842">2.9 barrels</text>
+  <text x="630" y="154" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.5)">of oil imports avoided per year</text>
+  <line x1="630" y1="165" x2="870" y2="165" stroke="rgba(200,153,42,.3)" stroke-width="1"/>
+  <text x="630" y="180" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#F5C842">$130</text>
+  <text x="660" y="180" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.5)">once → </text>
+  <text x="700" y="180" font-family="'JetBrains Mono',monospace" font-size="9.5" fill="#5DCAA5">$5,875</text>
+  <text x="753" y="180" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.5)"> saved over 25 yrs</text>
+  <text x="630" y="196" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(255,255,255,.35)">CAD break-even: &lt;7 months · ratio 45:1</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ROW 2: TRANSITION PHASES (TIMELINE)    -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <text x="450" y="235" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="3" fill="rgba(255,255,255,.3)">THE PATH TO ENERGY SOVEREIGNTY</text>
+
+  <!-- connecting line -->
+  <line x1="60" y1="265" x2="840" y2="265" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+
+  <!-- Phase dots and labels -->
+  <!-- NOW -->
+  <circle cx="110" cy="265" r="22" fill="#01411C" stroke="#1D9E75" stroke-width="2"/>
+  <text x="110" y="261" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#5DCAA5">NOW</text>
+  <text x="110" y="272" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#5DCAA5">2026</text>
+  <text x="110" y="302" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.7)">8 GW</text>
+  <text x="110" y="315" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.45)">net-metered</text>
+  <text x="110" y="328" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.45)">batteries arriving</text>
+
+  <!-- Phase 1 -->
+  <circle cx="330" cy="265" r="22" fill="#01411C" stroke="#0F6E56" stroke-width="2"/>
+  <text x="330" y="261" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#9FE1CB">PHASE 1</text>
+  <text x="330" y="272" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#9FE1CB">2026–28</text>
+  <text x="330" y="302" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.7)">Storage scales</text>
+  <text x="330" y="315" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.45)">grid fossils idle</text>
+  <text x="330" y="328" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#F5C842">$4B/yr saved</text>
+
+  <!-- Phase 2 -->
+  <circle cx="570" cy="265" r="22" fill="#01411C" stroke="#378ADD" stroke-width="2"/>
+  <text x="570" y="261" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#85B7EB">PHASE 2</text>
+  <text x="570" y="272" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#85B7EB">2028–33</text>
+  <text x="570" y="302" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.7)">EVs at scale</text>
+  <text x="570" y="315" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.45)">transport oil collapses</text>
+  <text x="570" y="328" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#F5C842">$10B/yr saved</text>
+
+  <!-- Phase 3 -->
+  <circle cx="800" cy="265" r="22" fill="#C8992A" stroke="#F5C842" stroke-width="2"/>
+  <text x="800" y="261" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="white">PHASE 3</text>
+  <text x="800" y="272" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="white">2033–40</text>
+  <text x="800" y="302" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9.5" fill="rgba(255,255,255,.7)">Energy sovereign</text>
+  <text x="800" y="315" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="9" fill="rgba(255,255,255,.45)">oil bill: $3–4B only</text>
+  <text x="800" y="328" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#F5C842">$14B+/yr saved</text>
+
+  <!-- connecting arrows between phases -->
+  <line x1="135" y1="265" x2="305" y2="265" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <polygon points="305,261 313,265 305,269" fill="rgba(255,255,255,.3)"/>
+  <line x1="355" y1="265" x2="545" y2="265" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <polygon points="545,261 553,265 545,269" fill="rgba(255,255,255,.3)"/>
+  <line x1="595" y1="265" x2="775" y2="265" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <polygon points="775,261 783,265 775,269" fill="rgba(255,255,255,.3)"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ROW 3: THE PRIZE                       -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <text x="450" y="368" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" letter-spacing="3" fill="rgba(255,255,255,.3)">THE PRIZE</text>
+
+  <!-- Prize cards -->
+  <rect x="16" y="382" width="196" height="80" rx="5" fill="rgba(1,65,28,.5)" stroke="rgba(29,158,117,.4)" stroke-width="1"/>
+  <text x="114" y="401" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="19" font-weight="900" fill="#5DCAA5">$20–24B</text>
+  <text x="114" y="418" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">total annual benefit by 2040</text>
+  <text x="114" y="433" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">savings + exports + multiplier</text>
+  <text x="114" y="452" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(93,202,165,.6)">from $17.5B drain to $6B surplus</text>
+
+  <rect x="228" y="382" width="196" height="80" rx="5" fill="rgba(1,65,28,.5)" stroke="rgba(29,158,117,.4)" stroke-width="1"/>
+  <text x="326" y="401" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="19" font-weight="900" fill="#5DCAA5">Rs 180K</text>
+  <text x="326" y="418" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">returned to avg. household/yr</text>
+  <text x="326" y="433" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">~2 months salary in energy savings</text>
+  <text x="326" y="452" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(93,202,165,.6)">GDP per capita: $1,643 → $3,100</text>
+
+  <rect x="440" y="382" width="196" height="80" rx="5" fill="rgba(1,65,28,.5)" stroke="rgba(29,158,117,.4)" stroke-width="1"/>
+  <text x="538" y="401" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="19" font-weight="900" fill="#5DCAA5">Net oil</text>
+  <text x="538" y="419" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="19" font-weight="900" fill="#5DCAA5">exporter</text>
+  <text x="538" y="436" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">possible by 2035 — onshore +</text>
+  <text x="538" y="452" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(93,202,165,.6)">offshore exploration underway</text>
+
+  <rect x="652" y="382" width="232" height="80" rx="5" fill="rgba(200,153,42,.1)" stroke="rgba(200,153,42,.4)" stroke-width="1"/>
+  <text x="768" y="401" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="18" font-weight="900" fill="#F5C842">IMF-free</text>
+  <text x="768" y="419" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="18" font-weight="900" fill="#F5C842">Pakistan</text>
+  <text x="768" y="436" text-anchor="middle" font-family="'Source Serif 4',Georgia,serif" font-size="10" fill="rgba(255,255,255,.55)">structural CA surplus ends</text>
+  <text x="768" y="452" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(245,200,66,.6)">25 IMF visits — all rooted in oil</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- BOTTOM: GOVT ACTION + DISCLAIMER       -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <rect x="16" y="478" width="868" height="56" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+  <text x="450" y="495" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="14" font-weight="700" fill="white">What the government needs to do:</text>
+  <text x="450" y="511" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing=".3" fill="rgba(245,200,66,.9)">Remove battery duties  ·  Stop new fossil capacity  ·  Stabilise net-metering  ·  EV tax credits  ·  Get out of the way</text>
+  <text x="450" y="527" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="rgba(255,255,255,.25)">Oil demand grows ~3%/yr without action. Problem gets bigger. Sources: PBS · SBP · NEPRA · IEEFA · World Bank</text>
+</svg>
+</div>
+</div>
+
+<!-- PIE CHARTS STRIP -->
+<div style="background:#012b12;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:900px;margin:0 auto;">
+  <div style="background:rgba(255,255,255,.05);border-radius:8px;padding:1.25rem 1rem 1rem;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,200,66,.7);margin-bottom:.25rem;">GDP impact by channel</p>
+    <p style="font-family:'Playfair Display',Georgia,serif;font-size:.95rem;font-weight:700;color:white;margin-bottom:.75rem;line-height:1.3;">Where does the $20–24B annual benefit come from?</p>
+    <div style="position:relative;height:180px;"><canvas id="gdpPie" role="img" aria-label="Pie chart: oil/energy savings 50%, hydrocarbon exports and LNG savings 15%, PKR stability and investment 20%, export competitiveness and new industries 10%, fiscal space from avoided debt 5%">GDP benefit breakdown.</canvas></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:.75rem;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#1D9E75;flex-shrink:0;"></span>Energy import savings (50%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#C8992A;flex-shrink:0;"></span>Hydrocarbons exports + LNG (15%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#378ADD;flex-shrink:0;"></span>PKR stability + investment (20%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#5DCAA5;flex-shrink:0;"></span>Exports + new industries (10%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#7F77DD;flex-shrink:0;"></span>Fiscal space (no new debt) (5%)</span>
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,.05);border-radius:8px;padding:1.25rem 1rem 1rem;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,200,66,.7);margin-bottom:.25rem;">Household wealth impact</p>
+    <p style="font-family:'Playfair Display',Georgia,serif;font-size:.95rem;font-weight:700;color:white;margin-bottom:.75rem;line-height:1.3;">Where does a family's Rs 354K/year gain come from?</p>
+    <div style="position:relative;height:180px;"><canvas id="citizenPie" role="img" aria-label="Pie chart: electricity bill savings 51%, transport fuel savings 20%, PKR stability preserving purchasing power 14%, food inflation reduction 7%, cheaper credit 8%">Household benefit breakdown.</canvas></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:.75rem;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#F5C842;flex-shrink:0;"></span>Electricity savings Rs 180K (51%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#1D9E75;flex-shrink:0;"></span>Transport fuel Rs 72K (20%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#378ADD;flex-shrink:0;"></span>PKR / purchasing power Rs 48K (14%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#5DCAA5;flex-shrink:0;"></span>Food price relief Rs 24K (7%)</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#D4537E;flex-shrink:0;"></span>Cheaper credit Rs 30K (8%)</span>
+    </div>
+  </div>
+</div>
+
+<div class="tldr">
+  <p class="tldr-label">TL;DR — Key Takeaways</p>
+  <ul>
+    <li>Pakistan pays <strong>$17.5 billion per year</strong> to import oil — nearly 5% of GDP. Every $10 rise in global oil prices costs the country an additional $1.8–2B. This single dependency drives chronic rupee depreciation, high inflation, and recurring IMF crises.</li>
+    <li>Consumers have already responded without waiting for the government: Pakistan has deployed an estimated <strong>27–33 GW of solar</strong> and imported 51.5 GW of panels cumulatively. A joint CREA/Renewables First analysis (March 2026) found this has <strong>already saved $12 billion in oil and LNG imports since 2020</strong> — with $6.3 billion more projected for FY2026 alone. As of April 2026, Energy Minister Sardar Awais Leghari confirmed <strong>8,000 MW of net-metered capacity</strong> is right now preventing four hours of loadshedding during a live Strait of Hormuz supply crisis.</li>
+    <li>Every 1 kW of solar installed displaces <strong>2.9 barrels of oil per year</strong> from the grid — saving ~$232/year against a one-time import cost of $80–130. Current account break-even: under 7 months. Each $1 of panel imported saves roughly <strong>$45 in oil imports over its 25-year life.</strong></li>
+    <li>Removing import duties on batteries does <em>not</em> worsen the current account — every $1 of duty removed generates ~$10 in long-term oil savings. The argument fails the arithmetic by 45:1 for panels and 5:1 for batteries.</li>
+    <li><strong>The citizen dividend:</strong> An urban household currently spends Rs 17,800/month on electricity — 18.5% of income. Solar brings that near zero: roughly <strong>2 months of salary returned annually</strong>. A motorcycle commuter saves Rs 72,000/year on an e-bike. Pakistan loses 2–3% of GDP to loadshedding every year — eliminated by storage. GDP per capita could reach <strong>$3,100 by 2040</strong> on the transition path versus ~$1,850 without it.</li>
+    <li><strong>The hydrocarbon bonus:</strong> Pakistan produces only 85,000 bbl/day of oil against consumption of 440,000. As solar + EVs slash domestic petroleum demand, conservative offshore exploration (23 blocks awarded in 2025) could make Pakistan a <strong>net oil exporter by 2035</strong>, generating $2–6B/year in new export revenue. Solar also frees up 973 MMCFD of power-sector gas, eliminating Pakistan's entire $2–3B annual LNG import bill.</li>
+    <li>Total annual economic benefit by 2040: up to <strong>$20–24B</strong> — from oil import savings, hydrocarbon exports, LNG savings, and GDP multiplier effects. The government's job: <strong>get out of the way.</strong> Remove battery duties. Stop protecting IPP capacity payments. Let the market finish what it started.</li>
+  </ul>
+</div>
+
+<article class="article-body">
+<div class="container">
+
+  <p class="lead">In 2026, Pakistan is importing more solar panels than Canada and the United Kingdom have installed in their entire histories — combined. No government program drove this. No green new deal. Consumers, drowning in electricity bills that had risen 155% in three years, simply voted with their wallets.<sup><a href="#src-1">[1]</a></sup> The revolution is already underway. The question is whether Pakistan understands what it has stumbled into.</p>
+
+  <div class="stat-row">
+    <div class="stat-card"><span class="num">51.5 GW</span><span class="label">Solar modules imported from China — cumulative to Nov 2025 [2]</span></div>
+    <div class="stat-card"><span class="num">8,000 MW</span><span class="label">Net-metered solar — Energy Minister, April 2026 [3]</span></div>
+    <div class="stat-card"><span class="num red">$17.5B</span><span class="label">Annual oil import bill — Pakistan's largest import [4]</span></div>
+    <div class="stat-card"><span class="num gold">$12B</span><span class="label">Already saved in oil &amp; LNG imports since 2020 — confirmed by CREA/Renewables First, Mar 2026 [41]</span></div>
+  </div>
+
+  <div class="part-header">
+    <p class="part-num">Part I</p>
+    <p class="part-title">The Problem</p>
+    <p class="part-desc">Pakistan's chronic economic fragility has one structural root — and it's measured in barrels of oil.</p>
+  </div>
+
+  <h2>The Trap: Pakistan's Economy Runs on Someone Else's Oil</h2>
+
+  <p>There is a number that explains most of Pakistan's chronic instability — the IMF visits every few years, the rupee that perpetually slides, the interest rates that strangle investment. That number is <strong>$17.5 billion</strong> — what Pakistan sends abroad every year to pay for oil.<sup><a href="#src-4">[4]</a></sup></p>
+
+  <p>When oil prices rise, Pakistan's import bill swells by <strong>$1.8–2 billion for every $10 per barrel increase.</strong><sup><a href="#src-6">[6]</a></sup> The rupee comes under pressure. The State Bank raises rates. Credit tightens. Industrial costs jump. Every household, whether or not they own a car, pays the price through higher food costs, transport fares, and electricity bills.</p>
+
+  <p>The structure of this dependency is stark. Transport burns <strong>55–60% of all petroleum products</strong> — roughly $10 billion annually.<sup><a href="#src-7">[7]</a></sup> Power generation consumes another $5 billion in LNG, coal, and fuel oil.<sup><a href="#src-8">[8]</a></sup> Of the $17.5 billion, only ~$2.8 billion covers uses genuinely impossible to electrify today. The rest is eliminable.</p>
+
+  <p>And the problem is not static. Pakistan's population grows at ~2% annually, its economy at 3–4% in good years. Oil demand grows roughly in line — PIDE estimates the import bill will reach <strong>$22–26 billion by 2035</strong> without structural change, as population growth and economic activity push petroleum demand higher every year. The $17.5B figure used throughout this article is today's baseline; the urgency compounds annually.</p>
+
+  <p>Oil is not the only imported energy. Pakistan also imports <strong>LNG (liquefied natural gas)</strong> to fill the widening gap between declining domestic gas production (~2,345 MMCFD) and consumption (~3,143 MMCFD). LNG imports ran at ~$2–3 billion annually in recent years, adding to the total energy import burden.<sup><a href="#src-38">[38]</a></sup> Together — petroleum products plus LNG — Pakistan's total energy import bill exceeds <strong>$20 billion per year</strong>, representing nearly 30% of all goods imported. Every analysis in this article of "oil savings" should be understood to also include LNG savings, which are equally real and equally large.</p>
+
+  <div class="callout red">
+    <p><strong>The live crisis, April 2026:</strong> Pakistan's Energy Minister attributed a current LNG supply crisis to the Iran–US conflict and Strait of Hormuz disruption. He confirmed that 8,000 MW of net-metered solar is injecting over <strong>2,000 MW into the grid during daylight hours — preventing nearly four additional hours of loadshedding.</strong><sup><a href="#src-3">[3]</a></sup> Economists at PIDE warn a full Strait closure could push monthly fuel bills to $3.5–4.5 billion and spike inflation from 7% to 17%.<sup><a href="#src-6">[6]</a></sup> A joint CREA and Renewables First analysis published in March 2026 found that without the solar surge, Pakistan would have been far more exposed — the installed capacity has already <strong>avoided $12 billion in oil and LNG imports since 2020.</strong><sup><a href="#src-41">[41]</a></sup> The solar that consumers installed without any government programme is right now the only buffer the country has.</p>
+  </div>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 1</p>
+    <p class="chart-headline">Pakistan's $17.5B oil bill and what the transition eliminates — phase by phase</p>
+    <div style="position:relative;height:280px;">
+      <canvas id="oilChart" role="img" aria-label="Stacked bar chart showing Pakistan oil import bill declining from $17.5B today to $3.6B by 2040">Oil bill: $17.5B today → $3.6B by 2040 through phased transition.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> Power sector savings (solar displaces LNG/coal/oil generation)</span>
+      <span><i style="background:#378ADD;"></i> Transport savings (EV transition)</span>
+      <span><i style="background:#D3D1C7;"></i> Remaining bill (aviation, marine, industrial feedstocks)</span>
+    </div>
+    <p class="chart-note">Sources: [4][7][8][9]. Transport = 57% of petroleum products. Power fossil = LNG + coal + oil for electricity generation.</p>
+  </div>
+
+  <div class="part-header">
+    <p class="part-num">Part II</p>
+    <p class="part-title">The Solution: A Consumer Revolution Already in Progress</p>
+    <p class="part-desc">Before a single government programme was launched, 255 million Pakistanis started solving the problem themselves. Solar. Then batteries. Then EVs. Here is what they have built — and where it is heading.</p>
+  </div>
+
+  <h2>The Revolution Nobody Planned</h2>
+
+  <p>The government did not cause this. NEPRA switched from net metering to a "net billing" system in February 2026, slashing the grid export rate from PKR 26 to PKR 13 per kWh.<sup><a href="#src-10">[10]</a></sup> Panels had faced import complications. And yet adoption accelerated anyway, driven by one force: price. Electricity tariffs rose 155% in three years.<sup><a href="#src-1">[1]</a></sup> Chinese panel costs fell to <strong>$0.08 per watt.</strong><sup><a href="#src-11">[11]</a></sup> A rooftop system pays back in 2–4 years and then generates free power for 25 years.</p>
+
+  <p>Pakistan imported 17 GW of panels in 2024 alone — twice 2023 volume.<sup><a href="#src-12">[12]</a></sup> The country is now the world's <strong>third-largest importer of Chinese solar panels</strong>.<sup><a href="#src-13">[13]</a></sup> Net-metered capacity reached 8,000 MW by April 2026.<sup><a href="#src-3">[3]</a></sup> Estimated total solar deployed — including off-grid — sits at 27–33 GW.<sup><a href="#src-2">[2]</a></sup></p>
+
+  <p>And now — for the first time — we have a hard number for what this has already delivered. A joint March 2026 analysis by CREA and Renewables First found that <strong>Pakistan's solar boom has already saved $12 billion in oil and LNG imports since 2020</strong> — and projects a further $6.3 billion saved in FY2026 alone.<sup><a href="#src-41">[41]</a></sup> Fossil-fuel imports fell 40% between 2022 and 2024 as a direct result. The same analysis estimates lifetime savings from Pakistan's currently installed capacity could ultimately exceed <strong>$100–180 billion.</strong><sup><a href="#src-41">[41]</a></sup> This is not a forecast. This is the scorecard on what consumers have already achieved, without a single rupee of government investment.</p>
+
+  <div class="callout">
+    <p><strong>Put this in context:</strong> Pakistan's annual oil import bill is $17.5 billion. In five years, consumer-led solar has already offset the equivalent of 69% of one full year's import bill — with the rate of savings accelerating. At $6.3 billion saved in FY2026 alone, the annual run-rate of savings is now approaching 36% of the total annual import bill, just from what has already been installed. The transition isn't approaching a tipping point. It passed it.</p>
+  </div>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 2</p>
+    <p class="chart-headline">Pakistan's solar trajectory — net-metered (official) vs. total estimated deployed</p>
+    <div style="position:relative;height:250px;">
+      <canvas id="solarChart" role="img" aria-label="Line chart showing Pakistan solar growth from 0.5 GW in 2022 to 8 GW net-metered and 32 GW total estimated by April 2026">Solar growth: 1.3 GW net-metered (Jun 2023) → 8 GW (Apr 2026). Total estimated 32 GW.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#01411C;"></i> Net-metered capacity (official NEPRA / Ministry data)</span>
+      <span><i style="background:#1D9E75;opacity:.5;"></i> Estimated total deployed incl. off-grid (Renewables First)</span>
+    </div>
+    <p class="chart-note">Sources: [2][3][12][14]. The gap reflects the enormous off-grid and unregistered market. Pakistan has imported 51.5 GW of modules cumulatively; only a fraction is formally grid-connected.</p>
+  </div>
+
+  <h2>Pakistan's Solar Endowment: Among the Most Blessed Places on Earth</h2>
+
+  <p>Not every country that needs to decarbonize is well-positioned to do so with solar. Pakistan is not merely well-positioned — it is among the most extraordinarily endowed places on earth, sitting on a resource that most of the world would pay dearly for.</p>
+
+  <p>The World Bank's Solar Resource Mapping report for Pakistan, using satellite data from 2000–2012, found a <strong>mean annual Global Horizontal Irradiance (GHI) of 2,071 kWh/m² across the entire country</strong>.<sup><a href="#src-51">[51]</a></sup> Maximum values in Balochistan exceed 2,300 kWh/m². The southern provinces of Sindh and Balochistan have been identified as having <strong>the second-highest solar potential in the world.</strong><sup><a href="#src-52">[52]</a></sup> The NREL estimates Pakistan's total solar energy potential at approximately <strong>5,500 TWh per year</strong> — more than five times the country's current total electricity consumption.<sup><a href="#src-52">[52]</a></sup> And the World Bank calculates that using just <strong>0.07% of Pakistan's land area</strong> for solar could generate enough power to meet its entire current electricity demand.<sup><a href="#src-53">[53]</a></sup></p>
+
+  <p>To understand what these numbers mean in practical terms: Germany — the country that pioneered modern solar policy and installed solar aggressively for two decades — receives approximately 1,000–1,100 kWh/m²/year. Pakistan's national average is nearly <strong>double</strong>. The UK, where solar policy is considered ambitious, receives about 950–1,050 kWh/m²/year. For every kW of solar installed in Lahore, a Pakistani household gets almost exactly twice the electricity output that the same panel would generate in Munich. Pakistan has a natural solar advantage that no European country can replicate regardless of policy ambition.</p>
+
+  <div class="callout">
+    <p><strong>The irony Pakistan must confront:</strong> Pakistan is simultaneously one of the most solar-blessed countries in the world and one of the most climate-vulnerable. It contributes less than 1% of global greenhouse gas emissions — yet the 2022 floods, fuelled by warming that Pakistan did not cause, affected nearly 30 million people and cost the country $3.8 billion.<sup><a href="#src-54">[54]</a></sup> The country is paying a severe price for a crisis it barely contributed to. Deploying its solar resource aggressively is both the economic and the moral imperative.</p>
+  </div>
+
+  <div class="callout" style="background:var(--green-pale);border-left-color:var(--green-light);">
+    <p><strong>The resource arithmetic:</strong> At $0.08/W and Pakistan's irradiance, solar electricity costs roughly $0.02–0.03/kWh to generate — less than one-fifth the cost of grid electricity and a fraction of oil-fired generation. This cost advantage compounds over a 25-year panel lifespan.<sup><a href="#src-11">[11]</a></sup></p>
+  </div>
+
+  <h2>The Environmental Case: Pakistan Pays the Climate Price — Solar Pays It Back</h2>
+
+  <p>Energy economists focus on the financial case for Pakistan's solar transition. There is an equally powerful environmental case — and uniquely for Pakistan, the two are inseparable.</p>
+
+  <p>Pakistan's power sector contributes approximately 76% of the country's energy-related CO2 emissions, with grid carbon intensity running at <strong>500–650 gCO2eq/kWh</strong> during winter months when gas and coal dominate.<sup><a href="#src-55">[55]</a></sup> Displacing the 63 TWh of annual fossil fuel electricity generation with solar eliminates roughly <strong>30–40 million tonnes of CO2 per year</strong> from power alone. Add the transport transition — eliminating ~138 TWh of petroleum combustion — and the full transition could reduce Pakistan's total emissions by <strong>80–100 million tonnes per year</strong>, against a current national emissions baseline of approximately 500 million tonnes. That is a reduction of 16–20% from a single structural shift — no behaviour change required, no carbon tax, just sun and silicon.</p>
+
+  <p>Pakistan's NDC (2025 update) commits to cutting GHG emissions by 50% by 2035 relative to business-as-usual — with 17% unconditional and 33% conditional on international finance.<sup><a href="#src-56">[56]</a></sup> The solar transition delivers the unconditional 17% almost automatically, as a byproduct of solving the economic problem. The remaining conditional target becomes far more achievable as the energy system transforms.</p>
+
+  <h3>Solar panels and the urban cooling effect</h3>
+
+  <p>There is a local environmental benefit that rarely makes it into energy policy discussions: rooftop solar panels physically cool the buildings and urban areas they cover. A peer-reviewed study published in <em>Frontiers in Environmental Science</em> demonstrated that widespread deployment of solar panels reduces the urban heat island (UHI) effect — panels shade heat-absorbing surfaces, convert solar radiation to electricity rather than waste heat, and reduce power plant waste heat by enabling less fossil generation.<sup><a href="#src-57">[57]</a></sup> A 2024 analysis published in <em>Nature Cities</em> found that city-scale rooftop solar deployment in Paris reduced the urban heat island effect by 0.2–0.3°C, lowering air conditioning energy demand by up to 12%.<sup><a href="#src-58">[58]</a></sup></p>
+
+  <p>For Pakistan's cities — Karachi, Lahore, and Faisalabad routinely record summer temperatures of 40–47°C, driven in part by urban heat absorption — this effect is not marginal. Reducing ambient temperatures by even 0.5–1°C meaningfully lowers cooling energy demand, reduces heat stress mortality, and creates a virtuous feedback loop: cooler buildings need less AC, which means less electricity demand, which means less fossil burning, which means less heat generation. The 8,000 MW of rooftop solar already deployed across Pakistan's cities is already beginning to deliver this co-benefit, compounding on top of the financial savings every household is already seeing on their bill.</p>
+
+  <p>On rainfall, the causal link between rooftop solar and precipitation patterns is indirect and not established at the local scale — so this article will not overstate it. What is clear is that reducing fossil fuel combustion reduces CO2 loading, which over time reduces warming-driven disruption of Pakistan's monsoon system. The 2022 floods, which scientists attributed to rainfall made 75% more intense by climate change, are a preview of what accelerating warming brings to Pakistan. Every tonne of CO2 avoided is a fraction of that risk removed.</p>
+
+  <div class="section-break">· · ·</div>
+
+  <p><strong>Layer 1 — Solar is already deployed at scale.</strong> As established in Part II, Pakistan has 27–33 GW of solar in the ground, an 8,000 MW net-metered grid connection, and $12 billion already saved in five years. The 8 GW of officially metered solar — concentrated among affluent urban households and commercial users with three-phase connections — is only part of the story. An estimated 3–4 GW sits in industrial and captive installations (factories, commercial buildings) operating outside the net-metering system entirely.<sup><a href="#src-59">[59]</a></sup> Another 1–1.7 GW is genuinely off-grid — rural households in Balochistan and Sindh where grid access is below 70%, agricultural tube wells powering irrigation pumps, and remote communities that now have daytime electricity for the first time.<sup><a href="#src-59">[59]</a></sup> The metered 8 GW is the visible tip. The full 27–33 GW spans every income level and geography in Pakistan. The transition is not a middle-class urban phenomenon — it is a national one. What follows builds on that foundation.</p>
+
+  <h2>Layer 2 — Batteries: The Missing Piece Now Arriving</h2>
+
+  <p>Pakistan imported <strong>1.25 GWh of lithium-ion battery packs in 2024</strong>, followed by 400 MWh in just the first two months of 2025.<sup><a href="#src-17">[17]</a></sup> IEEFA projects the country could deploy <strong>8.75 GWh of battery storage by 2030</strong> — enough to cover over a quarter of peak demand.<sup><a href="#src-17">[17]</a></sup> Even with the current 48% import duty premium, solar-plus-battery pays back in 3–5 years.<sup><a href="#src-17">[17]</a></sup> Remove the duty, and payback compresses to 2–3 years — at which point battery adoption stops being a considered decision and becomes an obvious one.</p>
+
+  <h2>Layer 3 — EVs: The $10 Billion Transport Prize</h2>
+
+  <p>Transport fuel costs Pakistan <strong>$9.8 billion per year.</strong><sup><a href="#src-7">[7]</a></sup> The efficiency mathematics are compelling: a petrol engine converts ~22% of fuel energy into movement; an electric motor converts ~88%.<sup><a href="#src-23">[23]</a></sup> Nearly a 4:1 ratio. Electrifying Pakistan's road transport does not require generating 138 TWh of equivalent electricity — it requires only <strong>35 TWh</strong>, because so much less energy is wasted in electric drivetrains.</p>
+
+  <p>Pakistan's EV policy targets 30% of new vehicle sales electric by 2030, rising to 90% by 2040.<sup><a href="#src-24">[24]</a></sup> BYD has entered with local assembly plans. The two-wheeler market — 15+ million registered units — is the fastest near-term win: an e-bike charges from any home socket and is already approaching petrol price parity without subsidy.</p>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 3</p>
+    <p class="chart-headline">Why EVs are 4× more efficient — transport energy savings potential</p>
+    <div style="position:relative;height:200px;">
+      <canvas id="evChart" role="img" aria-label="Horizontal bar chart: ICE vehicles need 138 TWh of thermal energy, EVs need only 35 TWh of electricity for the same transport">ICE: 138 TWh thermal → EV: 35 TWh electricity needed.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#C0392B;"></i> Current: thermal energy in petrol/diesel consumed (138 TWh)</span>
+      <span><i style="background:#1D9E75;"></i> After EV shift: electricity needed (35 TWh — 4× efficiency gain)</span>
+    </div>
+    <p class="chart-note">Sources: [7][23]. ICE efficiency ~22% vs. EV ~88%. Road and rail only; excludes aviation and marine (~12% of transport energy).</p>
+  </div>
+
+
+  <div class="section-break">· · ·</div>
+
+  <div class="part-header">
+    <p class="part-num">Part III</p>
+    <p class="part-title">Value: What's Already in Motion — Even Without Government</p>
+    <p class="part-desc">The transition does not need permission. Consumers have already proven that. Here is what Pakistan gets even if policy never changes — and the honest reckoning of who benefits first.</p>
+  </div>
+
+  <p>The most important thing to understand about this transition is also the most counterintuitive: <strong>it cannot be stopped.</strong> The government can slow it, tax it, and make it more expensive — but it cannot reverse it. The price of solar at $0.08/W, the payback period of 2–4 years, and the alternative of Rs 40/unit grid electricity have already made the decision for millions of households. Batteries and EVs are following the same curve. The consumer revolution has its own momentum, independent of any policy decision in Islamabad.</p>
+
+  <h2>Batteries and EVs Will Happen on Their Own Dime</h2>
+
+  <p>Sceptics ask: will consumers really add batteries and EVs without government support? The answer is already visible in the data. Pakistan imported 1.25 GWh of batteries in 2024, with another 400 MWh in the first two months of 2025 — entirely consumer-driven, with a 48% duty overhead that the government actively imposed.<sup><a href="#src-17">[17]</a></sup> At payback periods of 3–5 years even <em>with</em> that duty, the economics work. Remove the duty and payback compresses to 2–3 years — at which point it becomes a no-brainer rather than a calculation.</p>
+
+  <p>E-bikes and electric rickshaws are already approaching petrol price parity without any subsidy. Pakistan's 15 million+ registered motorcycles represent the largest single vehicle category in the country — and the one where the cost crossover happens first. An e-bike charging from home solar costs Rs 300–500/month in fuel equivalents versus Rs 6,500 for petrol.<sup><a href="#src-23">[23]</a></sup> That Rs 6,000/month saving does not require a government programme. It requires a Chinese manufacturer with a price-competitive product and a consumer who can do arithmetic. Both exist today.</p>
+
+  <p>Local battery assembly is already underway — Atom Power, Topak Power, Li-Power, EV Technologies — which progressively lowers costs further. Each year the battery duty exists, consumers find creative workarounds (importing cells at 0% duty and assembling locally). The consumer is not waiting for policy. Policy just determines whether the journey takes 8 years or 15.</p>
+
+  <h2>This Is Not Just a Middle-Class Story</h2>
+
+  <p>Perhaps the most striking aspect of Pakistan's solar transition is how broad-based it has become. The official narrative focuses on the 466,000 net-metering consumers — urban, affluent, with three-phase grid connections. But that is the most visible fraction of a much wider adoption.</p>
+
+  <p>An estimated 3–4 GW of industrial and captive solar is deployed outside the net-metering system — factories, textile mills, and commercial buildings that installed solar to escape the grid entirely, not to export to it.<sup><a href="#src-59">[59]</a></sup> Another 1–1.7 GW is genuinely off-grid in rural Balochistan and Sindh, where grid access remains below 70% — not consumers who abandoned the grid but communities that never had reliable access to it.<sup><a href="#src-59">[59]</a></sup> Punjab's tube well solarization programme is converting diesel-powered agricultural pumps: estimates suggest 5.6–7.5 GW of distributed PV could come from this sector alone.<sup><a href="#src-59">[59]</a></sup></p>
+
+  <p>Most compellingly — the poorest households in Pakistan are installing single solar panels. Not a 5 kW rooftop system with an inverter and battery bank, but a single 100–250 watt panel powering an LED light, a phone charger, and a fan. In remote villages, this single plate is transformative: children study after dark, small businesses operate through outages, and the dependency on expensive diesel generators diminishes. The solar transition is not a luxury that trickles down slowly. It is already present at every income level, adapting to what each household can afford.</p>
+
+  <div class="callout red">
+    <p><strong>The honest equity risk:</strong> The transition carries a structural danger that must be named. As affluent households exit the grid — their bills near zero from solar — the fixed costs of Pakistan's power infrastructure spread across a smaller pool of remaining grid-dependent consumers. NEPRA data suggests net-metering has already shifted a financial burden of Rs 159 billion ($570 million) onto non-solar grid users — disproportionately the poor who cannot yet afford their own systems.<sup><a href="#src-61">[61]</a></sup> This is the utility death spiral: higher tariffs push more solvent customers off-grid, which raises tariffs further, which pushes more away. Without policy intervention — specifically, renegotiating IPP capacity payments and retiring stranded fossil assets — the transition could widen inequality even as it creates national wealth. Good policy is not just about speed. It is about ensuring the benefits are broad rather than captured only by those who could already afford to leave.</p>
+  </div>
+
+  <h2>The Floor: What the Current Trajectory Delivers</h2>
+
+  <p>Even without any policy change, the consumer-led transition delivers substantial value — just more slowly, and with the equity risk above left unaddressed. Here is the honest floor calculation: solar adoption at current pace, batteries arriving over 5–8 years as costs fall naturally, EV penetration slow without incentives, fossil capacity payments continuing to drag.</p>
+
+  <p>By 2035 on the status quo trajectory: roughly $8–10 billion in annual energy import savings from the power sector transition alone. GDP per capita reaching approximately $2,100–2,200 — meaningfully higher than today but well short of the $2,650 achievable with policy support by the same date. The CA deficit structural gap narrows significantly, but does not close. The debt-to-GDP ratio improves more slowly. The timeline to energy sovereignty extends from 2033–40 to somewhere around 2040–47.</p>
+
+  <p>This is not a bad outcome. It is a dramatically better Pakistan than today. The point of Part IV and Part V is simply that policy can deliver the same destination in half the time — at essentially zero cost to the government, because the required policy changes are mostly about removing things rather than building them.</p>
+
+  <h2>Two Pakistans: What Happens With vs. Without Policy Support</h2>
+
+  <p>The most important thing to understand about this transition is that it <em>will happen either way.</em> Consumers have already demonstrated they do not need government permission to put solar panels on their rooftops. The question is not whether Pakistan transitions — it is how fast, how broadly, and how much value the country captures in the process. The two scenarios below are both realistic. The difference between them is not heroic government action; it is simply whether the government stops making things harder.</p>
+
+  <div class="stat-row" style="margin:1.5rem 0;">
+    <div class="stat-card" style="border-top:3px solid #C0392B;">
+      <span class="num red" style="font-size:1.3rem;">Status Quo</span>
+      <span class="label">Policies continue as today — duties on batteries, solar taxes, net-billing uncertainty, no EV incentives, new fossil capacity still planned</span>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #1D9E75;">
+      <span class="num" style="font-size:1.3rem;">Optimal Policy</span>
+      <span class="label">Battery duties removed, net-billing stabilised, filer-only tax credits, EV policy with teeth, fossil pipeline frozen</span>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure — Two scenarios</p>
+    <p class="chart-headline">Oil import bill trajectory: status quo policy vs. optimal policy support</p>
+    <div style="position:relative;height:260px;">
+      <canvas id="scenarioChart" role="img" aria-label="Line chart comparing two scenarios: status quo where transition happens slowly reaching $10B savings by 2040, versus optimal policy where savings reach $14B+ by 2035">Status quo: $10B savings by 2040. Optimal policy: $14B savings by 2035.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> Optimal policy (battery duties removed, net-billing stable, EV incentives, fossil freeze)</span>
+      <span><i style="background:#C8992A;"></i> Status quo (consumer-led continues but slower — transition still happens)</span>
+      <span><i style="background:#C0392B;"></i> No transition (oil demand grows with population ~3%/yr)</span>
+    </div>
+    <p class="chart-note">Status quo: solar adoption continues but batteries lag due to 48% duty; EV penetration slow without incentives; fossil capacity payments continue crowding out grid investment. Transition still happens — driven by consumers — but takes 5–7 additional years to reach the same savings level. Oil demand CAGR of ~3% assumed without transition (population + economic growth). All scenarios illustrative.</p>
+  </div>
+
+  <div class="callout">
+    <p><strong>The key insight:</strong> In the status quo scenario, Pakistan still gets most of the benefits — just 7–10 years later. The consumer revolution cannot be stopped. What the government <em>can</em> do is either accelerate it by removing barriers, or slow it by taxing it. The 48% battery duty, the 18% solar GST, and the net-billing uncertainty are active brakes on a car that is already moving. Remove the brakes. The transition cost to government is zero. The gain is $3–5B in annual savings arriving a decade earlier.</p>
+  </div>
+
+  <div class="section-break">· · ·</div>
+
+  <div class="part-header">
+    <p class="part-num">Part IV</p>
+    <p class="part-title">Turbo Charge It: The Policy Lever</p>
+    <p class="part-desc">The transition happens without government action. But the right policy choices compress a 15-year journey into 7 years — and turn a good outcome into a historic one. Here is the exact lever to pull.</p>
+  </div>
+
+  <h2>What the Government Needs to Do: Get Out of the Way</h2>
+
+  <p>This is a consumer-led revolution. The government's most valuable contribution is not a grand plan — it is removing the obstacles it has itself erected. The policy agenda is largely a list of <em>subtractions:</em></p>
+
+  <ul class="policy-list">
+    <li><strong>Remove the 48% effective duty on lithium-ion batteries.</strong> Every rupee of duty removed generates ~10 rupees of long-term oil savings. Raw materials for local assembly already enter at 0%. The National Battery Policy 2026–31 should make duty elimination its first act.<sup><a href="#src-22">[22]</a></sup></li>
+    <li><strong>Restore and stabilise net metering / net billing.</strong> NEPRA's February 2026 switch to net billing — cutting export rates from PKR 26 to PKR 13 — created investment uncertainty at exactly the wrong moment.<sup><a href="#src-10">[10]</a></sup> The PM's intervention to protect existing contracts was correct; a clear, long-term tariff schedule for new prosumers must follow. Prosumers with batteries will go fully off-grid if export economics vanish — and the grid will permanently lose its most reliable daytime surplus.</li>
+    <li><strong>Honour IPP renegotiations and accelerate fossil capacity payment exit.</strong> Pakistan pays capacity charges to idle fossil plants whose economics solar has destroyed. These billions in annual dead weight must end. The renegotiations must conclude.<sup><a href="#src-25">[25]</a></sup></li>
+    <li><strong>Fast-track the National Lithium-Ion Battery Manufacturing Policy 2026–31.</strong> Duty reductions on cell-level components should be in the next budget.<sup><a href="#src-22">[22]</a></sup></li>
+    <li><strong>Give EV policy teeth.</strong> The 30% EV target by 2030 needs zero import duty on EVs and a standardised charging code.<sup><a href="#src-24">[24]</a></sup> Two- and three-wheelers are the fastest win.</li>
+    <li><strong>Stop building new gas and coal capacity.</strong> Every new fossil plant locks in import dependency for 25+ years and competes with solar on capacity payment terms. The pipeline should be frozen immediately.</li>
+    <li><strong>Introduce solar, battery, and EV tax credits — and make them filer-only.</strong> A 20–30% investment tax credit on rooftop solar, battery storage, and EV purchases, available exclusively to registered tax filers, would simultaneously accelerate the energy transition and expand the tax base. Pakistan has only ~4–5 million active tax filers out of 255 million people. The 466,000+ households already connected via net metering — middle-class homeowners with disposable investment capital — are exactly the people who should be filing. A tax credit creates a direct financial incentive to enter the formal tax system. This is not a cost to the government; it is a lever that pays for itself.</li>
+  </ul>
+
+  <div class="section-break">· · ·</div>
+
+  <h2>Answering the Critics: Does Removing Solar Duties Worsen the Current Account?</h2>
+
+  <p>The policy list above will meet one objection immediately: "Removing import duties on solar panels and batteries increases imports and widens the current account deficit." It is the most common counter-argument from Pakistan's economic establishment. It fails the arithmetic — by a factor of roughly 45:1 for panels and 5:1 for batteries. Here is the proof, with the numbers done properly.</p>
+
+  <div class="kw-calc">
+    <p class="kw-calc-title">Calculation A — Per 1 kW of Solar Panel Installed</p>
+    <h4>The current account math of one kilowatt</h4>
+    <div class="kw-row">
+      <div class="kw-box">
+        <p class="kw-box-label">One-time import cost</p>
+        <p class="kw-box-val red">$80–130</p>
+        <p class="kw-box-sub">panels at $0.08/W + inverter/mounting share<br>~$130 total imported content per kW <sup>[11]</sup></p>
+      </div>
+      <div class="kw-box">
+        <p class="kw-box-label">Annual oil displaced (power grid)</p>
+        <p class="kw-box-val">2.9 barrels</p>
+        <p class="kw-box-sub">1,750 kWh generated ÷ 35% grid efficiency = 5,000 kWh thermal ÷ 1,700 kWh/barrel <sup>[15][16]</sup></p>
+      </div>
+    </div>
+    <ul class="kw-steps">
+      <li>Annual generation at 20% capacity factor <span>1,750 kWh/year</span></li>
+      <li>Thermal energy displaced (35% grid efficiency) <span>5,000 kWh thermal</span></li>
+      <li>Oil equivalent displaced annually <span>2.94 barrels/year</span></li>
+      <li>Dollar value at $80/barrel <span>$235/year saved</span></li>
+      <li>Current account break-even (import ÷ annual saving) <span>&lt; 7 months</span></li>
+      <li>25-year lifetime oil savings per kW <span>$5,875</span></li>
+      <li>Ratio: lifetime oil savings ÷ import cost <span>~45:1</span></li>
+    </ul>
+    <div class="kw-verdict"><strong>Verdict:</strong> Every $1 of solar panel imported with zero duty saves approximately $45 in oil imports over the panel's 25-year life. For the current account, this is not a cost — it is one of the best investments the country can make. The "duty removal hurts the CAD" argument fails at first contact with numbers.</div>
+  </div>
+
+  <div class="kw-calc">
+    <p class="kw-calc-title">Calculation B — Per 1 kWh of Battery Storage Installed</p>
+    <h4>The CAD math of one kilowatt-hour of storage</h4>
+    <div class="kw-row">
+      <div class="kw-box">
+        <p class="kw-box-label">One-time import cost</p>
+        <p class="kw-box-val red">~$100</p>
+        <p class="kw-box-sub">wholesale LFP cell ~$80–100/kWh<br>48% duty adds ~$48 on top <sup>[17]</sup></p>
+      </div>
+      <div class="kw-box">
+        <p class="kw-box-label">Annual oil displaced</p>
+        <p class="kw-box-val">0.61 barrels</p>
+        <p class="kw-box-sub">1 cycle/day × 365 = 365 kWh displaced from grid ÷ 35% grid efficiency = 1,043 kWh thermal = 0.61 BOE <sup>[16]</sup></p>
+      </div>
+    </div>
+    <ul class="kw-steps">
+      <li>Cycles per year (once daily) <span>365</span></li>
+      <li>Thermal energy displaced from fossil grid <span>1,043 kWh/year</span></li>
+      <li>Oil equivalent displaced <span>0.61 barrels/year</span></li>
+      <li>Dollar value at $80/barrel <span>$49/year saved</span></li>
+      <li>Current account break-even <span>~2 years</span></li>
+      <li>10-year lifetime oil savings per kWh of storage <span>$490</span></li>
+      <li>Ratio: lifetime oil savings ÷ import cost <span>~4.9:1</span></li>
+    </ul>
+    <div class="kw-verdict"><strong>On the 48% battery duty specifically:</strong> Removing it saves ~$48 on the import cost of a 1 kWh battery. That same battery generates $490 in oil savings over its 10-year life. <strong>Every rupee of battery duty removed creates roughly 10 rupees of long-term oil import savings.</strong> The duty is not protecting the current account — it is taxing the cure.</div>
+  </div>
+
+  <h3>The Local Manufacturing Strategy: Progressively Reducing Import Content</h3>
+
+  <p>The stronger long-term answer to the import concern is that local manufacturing progressively reduces hardware import content, transforming foreign purchases into a domestic industry. This arc is already underway:</p>
+
+  <div class="local-mfg">
+    <div class="mfg-phase">
+      <span class="mfg-badge">2026–28</span>
+      <div class="mfg-content">
+        <p><strong>Cell import + local pack assembly.</strong> Battery cells enter at 0% duty; packs are assembled domestically. Atom Power (Wavetec subsidiary), Topak Power (Shenzhen JV), Li-Power Green Energy, and EV Technologies in Karachi's Korangi Industrial Area are all doing this now.<sup><a href="#src-18">[18][19][20]</a></sup> About 40–50% of a battery pack's final cost is labour, BMS electronics, casing, and wiring — all value-added locally. Import content per kWh of storage effectively halves compared to buying a finished unit from China.</p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge mid">2028–32</span>
+      <div class="mfg-content">
+        <p><strong>EV assembly + inverter manufacturing.</strong> BYD and other Chinese OEMs are planning local assembly in Pakistan.<sup><a href="#src-21">[21]</a></sup> Solar inverter assembly is already partly local. As EV assembly scales, import content per vehicle drops from ~80% to ~40–50%, and each domestically assembled EV permanently displaces ~$350–500/year in fuel imports. The National Lithium-Ion Battery Manufacturing Policy 2026–31, in cabinet review, formalises duty reductions on cell-level components.<sup><a href="#src-22">[22]</a></sup></p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge gold">2032+</span>
+      <div class="mfg-content">
+        <p><strong>Moving up the value chain.</strong> With 26% projected annual demand growth in batteries<sup><a href="#src-21">[21]</a></sup> and Chinese manufacturers seeking to internationalise production amid overcapacity, Pakistan becomes a candidate for cathode material processing and eventually cell manufacturing — exporting components regionally rather than importing finished units. The hardware import-to-oil-savings ratio continues shifting in Pakistan's favour.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-break">· · ·</div>
+
+  <h2>The Debt-Free Dividend: Why the Consumer Model Beats Government Every Time</h2>
+
+  <p>There is a dimension to this transition that gets almost no attention in Pakistan's energy debate, yet it may be the most important fiscal story of the decade. When the government builds a power plant, it takes on debt. When a consumer puts solar panels on their roof, the government takes on nothing. That asymmetry, compounded over millions of households and thirty years, produces numbers that dwarf the oil import savings.</p>
+
+  <h3>The circular debt trap — and how solar breaks it</h3>
+
+  <p>Pakistan's power sector circular debt peaked at Rs 5.73 trillion (~$20.6 billion) in July 2024.<sup><a href="#src-45">[45]</a></sup> To partially clear it, the government in September 2025 executed what was described as the largest financial transaction in Pakistan's history — borrowing Rs 1.225 trillion from 18 commercial banks over 6 years, to be repaid via a Rs 3.23/unit surcharge imposed on electricity consumers.<sup><a href="#src-46">[46]</a></sup> The same consumers already drowning in tariffs are now also financing the cleanup of the debt that caused those tariffs. Annual capacity payments to IPPs reached Rs 2.1 trillion in 2024 — <strong>comparable in scale to Pakistan's entire defence budget</strong> — for plants running at an average of just 34% utilization.<sup><a href="#src-47">[47]</a></sup></p>
+
+  <p>The mechanism that creates this is straightforward. Government builds plant → takes sovereign or guaranteed loan with 20–25 year tenure → signs take-or-pay power purchase agreement (PPA) with the IPP → plant gets built → DISCOs are obligated to pay capacity charges whether the plant runs or not → DISCOs cannot recover full costs from consumers → gap becomes circular debt → government borrows to clear circular debt → adds to sovereign balance sheet → raises tariffs → consumers exit to solar → grid revenue falls → circular debt grows faster. Repeat.</p>
+
+  <div class="callout red">
+    <p><strong>The perversity of the current situation:</strong> Pakistan has 45,000+ MW of installed generation capacity but runs it at 34% utilization on average. It is paying Rs 2.1 trillion/year for capacity it barely uses — because the take-or-pay contracts require payment regardless of dispatch. Meanwhile, the solar panels consumers installed themselves are running at nearly 100% utilization for the household's own consumption, with zero capacity payments, zero PPA, and zero sovereign debt. The consumer model is 3× more capital-efficient than the IPP model even before you count the import savings.</p>
+  </div>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 8 — Fiscal comparison</p>
+    <p class="chart-headline">Consumer solar vs. government IPP model — what 33 GW actually costs each way</p>
+    <div style="position:relative;height:280px;">
+      <canvas id="debtChart" role="img" aria-label="Comparison chart showing consumer solar 33 GW costs $3-5B private capital with zero government debt versus government IPP route costing $23-33B sovereign debt plus $5B per year in capacity payments">Consumer solar: $3-5B private, zero sovereign debt. IPP equivalent: $23-33B sovereign + $5B/year capacity payments.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> Consumer solar path (private capital, zero government debt)</span>
+      <span><i style="background:#C0392B;"></i> Equivalent government/IPP path (sovereign debt + annual capacity payments)</span>
+    </div>
+    <p class="chart-note">Sources: [45][46][47][48]. IPP investment cost ~$700–1,000/kW (CPEC/ADB benchmarks). Consumer solar at ~$100–150/kW total installed cost. Capacity payments at ~$150/kW/year (derived from Rs 2.1T for 46,600 MW). 25-year NPV of avoided capacity payments at 6% discount rate.</p>
+  </div>
+
+  <h3>The numbers: what 33 GW of private solar actually saved the government</h3>
+
+  <div class="stat-row" style="margin:1.5rem 0;">
+    <div class="stat-card"><span class="num" style="font-size:1.4rem;">$3–5B</span><span class="label">Total private capital invested in 33 GW of consumer solar — zero sovereign debt [48]</span></div>
+    <div class="stat-card"><span class="num red" style="font-size:1.4rem;">$23–33B</span><span class="label">What 33 GW would have cost via government/IPP route in sovereign borrowing [47]</span></div>
+    <div class="stat-card"><span class="num red" style="font-size:1.4rem;">$5B/yr</span><span class="label">Annual capacity payments avoided (33 GW × ~$150/kW/year) [47]</span></div>
+    <div class="stat-card"><span class="num" style="font-size:1.4rem;">$75–100B</span><span class="label">25-year NPV of avoided capacity payment obligations at 6% discount rate</span></div>
+  </div>
+
+  <p>Put differently: consumers have already done for Pakistan's power sector what would have required $23–33 billion in sovereign borrowing to achieve through normal channels — and they did it without a single government loan, PPA negotiation, or capacity payment commitment. The government's power sector strategy for twenty years was to borrow money, build plants, guarantee returns to investors, and pass the cost to consumers. Consumers, fed up, simply bypassed the entire system. And in doing so, they avoided a sovereign debt burden larger than Pakistan's entire annual GDP growth in most years.</p>
+
+  <h3>The tax credit flywheel: turning the transition into a filer expansion</h3>
+
+  <p>Here is where the story gets even more interesting. Pakistan has approximately 4–5 million active tax filers out of 255 million people — one of the lowest tax-to-population ratios in the world. The energy transition provides a unique mechanism to change this. A well-designed <strong>solar, battery, and EV investment tax credit</strong> — say 20–30% of system cost, available only to registered tax filers — creates a direct financial incentive to enter the formal tax system.</p>
+
+  <p>The 466,000 households already connected via net metering are disproportionately middle and upper-middle class — precisely the income bracket that should be filing but often doesn't.<sup><a href="#src-49">[49]</a></sup> At Rs 500,000 for an average solar+battery system, a 25% tax credit is worth Rs 125,000 — more than enough to make registering with FBR worth the effort. If 2 million households claim this credit over five years, and their average declared income is Rs 1.2 million/year, the resulting expansion of the formal tax base generates roughly <strong>Rs 360 billion/year in additional income tax revenue</strong> at an effective rate of 15% — offsetting the credits themselves within 3–4 years and generating a net fiscal surplus thereafter.</p>
+
+  <p>The government is currently doing the opposite — imposing an 18% GST on solar panels, taxing net metering users on exported electricity, and adding surcharges on top of an already unaffordable tariff.<sup><a href="#src-50">[50]</a></sup> Every one of these moves accelerates the utility death spiral: affluent consumers exit the grid, the fixed-cost base spreads over fewer customers, tariffs rise further, more consumers exit. A tax credit that brings these consumers <em>into</em> the formal tax system rather than pushing them <em>off</em> the grid is the policy that converts a fiscal threat into a fiscal opportunity.</p>
+
+  <div class="section-break">· · ·</div>
+
+  <h2>The IPP Opportunity: How Pakistan's Power Establishment Can Win, Not Lose</h2>
+
+  <p>Pakistan's Independent Power Producers are, rightly, seen as part of the problem — the take-or-pay contracts, the dollar-indexed returns, the Rs 2.1 trillion in annual capacity payments for plants running at 34% utilization. But the IPPs are also the most powerful lobbying force in Pakistan's energy sector. Any analysis of how policy actually changes in Pakistan has to grapple with a simple reality: if the IPPs see a threat in the solar transition, they will fight it. If they see an opportunity, they will accelerate it.</p>
+
+  <p>The good news is that the opportunity is real, it is large, and the IPPs are better positioned to seize it than almost any other private actor. Here is the business case.</p>
+
+  <h3>What IPPs have that consumer solar doesn't</h3>
+
+  <p>Pakistan's IPPs — groups like Hub Power, Engro Energy, Lucky Electric, K-Electric, and the CPEC-era Chinese consortium plants — collectively possess assets that took decades to build and cannot be replicated quickly. They have <strong>transmission grid connections</strong> at the 132kV and 220kV level. They have <strong>land near substations</strong>. They have <strong>operational teams</strong> experienced in grid management, dispatch, and power purchase agreement negotiation. They have <strong>established relationships</strong> with NEPRA, the Ministry of Energy, and international financing institutions. They have <strong>balance sheets</strong> capable of deploying capital at scale. Consumer solar has none of these things.</p>
+
+  <p>Consumer rooftop solar solves the daytime household load. It does not solve grid stability, nighttime demand, industrial-scale supply, or the complex task of integrating gigawatts of distributed generation into a functioning national grid. <strong>That is the IPP's new business.</strong></p>
+
+  <h3>Five concrete business pivots available right now</h3>
+
+  <div class="local-mfg">
+    <div class="mfg-phase">
+      <span class="mfg-badge">1</span>
+      <div class="mfg-content">
+        <p><strong>Utility-scale solar + grid-scale BESS.</strong> The consumer rooftop revolution has left utility-scale solar almost completely untouched — Pakistan has only ~780 MW of utility-scale solar installed despite 33 GW of rooftop.<sup><a href="#src-2">[2]</a></sup> An IPP with a 220kV grid connection and land near a substation can deploy 200–500 MW of solar paired with a 4-hour battery system, offer firm dispatchable renewable power, and command a premium PPA over intermittent rooftop. Oracle Power is already developing a 1.3 GW renewable complex in Sindh with 450 MWh of BESS. Lucky Cement has announced a hybrid wind-solar project. The market is open and the economics are compelling — solar+storage is now cheaper per kWh than new gas in Pakistan.</p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge mid">2</span>
+      <div class="mfg-content">
+        <p><strong>Grid stabilization and ancillary services.</strong> As distributed solar grows from 8 GW toward 30–50 GW, the grid needs frequency regulation, voltage support, and rapid response backup capacity that rooftop solar cannot provide. An IPP that converts a retiring gas peaker into a grid-scale battery facility — using the existing substation, land, and grid connection — becomes the indispensable balancing provider for the very solar revolution that made its fossil plant uneconomic. The transmission infrastructure is a long-dated asset even after the fuel plant is retired. In markets that have undergone similar transitions (UK, Australia, Germany), this ancillary services market became extremely valuable precisely because it was scarce.</p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge">3</span>
+      <div class="mfg-content">
+        <p><strong>Direct industrial wheeling — B2B renewable supply.</strong> Pakistan's large industrial consumers — textile mills, cement plants, steel, fertilizers — face electricity costs that are among the highest in the region and are screaming for captive renewable supply. An IPP can develop dedicated solar farms and wheel clean power directly to industrial customers under bilateral contracts, bypassing the DISCO system entirely. This is already happening in South Africa's post-REIPPPP market and is the natural next step for Pakistan's industrial sector. The IPP brings the grid access, the industrial customer brings the offtake — no government PPA required.</p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge mid">4</span>
+      <div class="mfg-content">
+        <p><strong>EV charging infrastructure at scale.</strong> Pakistan's motorcycle and vehicle fleet electrification needs charging infrastructure — not just home chargers, but fast-charging corridors along highways, in commercial areas, and at industrial estates. An IPP with land assets across Pakistan's geography is naturally positioned to deploy solar-powered charging hubs. This is a capital-intensive, high-return business that requires exactly what IPPs have: balance sheets, land, grid connections, and operational infrastructure. The EV charging market in Pakistan is completely open — no incumbent, no competition, enormous first-mover advantage.</p>
+      </div>
+    </div>
+    <div class="mfg-phase">
+      <span class="mfg-badge gold">5</span>
+      <div class="mfg-content">
+        <p><strong>Carbon credits and green finance.</strong> Pakistan's NDC commits to 50% emission reduction by 2035. Every MW of renewable capacity an IPP deploys generates carbon offsets that can be monetised under Article 6 of the Paris Agreement. International climate finance — Green Climate Fund, ADB climate facilities, European development banks — is actively seeking investable projects in countries like Pakistan. An IPP that pivots to renewables accesses a capital pool that is several orders of magnitude cheaper than the commercial and Chinese lending that financed the CPEC fossil plants. A 500 MW solar farm financed at 6% from a green bond beats 14% from a commercial bank. The financing advantage alone makes the pivot economics attractive.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>The policy ask that makes IPPs allies instead of opponents</h3>
+
+  <p>The solar transition threatens the IPPs' existing revenue stream — the capacity payments. The natural IPP response is to lobby for those payments to continue and for solar to be slowed. This is the response Pakistan is currently experiencing, and it is the most destructive possible outcome for everyone including the IPPs themselves: their fossil plants will become worthless liabilities regardless of how many lobbying rupees they spend, because consumers are simply leaving the grid.</p>
+
+  <p>The smarter play — and the one that Pakistan's policymakers should actively facilitate — is to convert IPPs from capacity payment defenders into renewable transition investors by offering a credible bargain: <strong>accelerated exit from the old PPA in exchange for preferential access to the new renewable market.</strong></p>
+
+  <p>Practically, this means: first-right-of-refusal on utility-scale renewable tenders for IPPs that voluntarily convert to take-and-pay; fast-tracked NEPRA licensing for IPP-led solar+BESS projects; wheeling regulations that allow B2B industrial renewable supply; and a grid stabilization service market that pays for the dispatchable backup that only large storage assets can provide. None of this requires government capital. It requires only that the government create the regulatory space and then step back.</p>
+
+  <div class="callout gold">
+    <p><strong>The lobbying calculus:</strong> Pakistan's IPPs spend significant resources maintaining the status quo. If even a fraction of that lobbying energy were redirected toward advocating for the five pivots above — utility solar licensing, wheeling rights, grid services markets, EV charging corridors, carbon credit frameworks — the policy environment would change faster than any civil society campaign could achieve. The most powerful accelerant for Pakistan's energy transition is not a consumer petition. It is an IPP boardroom deciding that their next billion-dollar investment is a solar farm, not another gas plant.</p>
+  </div>
+
+  <div class="section-break">· · ·</div>
+
+  <div class="part-header">
+    <p class="part-num">Part V</p>
+    <p class="part-title">The Full Prize: Policy + Market Working Together</p>
+    <p class="part-desc">When government stops blocking the market and starts helping it — the arithmetic of removing a single structural dependency compounds into something extraordinary for Pakistan's economy, its balance sheet, and every family in the country.</p>
+  </div>
+
+  <h2>The Prize: What Pakistan Looks Like on the Other Side</h2>
+
+  <div class="value-grid">
+    <div class="value-card"><span class="vc-icon">↓</span><p class="vc-title">Structural inflation falls</p><p class="vc-body">Solar electricity has near-zero marginal cost for 25 years. When households and industry run on sunlight, global commodity shocks can no longer transmit into domestic prices. Pakistan's most chronic inflation driver breaks.<sup><a href="#src-26">[26]</a></sup></p></div>
+    <div class="value-card"><span class="vc-icon">↑</span><p class="vc-title">PKR stabilises</p><p class="vc-body">A $12–15B annual reduction in oil import demand permanently reduces the structural downward pressure on the rupee. Stable exchange rates mean lower risk premiums, lower interest rates, and cheaper credit for every business in the country.<sup><a href="#src-26">[26]</a></sup></p></div>
+    <div class="value-card"><span class="vc-icon">↗</span><p class="vc-title">GDP gains $18–25B</p><p class="vc-body">Capital that currently leaves the country stays in the domestic economy. With a 1.3–1.5× multiplier, $12–15B in annual savings translates to $16–22B of additional economic activity. Total GDP uplift: 5–7%.<sup><a href="#src-27">[27]</a></sup></p></div>
+    <div class="value-card"><span class="vc-icon">✦</span><p class="vc-title">Exports become competitive</p><p class="vc-body">Pakistan's textiles (~$16–18B/year) are energy-intensive. Industrial electricity at solar cost vs. grid cost transforms manufacturing competitiveness. Pakistani exporters could break out of their decade-long plateau.<sup><a href="#src-28">[28]</a></sup></p></div>
+    <div class="value-card"><span class="vc-icon">⊕</span><p class="vc-title">Oil found can be exported</p><p class="vc-body">Pakistan currently consumes its entire domestic crude output (~80–90,000 bbl/day in 2025) as a partial offset to imports.<sup><a href="#src-29">[29]</a></sup> As domestic demand shifts to solar, every barrel produced becomes hard-currency export revenue.</p></div>
+    <div class="value-card"><span class="vc-icon">⊘</span><p class="vc-title">Refinery drag diminishes</p><p class="vc-body">Pakistan's refineries currently produce excess furnace oil nobody wants while importing petrol and diesel at a premium — a structural absurdity.<sup><a href="#src-42">[42]</a></sup> As domestic petroleum demand falls with EV adoption, pressure on this broken system eases. Upgrading to modern conversion refineries, funded partly by crude export revenue, becomes viable rather than aspirational.</p></div>
+    <div class="value-card"><span class="vc-icon">✓</span><p class="vc-title">IMF independence</p><p class="vc-body">Pakistan has visited the IMF 25 times. Most crises trace to external account pressure from oil. A CA swinging to $12–14B structural surplus permanently changes Pakistan's credit profile and ends the cycle of crisis and conditionality.<sup><a href="#src-30">[30]</a></sup></p></div>
+    <div class="value-card"><span class="vc-icon">⊞</span><p class="vc-title">New industries, new jobs</p><p class="vc-body">Battery assembly, EV manufacturing, inverter production, and grid software are emerging with export potential. Battery demand projected to grow 26% annually for five years.<sup><a href="#src-21">[21]</a></sup> A young, tech-literate workforce can capture significant value here.</p></div>
+    <div class="value-card"><span class="vc-icon">∅</span><p class="vc-title">Zero sovereign debt added</p><p class="vc-body">Every rooftop solar system and EV is financed entirely by the consumer. No CPEC loan. No ADB facility. No capacity payment guarantee. Consumers have already deployed 33 GW — the equivalent of $23–33B in sovereign borrowing and $75–100B in NPV capacity obligations — at zero cost to the government balance sheet.<sup><a href="#src-48">[48]</a></sup></p></div>
+  </div>
+
+  <h2>Does This Help Pakistan's Debt-to-GDP Ratio?</h2>
+
+  <p>Yes — and in three compounding ways that make the fiscal improvement larger than it first appears.</p>
+
+  <p>Pakistan's debt-to-GDP ratio currently stands at roughly 70–83% depending on the measurement used (the government reports 70% of GDP, while broader measures including contingent liabilities push it toward 83%).<sup><a href="#src-60">[60]</a></sup> With a debt-to-GDP ratio of 70–80%, servicing public debt occasionally reaches two-thirds of government spending. This is the single biggest constraint on Pakistan's ability to invest in healthcare, education, and infrastructure.</p>
+
+  <p><strong>Channel 1 — Avoided sovereign borrowing (numerator shrinks).</strong> Every gigawatt of solar deployed by consumers is a gigawatt the government did not need to finance. At $700–1,000/kW, the 33 GW already deployed represents $23–33 billion in sovereign borrowing that never happened. Going forward, each year of consumer-led growth avoids roughly $3–5 billion more in new power sector debt. Debt-to-GDP improves mechanically: you cannot accumulate debt you never took.</p>
+
+  <p><strong>Channel 2 — Circular debt wind-down (numerator shrinks).</strong> As fossil IPPs are renegotiated and retired, the Rs 1.6 trillion (~$5.7B) in power sector circular debt stops growing and can be systematically retired. This debt sits on the government's balance sheet as a contingent liability. Eliminating it removes a structural fiscal burden that has required repeated bank bailouts and consumer surcharges.</p>
+
+  <p><strong>Channel 3 — Faster GDP growth (denominator grows).</strong> A 5–7% GDP uplift from the energy transition means the denominator of the debt-to-GDP ratio grows faster than the numerator. Even without reducing absolute debt, a 5–7% larger economy reduces the ratio proportionally. Combined with avoided new borrowing and circular debt retirement, the energy transition could plausibly bring Pakistan's debt-to-GDP ratio from ~75% today to <strong>50–55% by 2040</strong> — moving Pakistan from "very high debt" to "moderate debt" on international credit assessments, and dramatically reducing the interest burden that currently consumes two-thirds of federal spending.</p>
+    <div style="position:relative;height:260px;">
+      <canvas id="caChart" role="img" aria-label="Line chart showing CA improving to $14B surplus by 2040 with transition, vs deteriorating to -$7B without">CA with transition: $2B → $14.5B by 2040. Without: $2B → -$7.5B.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> With energy transition</span>
+      <span><i style="background:#C0392B;"></i> Without transition (oil dependency continues)</span>
+    </div>
+    <p class="chart-note">Sources: [4][26][30]. Baseline: oil imports grow ~3%/year. Transition: Phase 1 (2026–28), Phase 2 (2028–33), Phase 3 (2033–40). Remittances held constant at ~$38B.<sup>[30]</sup> Projections are illustrative scenarios, not forecasts.</p>
+
+
+  <div class="section-break">· · ·</div>
+
+  <div class="section-break">· · ·</div>
+
+  <h2>A Realistic Timeline to 2040</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot">NOW<br>2026</div>
+      <div class="timeline-content">
+        <h4>The Foundation — Already Built</h4>
+        <p>27–33 GW of solar deployed, mostly rooftop.<sup>[2]</sup> 8,000 MW net-metered — Energy Minister, April 2026.<sup>[3]</sup> That 8 GW is right now preventing 4 hours of loadshedding during a live supply crisis. Battery imports accelerating — 1.25 GWh in 2024.<sup>[17]</sup> Grid electricity consumption down 3.6% in FY2024-25 despite GDP growth.<sup>[9]</sup> Local battery assembly live: Atom Power, Topak Power, Li-Power, EV Technologies.<sup>[18][19][20]</sup> National Battery Policy 2026–31 in cabinet review.<sup>[22]</sup></p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot mid">PHASE 1<br>2026–28</div>
+      <div class="timeline-content">
+        <h4>Storage Arrives, Grid Fossils Begin Dying</h4>
+        <p>Battery prices fall another 30–40% as Chinese manufacturing scales. Local LFP pack assembly reaches commercial scale. IEEFA projects 8.75 GWh battery deployed by 2030.<sup>[17]</sup> Coal and gas plants increasingly idle; capacity payments become politically untenable. Power sector oil imports fall $3–4B/year. EV two-wheelers hit price parity with petrol without subsidy. Net billing stabilised with long-term tariff schedule.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot">PHASE 2<br>2028–33</div>
+      <div class="timeline-content">
+        <h4>EVs Scale, Transport Fuel Imports Collapse</h4>
+        <p>30–50% of new vehicle sales electric — consistent with government targets.<sup>[24]</sup> BYD and local assembly partners reach price parity for four-wheelers. Motorcycle fleet substantially electrified. EV batteries acting as distributed storage: 1 million EVs = 40+ GWh mobile storage. Transport petroleum imports fall $5–6B. Local EV assembly generates 50,000+ jobs. CA swings to structural surplus. IMF programme dependence ends.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot gold">PHASE 3<br>2033–40</div>
+      <div class="timeline-content">
+        <h4>Full Transition — Energy Sovereignty</h4>
+        <p>70%+ of transport electrified. Grid runs &gt;80% solar, wind, and hydro. Oil import bill falls to $3–4B (aviation, marine, industrial only). $12–14B retained domestically per year. PKR structurally stable. Industrial electricity among cheapest in the region. Pakistan begins exporting battery packs, inverters, and EV components regionally. Domestically found oil becomes export revenue rather than import offset.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Pakistan has imported enough solar panels to match <em>its entire existing grid capacity.</em> The revolution isn't coming — it's already here, and it's saving the grid right now."</p>
+    <cite>Energy Minister Sardar Awais Leghari, April 2026 — 8,000 MW of consumer solar preventing 4 hours of loadshedding during the live Strait of Hormuz supply crisis</cite>
+  </div>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 5</p>
+    <p class="chart-headline">GDP uplift channels — how $12–15B in retained capital cascades through the economy</p>
+    <div style="position:relative;height:240px;">
+      <canvas id="gdpChart" role="img" aria-label="Horizontal bar chart: direct savings +4% GDP, lower rates +1.5%, exports +0.75%, new industries +0.4%, total ~+6.65% GDP">GDP uplift: ~6.65% total across four channels.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#01411C;"></i> GDP uplift contribution (% of ~$340B GDP)</span>
+    </div>
+    <p class="chart-note">Sources: [26][27][28]. Pakistan GDP ~$340B.<sup>[5]</sup> Direct savings use 1.3–1.5× domestic multiplier (IMF EM standard).<sup>[27]</sup> Interest rate effect: 200–300bps compression from structural CA improvement. Export effect: 10–15% manufacturing cost reduction.<sup>[28]</sup> Note: hydrocarbon export revenues add further upside not captured here — see section below.</p>
+  </div>
+
+  <div class="section-break">· · ·</div>
+
+  <h2>The Bonus Nobody Is Discussing: Pakistan's Path to Net Oil Exporter</h2>
+
+  <p>Here is the twist nobody is discussing: the solar transition does not just eliminate Pakistan's oil import bill. It <em>transforms</em> Pakistan's relationship with its own hydrocarbons — potentially turning the country from a desperate net importer into a modest but meaningful net exporter within fifteen years.</p>
+
+  <h3>Where Pakistan Stands Today</h3>
+
+  <p>Pakistan currently produces roughly <strong>85,000 barrels per day of crude oil</strong> — but consumes approximately 440,000 bbl/day, importing the remaining 82%.<sup><a href="#src-37">[37]</a></sup> On gas, the picture is similarly stressed: domestic production has declined from ~4,063 MMCFD in 2010 to ~2,345 MMCFD today, while total consumption runs at 3,143 MMCFD — with the gap of ~798 MMCFD filled by expensive RLNG imports.<sup><a href="#src-38">[38]</a></sup> The biggest single consumer of that gas? Power generation, at 973 MMCFD.<sup><a href="#src-38">[38]</a></sup></p>
+
+  <p>Pakistan's five refineries have a combined processing capacity of roughly 420,000 bbl/day<sup><a href="#src-39">[39]</a></sup> — more than five times domestic oil production. These are large, expensive assets sitting largely underutilised. The refinery is not today a value-creation engine; it is a bottleneck waiting for crude that doesn't exist domestically.</p>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 6 — Hydrocarbon</p>
+    <p class="chart-headline">Pakistan oil: production vs. consumption today, and the crossover to net exporter</p>
+    <div style="position:relative;height:260px;">
+      <canvas id="oilCrossoverChart" role="img" aria-label="Line chart showing Pakistan oil production rising from 85k bbl/day today to 200k by 2040 while non-electrifiable demand falls from 440k to 100k, crossing over to surplus around 2035">Production crosses non-electrifiable demand around 2035, creating export surplus.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> Domestic oil production (with onshore + conservative offshore growth)</span>
+      <span><i style="background:#C0392B;"></i> Non-electrifiable petroleum demand (aviation, marine, industry — as EVs take transport)</span>
+      <span><i style="background:#378ADD; opacity:0.5;"></i> Total demand today (440k) shrinking as EVs penetrate</span>
+    </div>
+    <p class="chart-note">Sources: [37][39][40]. Production path: onshore +25k bbl/day by 2030 from new discoveries (Baragzai, KPK, Balochistan); offshore Phase-I G&G studies 2025–28, first production 2032–35, +50–120k bbl/day by 2035–40 (conservative). Non-electrifiable demand: aviation ~20k, marine ~15k, industrial/petrochem ~20k, + residual road transport not yet electrified.</p>
+  </div>
+
+  <h3>How Solar Frees the Gas</h3>
+
+  <p>The power sector today consumes 973 MMCFD of natural gas — the largest single consumer in the country. As distributed solar and batteries replace gas generation, this demand collapses. Conservative estimate: the power sector's gas consumption drops to 200–300 MMCFD (backup/peaking only) by 2032–35 as solar carries the baseload.</p>
+
+  <p>That frees approximately <strong>670–770 MMCFD of domestic gas</strong> — almost exactly the volume Pakistan currently imports as RLNG (798 MMCFD). The arithmetic is elegant: solar kills gas power demand, the freed domestic gas replaces all LNG imports, and Pakistan's <strong>$2–3B annual LNG import bill simply disappears.</strong> No new gas discoveries required — just the existing fields, no longer being swallowed by power plants that solar has made redundant.</p>
+
+  <div class="callout gold">
+    <p><strong>The LNG irony:</strong> Pakistan is currently importing expensive LNG to fuel power plants that are competing with $0.08/W solar panels. Every rooftop solar installation doesn't just save on that household's electricity bill — it frees a proportional share of domestic gas that was being used to generate that electricity. The solar revolution and the gas supply situation are the same problem, seen from opposite ends.</p>
+  </div>
+
+  <h3>The Offshore Prize: 23 Blocks, One Decade</h3>
+
+  <p>Pakistan awarded 23 of 40 offshore blocks in its first such bidding round in nearly two decades in late 2025.<sup><a href="#src-40">[40]</a></sup> The winning bidders include OGDCL, PPL, MariEnergies, and Turkey's TPAO in joint venture. A basin study by US firm DeGolyer and MacNaughton indicated significant yet-to-find potential in both the Indus and Makran basins.<sup><a href="#src-40">[40]</a></sup> The EIA estimates Pakistan's total potential hydrocarbons (including unproven) at over 9 billion barrels of oil and 105 trillion cubic feet of gas.<sup><a href="#src-39">[39]</a></sup></p>
+
+  <p>A conservative timeline: Phase-I involves geophysical and seismic studies (2025–28). First exploration wells: 2028–30. First commercial production: 2032–35 at the earliest. Offshore developments rarely deliver quickly — but they also rarely disappoint in scale when they do deliver.</p>
+
+  <p>Conservative production estimates, assuming even modest offshore success:</p>
+
+  <div class="stat-row" style="margin:1.5rem 0;">
+    <div class="stat-card"><span class="num" style="font-size:1.5rem;">85k</span><span class="label">bbl/day now — 19% of consumption [37]</span></div>
+    <div class="stat-card"><span class="num" style="font-size:1.5rem;">110k</span><span class="label">bbl/day by 2030 — onshore discoveries [37][40]</span></div>
+    <div class="stat-card"><span class="num" style="font-size:1.5rem;">160k</span><span class="label">bbl/day by 2035 — first offshore production [40]</span></div>
+    <div class="stat-card"><span class="num" style="font-size:1.5rem;">200–250k</span><span class="label">bbl/day by 2040 — offshore at scale [40]</span></div>
+  </div>
+
+  <h3>The Crossover: When Pakistan Becomes a Net Exporter</h3>
+
+  <p>As the energy transition runs in parallel, what does petroleum demand look like for uses that genuinely <em>cannot</em> be electrified? Aviation consumes roughly 20,000 bbl/day. Marine shipping: ~15,000 bbl/day. Industrial petrochemicals and feedstocks: ~20,000 bbl/day. Remaining road transport not yet electrified: declining from ~350,000 bbl/day today toward 50,000–80,000 bbl/day by 2035–38 as EVs penetrate. Total non-electrifiable demand by 2035: roughly <strong>105,000–135,000 bbl/day.</strong></p>
+
+  <p>At 160,000 bbl/day of domestic production by 2035, and non-electrifiable demand at ~120,000 bbl/day, Pakistan crosses into <strong>net oil surplus for the first time in its history</strong> — with 40,000–50,000 bbl/day available for export. At $80/barrel: <strong>$1.2–1.5B in annual oil export revenue.</strong> By 2040, with production at 200,000–250,000 bbl/day and demand at ~100,000 bbl/day: a surplus of 100,000–150,000 bbl/day, generating <strong>$3–5B in annual oil export revenue.</strong></p>
+
+  <div class="chart-wrap">
+    <p class="chart-title">Figure 7 — Hydrocarbon value</p>
+    <p class="chart-headline">Cumulative hydrocarbon benefit: from $17.5B annual drain to net export surplus</p>
+    <div style="position:relative;height:240px;">
+      <canvas id="hydrocarbonChart" role="img" aria-label="Stacked bar chart showing Pakistan's net hydrocarbon position improving from -$17.5B today to +$5-8B surplus by 2040 through oil import savings, LNG savings, and oil exports">Hydrocarbon position: -$17.5B today → +$5-8B by 2040.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#1D9E75;"></i> Oil import savings (transport + power electrification)</span>
+      <span><i style="background:#378ADD;"></i> LNG savings (freed power-sector gas replaces imports)</span>
+      <span><i style="background:#C8992A;"></i> Oil export revenue (surplus production)</span>
+      <span><i style="background:#C0392B;"></i> Remaining unavoidable imports</span>
+    </div>
+    <p class="chart-note">Sources: [37][38][39][40]. Oil export revenue assumes $80/barrel. LNG savings assume 798 MMCFD × $3.5/MMBTU × 365 days. Remaining imports = aviation + marine + non-electrifiable industrial (~$2.5–3B at full transition). Net position = savings + exports − remaining imports. All figures approximate; scenario-based, not forecasts.</p>
+  </div>
+
+  <h3>What This Does to the Export Ledger — and a Correction on Refineries</h3>
+
+  <p>Pakistan's goods exports today are ~$30B annually — almost entirely textiles, agriculture, and light manufactures.<sup><a href="#src-26">[26]</a></sup> Adding $3–5B in oil exports and $2–3B in LNG savings would represent a meaningful and structurally new category of hard currency inflows the country has never had before.</p>
+
+  <p>A clarification is necessary on refineries, however. The article earlier described Pakistan's refineries as a potential value-adding export industry waiting for domestic crude to process — that framing is misleading and deserves correction. The reality is the opposite of a hidden asset.</p>
+
+  <p>Pakistan has five refineries with a nameplate capacity of ~450,000 bbl/day, but <strong>actual utilization runs at only ~55%</strong> (~200,000–220,000 bbl/day).<sup><a href="#src-42">[42]</a></sup> Four of the five are built on <strong>outdated hydroskimming technology</strong>, which produces roughly 30–40% furnace oil as a byproduct — a heavy residual fuel for which Pakistan has almost no domestic demand since LNG replaced it in power generation in 2015.<sup><a href="#src-42">[42]</a></sup> The result is a structural absurdity: Pakistan simultaneously <strong>exports surplus furnace oil at a discount</strong> while <strong>importing petrol and diesel at a premium</strong>, forfeiting the refining margin on both ends. Even at current utilization, domestic refineries only meet 60% of diesel demand and 30% of petrol demand.<sup><a href="#src-43">[43]</a></sup></p>
+
+  <p>The Brownfield Refinery Upgradation Policy 2023 acknowledges this explicitly — it aims to convert these hydroskimmers into conversion refineries producing Euro-V compliant fuels. PRL is pursuing a $2B+ expansion to double its capacity and modernise its product slate, but is still in financing and contracting stages as of early 2026.<sup><a href="#src-44">[44]</a></sup> This is a decade-long project, not a near-term lever.</p>
+
+  <p>The honest hydrocarbon export story therefore rests squarely on <strong>exporting crude oil directly</strong> — which requires no refining upgrade — as domestic petroleum demand falls with EV adoption. Crude exports bypass the refinery problem entirely. Simultaneously, the freed domestic gas (from solar displacing power-sector demand) eliminates LNG imports. Those two channels — crude exports and LNG savings — are where the $5–8B annual benefit actually comes from. The refinery sector's role in this transition is to either upgrade or gradually step aside, not to lead it.</p>
+
+</div>
+</div>
+</article>
+
+<!-- CITIZEN IMPACT SECTION -->
+<section class="citizen-section">
+<div class="container">
+
+  <h2>The Human Translation: What This Means for Every Pakistani Family</h2>
+
+  <p>Macroeconomic numbers are necessary but they are not sufficient. The real question is: what does $17.5 billion in annual oil imports, a chronically depreciating rupee, and 30%+ inflation actually cost a Pakistani family — and what does fixing it give back? Here is the answer, household by household.</p>
+
+  <p><strong>The baseline:</strong> Average monthly household income is Rs 82,179 as of the HIES 2024–25 survey.<sup><a href="#src-31" style="color:#9FE1CB;">[31]</a></sup> Average monthly consumption is Rs 79,150 — meaning the average family is spending nearly everything it earns, with almost nothing left over. The rupee lost 64% of its value against the dollar between 2014 and 2024.<sup><a href="#src-32" style="color:#9FE1CB;">[32]</a></sup> Inflation peaked above 38% in 2023 and remained in double digits through most of 2024-25.<sup><a href="#src-33" style="color:#9FE1CB;">[33]</a></sup> This is the economic reality that 255 million people are living through.</p>
+
+  <div class="persona-grid">
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">🏠</div>
+        <div>
+          <p class="persona-name">The Urban Family</p>
+          <p class="persona-desc">Lahore · Rs 96,000/month income · 400 units/month electricity</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Monthly electricity bill</p>
+          <p class="persona-stat-val red">Rs 17,800</p>
+          <p class="persona-stat-sub">incl. taxes &amp; fuel charges<br>at Rs ~40/unit [34]</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">% of household income</p>
+          <p class="persona-stat-val red">18.5%</p>
+          <p class="persona-stat-sub">on electricity alone —<br>before gas &amp; transport</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Bill 3 years ago (2022)</p>
+          <p class="persona-stat-val red">Rs ~7,000</p>
+          <p class="persona-stat-sub">155% tariff rise in<br>3 years [1]</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">Effective solar cost</p>
+          <p class="persona-stat-val green">Rs 2–4/unit</p>
+          <p class="persona-stat-sub">amortised over 25-yr<br>panel life at $0.08/W [11]</p>
+        </div>
+      </div>
+      <div class="persona-saving">
+        Solar + battery transition savings: Rs 15,000–16,000/month · Rs 180,000–192,000/year<br>
+        That is <strong>~2 full months of salary returned</strong> to the household annually
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">🛵</div>
+        <div>
+          <p class="persona-name">The Motorcycle Commuter</p>
+          <p class="persona-desc">Karachi · Rs 45,000/month income · 70km/day commute</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Monthly petrol cost</p>
+          <p class="persona-stat-val red">Rs 6,500</p>
+          <p class="persona-stat-sub">~35L at Rs 280/liter<br>for 70km/day at 55km/L</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">% of income</p>
+          <p class="persona-stat-val red">14.4%</p>
+          <p class="persona-stat-sub">just to get to<br>and from work</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">E-bike equivalent cost</p>
+          <p class="persona-stat-val green">Rs 300–500</p>
+          <p class="persona-stat-sub">per month from home<br>solar charging [23]</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">Annual fuel saving</p>
+          <p class="persona-stat-val green">Rs 72,000+</p>
+          <p class="persona-stat-sub">= 1.6 months of<br>salary per year</p>
+        </div>
+      </div>
+      <div class="persona-saving">
+        Pakistan has 15M+ registered motorcycles. If 50% electrify: <strong>Rs 540 billion</strong> stays in Pakistani pockets annually instead of flowing to oil imports — Rs 72,000/rider/year on average
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">🏪</div>
+        <div>
+          <p class="persona-name">The Small Business Owner</p>
+          <p class="persona-desc">Faisalabad · textile shop · generator costs + grid bills</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Monthly energy costs</p>
+          <p class="persona-stat-val red">Rs 35,000+</p>
+          <p class="persona-stat-sub">grid bill + generator<br>diesel during outages</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">GDP lost to outages</p>
+          <p class="persona-stat-val red">2–3%</p>
+          <p class="persona-stat-sub">of Pakistan's GDP<br>annually [35]</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Solar+battery equivalent</p>
+          <p class="persona-stat-val green">Rs 6,000–8,000</p>
+          <p class="persona-stat-sub">per month amortised<br>over 25-yr system life</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">Zero loadshedding</p>
+          <p class="persona-stat-val green">24/7</p>
+          <p class="persona-stat-sub">productivity restored —<br>no more idle hours</p>
+        </div>
+      </div>
+      <div class="persona-saving">
+        Energy cost saving: Rs 27,000–29,000/month · Rs 324,000–348,000/year<br>
+        <strong>Plus: full productive hours restored</strong> — currently losing 4–8 hrs/day to load-shedding
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">👨‍💼</div>
+        <div>
+          <p class="persona-name">The Salaried Professional</p>
+          <p class="persona-desc">Islamabad · Rs 120,000/month · savings in PKR &amp; imports</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">PKR lost vs dollar since 2014</p>
+          <p class="persona-stat-val red">64%</p>
+          <p class="persona-stat-sub">Rs 108/$ → Rs 278/$<br>in 10 years [32]</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">Real purchasing power lost</p>
+          <p class="persona-stat-val red">~40%</p>
+          <p class="persona-stat-sub">for imported goods —<br>phones, medicine, parts</p>
+        </div>
+      </div>
+      <div class="persona-stat-row">
+        <div class="persona-stat">
+          <p class="persona-stat-label">Stable PKR means</p>
+          <p class="persona-stat-val green">Preserved</p>
+          <p class="persona-stat-sub">savings value — no more<br>silent wealth erosion</p>
+        </div>
+        <div class="persona-stat">
+          <p class="persona-stat-label">Lower interest rates mean</p>
+          <p class="persona-stat-val green">Cheaper</p>
+          <p class="persona-stat-sub">home loans, business credit,<br>car financing</p>
+        </div>
+      </div>
+      <div class="persona-saving">
+        Structural PKR stability stops the silent 8–12%/year purchasing power erosion that has made every Pakistani's savings worth less every year for a decade
+      </div>
+    </div>
+
+  </div>
+
+  <h3>The Aggregate Citizen Picture</h3>
+
+  <p>Add it up across 255 million people and the numbers are staggering. Pakistan's nominal GDP per capita is ~$1,643 today — among the lowest in the world for a country of its size and history.<sup><a href="#src-32" style="color:#9FE1CB;">[32]</a></sup> On a purchasing power basis (PPP), it is $5,531 — still only 31% of the world average.<sup><a href="#src-36" style="color:#9FE1CB;">[36]</a></sup> The energy transition changes this trajectory fundamentally — not through magic, but through straightforward arithmetic: stop sending $17.5 billion abroad every year and the domestic economy grows.</p>
+
+  <div class="agg-row">
+    <div class="agg-card"><span class="agg-num">Rs 180K</span><span class="agg-label">Annual savings for a solar household — ~2 months of average salary returned</span></div>
+    <div class="agg-card"><span class="agg-num">Rs 72K</span><span class="agg-label">Annual fuel savings per motorcycle owner switching to e-bike</span></div>
+    <div class="agg-card"><span class="agg-num gold">+$500</span><span class="agg-label">GDP per capita increase by 2030, driven by energy transition (from $1,643 today)</span></div>
+    <div class="agg-card"><span class="agg-num gold">+$1,100</span><span class="agg-label">GDP per capita increase by 2040 vs. no-transition scenario</span></div>
+    <div class="agg-card"><span class="agg-num">64%</span><span class="agg-label">PKR lost vs dollar 2014–2024 — structural CA improvement stops this erosion</span></div>
+    <div class="agg-card"><span class="agg-num">2–3%</span><span class="agg-label">Of Pakistan's GDP lost annually to power outages — eliminated by solar + storage</span></div>
+  </div>
+
+  <div class="chart-wrap" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);">
+    <p class="chart-title" style="color:rgba(255,255,255,.3);">Figure 6</p>
+    <p class="chart-headline" style="color:white;">GDP per capita trajectory — with vs. without transition (nominal USD)</p>
+    <div style="position:relative;height:260px;">
+      <canvas id="gdpCapitaChart" role="img" aria-label="Line chart showing GDP per capita rising from $1,643 today to $3,100 by 2040 with full transition versus stagnating at $1,850 without it">GDP per capita: $1,643 today → $3,100 by 2040 with full transition (incl. hydrocarbon exports) vs $1,850 without.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><i style="background:#5DCAA5;"></i> With energy transition</span>
+      <span><i style="background:#f08080;"></i> Without transition (continued depreciation + stagnation)</span>
+    </div>
+    <p class="chart-note" style="color:rgba(255,255,255,.3);">Sources: [32][35][36]. GDP per capita today ~$1,643 nominal (World Bank 2024). With-transition path assumes energy savings add ~$70–100/person/year cumulative plus PKR stability preventing ~5–8%/yr nominal depreciation drag. Without-transition path assumes 3% real growth but ~5% annual PKR depreciation continuing.</p>
+  </div>
+
+  <p>The deepest impact is the one hardest to quantify: <strong>economic dignity.</strong> A family that is not spending 18% of its income on electricity, not watching its savings depreciate at 8% per year against the dollar, not shut down for 6 hours a day by loadshedding — that family is free to build something. To educate its children. To take a business risk. To save for a home. The energy transition is not just a macroeconomic story. It is the foundation of a different kind of Pakistan.</p>
+
+</div>
+</section>
+
+<section class="sources-section">
+<div class="container">
+  <h2>Sources</h2>
+  <ol class="sources-list">
+    <li id="src-1"><span class="src-num">1</span><span class="src-body">Climate Adaptation Platform, "Inside Pakistan's Solar Revolution: Growth, Drivers and Obstacles," Nov 2025. Electricity tariff increase of 155% in three years cited. <a href="https://climateadaptationplatform.com/inside-pakistans-solar-revolution-growth-drivers-and-obstacles/" target="_blank">climateadaptationplatform.com</a></span></li>
+    <li id="src-2"><span class="src-num">2</span><span class="src-body">PV Magazine, "Pakistan's installed PV capacity estimated above 27 GW," Jan 2026. Renewables First estimates 27–33 GW total deployed; 51.5 GW cumulative module imports from China as of Nov 2025. <a href="https://www.pv-magazine.com/2026/01/20/pakistans-installed-pv-capacity-estimated-above-27-gw/" target="_blank">pv-magazine.com</a></span></li>
+    <li id="src-3"><span class="src-num">3</span><span class="src-body">Energy Update PK, "Solar Net Metering Shields Pakistan from Daytime Blackouts Amid Deepening Energy Crisis," 17 Apr 2026. Minister Sardar Awais Leghari confirms 8,000 MW net-metered solar injecting 2,000+ MW, preventing 4 hours of loadshedding amid LNG/Strait of Hormuz disruption. <a href="https://www.energyupdate.com.pk/2026/04/17/solar-net-metering-shields-pakistan-from-daytime-blackouts-amid-deepening-energy-crisis/" target="_blank">energyupdate.com.pk</a></span></li>
+    <li id="src-4"><span class="src-num">4</span><span class="src-body">Profit Pakistan Today, "Pakistan's oil import bill hits $8.08bn in first half of FY25," Jan 2025. Full-year figure annualised to ~$17.5B based on H1 FY25 data. <a href="https://profit.pakistantoday.com.pk/2025/01/21/pakistans-oil-import-bill-hits-8-08bn-in-first-half-of-fy25/" target="_blank">profit.pakistantoday.com.pk</a></span></li>
+    <li id="src-5"><span class="src-num">5</span><span class="src-body">World Bank, Pakistan GDP data 2024 (~$338B). Oil bill as % of GDP calculated from [4]. Pakistan Finance Division Economic Survey FY2025: petroleum = 28% of total imports. <a href="https://www.finance.gov.pk/survey/chapter_25/8_Trade_and_Payments.pdf" target="_blank">finance.gov.pk</a></span></li>
+    <li id="src-6"><span class="src-num">6</span><span class="src-body">OilPrice.com, "Middle East Crisis Could Triple Pakistan's Oil Import Bill," Mar 2026. Cites PIDE study: $10/barrel rise = $1.8–2B additional annual import cost; Strait of Hormuz closure risk = $3.5–4.5B/month; inflation could spike from 7% to 17%. <a href="https://oilprice.com/Energy/Crude-Oil/Middle-East-Crisis-Could-Triple-Pakistans-Oil-Import-Bill.html" target="_blank">oilprice.com</a></span></li>
+    <li id="src-7"><span class="src-num">7</span><span class="src-body">The News (Pakistan), "Pakistan's oil cushion," Mar 2026. Transport = 55–60% of total petroleum products. Pakistan daily oil demand ~440,000 bbl/day in 2025. Transport oil bill derived at ~$9.8B/year. <a href="https://www.thenews.com.pk/print/1402722-comment-pakistan-s-oil-cushion" target="_blank">thenews.com.pk</a></span></li>
+    <li id="src-8"><span class="src-num">8</span><span class="src-body">Renewables First, Pakistan Electricity Review 2025. FY24: RLNG generation 31 TWh, coal ~19 TWh, oil-fired ~3 TWh. Power sector fossil fuel import value derived from Enerdata Pakistan Energy Report. <a href="https://uploads.renewablesfirst.org/Pakistan_Electricity_Review_2025_89f0b613d6.pdf" target="_blank">renewablesfirst.org</a></span></li>
+    <li id="src-9"><span class="src-num">9</span><span class="src-body">Wikipedia, "Electricity sector in Pakistan," updated Feb 2026. FY2024 total generation 137 TWh; fossil share 46.3% (~63 TWh); installed capacity 46,605 MW March 2025; grid consumption down 3.6% FY2024-25. <a href="https://en.wikipedia.org/wiki/Electricity_sector_in_Pakistan" target="_blank">en.wikipedia.org</a></span></li>
+    <li id="src-10"><span class="src-num">10</span><span class="src-body">PV Magazine, "Pakistan blocks retroactive export rate cut in net billing shift," Feb 2026. NEPRA Prosumer Regulations 2026; export rate cut PKR 26 → PKR 13/kWh; PM Sharif intervenes to protect existing contracts. <a href="https://www.pv-magazine.com/2026/02/25/pakistan-blocks-retroactive-export-rate-cut-in-net-billing-shift/" target="_blank">pv-magazine.com</a></span></li>
+    <li id="src-11"><span class="src-num">11</span><span class="src-body">Mordor Intelligence, Pakistan Solar Energy Market Analysis, 2026. Panel prices sub-$0.15/W; PV Magazine reports $0.08/W for Chinese modules by 2025. Installed system cost ~$150–200/kW total; imported hardware content ~$80–130/kW. <a href="https://www.mordorintelligence.com/industry-reports/pakistan-solar-energy-market" target="_blank">mordorintelligence.com</a></span></li>
+    <li id="src-12"><span class="src-num">12</span><span class="src-body">REN21, GSR 2025 Snapshot: Pakistan. Pakistan imported 17 GW of solar panels in 2024, double 2023 volume. Also: Pakistan has imported ~45 GW over 4–5 years. <a href="https://www.ren21.net/gsr-2025/snapshots/pk/" target="_blank">ren21.net</a></span></li>
+    <li id="src-13"><span class="src-num">13</span><span class="src-body">The Nation (Pakistan) / Illuminem: Pakistan is the world's third-largest importer of Chinese solar panels and the sixth-largest global solar market as of 2024. <a href="https://illuminem.com/illuminemvoices/pakistans-solar-revolution" target="_blank">illuminem.com</a> · <a href="https://www.nation.com.pk/16-Apr-2026/net-metering-net-billing" target="_blank">nation.com.pk</a></span></li>
+    <li id="src-14"><span class="src-num">14</span><span class="src-body">PV Magazine, "Pakistan adds 1.2 GW of net-metering capacity in H1," Aug 2025. Cumulative net-metered: 5.3 GW by Apr 2025, 6.1 GW by Jun 2025. <a href="https://www.pv-magazine.com/2025/08/06/pakistan-adds-1-2-gw-of-net-metering-capacity-in-h1/" target="_blank">pv-magazine.com</a></span></li>
+    <li id="src-15"><span class="src-num">15</span><span class="src-body">World Bank / IRENA Global Solar Atlas: Pakistan GHI of 1,800–2,200 kWh/m²/year. Capacity factor of ~20% used throughout; consistent with Renewables First Pakistan Electricity Review 2025. <a href="https://globalsolaratlas.info/map?c=30.3753,69.3451,5" target="_blank">globalsolaratlas.info</a></span></li>
+    <li id="src-16"><span class="src-num">16</span><span class="src-body">IEA / US DOE energy conversion standards: 1 barrel of oil = ~1,700 kWh thermal energy equivalent. Pakistan average grid thermal efficiency ~35% (mix of gas CCGT and coal plants — derived from NEPRA generation and fuel consumption data). All per-kW calculations use these standard factors.</span></li>
+    <li id="src-17"><span class="src-num">17</span><span class="src-body">IEEFA, "Battery storage and the future of Pakistan's electricity grid," 2025. Pakistan imported 1.25 GWh BESS in 2024 + 400 MWh in first 2 months of 2025. Solar+BESS residential payback 3–5 years; C&I 4–6 years. 48% effective cost premium from duties. Projects 8.75 GWh by 2030 meeting over 25% of peak demand. <a href="https://ieefa.org/resources/battery-storage-and-future-pakistans-electricity-grid" target="_blank">ieefa.org</a></span></li>
+    <li id="src-18"><span class="src-num">18</span><span class="src-body">Business Recorder, "Atom Power unveils Pakistan's first locally assembled lithium-ion batteries," Dec 2024. Atom Power (Wavetec subsidiary) commences cell-level assembly in Karachi; cell manufacturing plant targeted Q2 2025. <a href="https://www.brecorder.com/news/40336644" target="_blank">brecorder.com</a></span></li>
+    <li id="src-19"><span class="src-num">19</span><span class="src-body">Topak Power official website: Pakistan lithium-ion battery manufacturing plant in JV with Shenzhen Topak New Energy Technology Co. Ltd. Serving residential, commercial, industrial, and telecom sectors. <a href="https://topakpower.com.pk" target="_blank">topakpower.com.pk</a></span></li>
+    <li id="src-20"><span class="src-num">20</span><span class="src-body">Profit Pakistan Today, "Pakistan's first lithium-ion battery plant set to begin production," 12 Apr 2026. EV Technologies, Korangi Industrial Area, Karachi. Initial capacity 4 MW for e-bikes/e-scooters (~2,000 units/month). CEO Huma Khattak. National Battery Policy 2026–31 in cabinet pipeline. <a href="https://profit.pakistantoday.com.pk/2026/04/12/pakistans-first-lithium-ion-battery-plant-set-to-begin-production-as-new-industrial-policy-nears-approval/" target="_blank">profit.pakistantoday.com.pk</a></span></li>
+    <li id="src-21"><span class="src-num">21</span><span class="src-body">Profit Pakistan Today, "Pakistan moves to develop local lithium-ion battery manufacturing policy," Dec 2025. Raw materials 0% duty; finished batteries 12% tax. Battery demand projected +26%/year over 5 years. BYD and Chinese OEMs planning local production. <a href="https://profit.pakistantoday.com.pk/2025/12/18/pakistan-moves-to-develop-local-lithium-ion-battery-manufacturing-policy/" target="_blank">profit.pakistantoday.com.pk</a></span></li>
+    <li id="src-22"><span class="src-num">22</span><span class="src-body">Energy Update PK / Profit Pakistan, "Pakistan's first lithium-ion battery manufacturing plant set to begin," 13 Apr 2026. National Lithium-Ion Battery Manufacturing Policy 2026–31 forwarded to Ministry of Industries, pending National Tariff Board and cabinet approval. EDB CEO Hammad Mansoor. <a href="https://www.energyupdate.com.pk/2026/04/13/pakistans-first-lithium-battery-manufacturing-plant-to-be-set-up-in-korangi/" target="_blank">energyupdate.com.pk</a></span></li>
+    <li id="src-23"><span class="src-num">23</span><span class="src-body">US Department of Energy, Alternative Fuels Data Center. EV drivetrain efficiency ~85–88%; conventional ICE vehicle tank-to-wheel efficiency ~20–25%. <a href="https://afdc.energy.gov/vehicles/electric_emissions_sources.html" target="_blank">afdc.energy.gov</a></span></li>
+    <li id="src-24"><span class="src-num">24</span><span class="src-body">Pakistan National EV Policy 2025–2030 (referenced in PakAlumni/PAKALUMNI and Profit Pakistan). Targets 30% electric new vehicle sales by 2030, 90% by 2040. Subsidies announced for electric two- and three-wheelers. <a href="https://www.pakalumni.com/profiles/blogs/clean-energy-revolution-soaring-solar-energy-battery-storage-in-p" target="_blank">pakalumni.com</a></span></li>
+    <li id="src-25"><span class="src-num">25</span><span class="src-body">Renewables First, Pakistan Electricity Review 2025. Capacity payments rose 46% YoY to PKR 1.9 trillion in FY24. Circular debt PKR 2.4 trillion. Government IPP renegotiations underway. <a href="https://uploads.renewablesfirst.org/Pakistan_Electricity_Review_2025_89f0b613d6.pdf" target="_blank">renewablesfirst.org</a></span></li>
+    <li id="src-26"><span class="src-num">26</span><span class="src-body">Pakistan Finance Division, Economic Survey FY2025, "Trade and Payments" chapter. Petroleum = 28% of total imports. CA surplus $1.88B in 10MFY25; workers' remittances $38.1B (+26% YoY); goods imports $54.1B; goods exports $29.7B. PKR/USD dynamics and interest rate transmission described. <a href="https://www.finance.gov.pk/survey/chapter_25/8_Trade_and_Payments.pdf" target="_blank">finance.gov.pk</a></span></li>
+    <li id="src-27"><span class="src-num">27</span><span class="src-body">IMF / World Bank: Fiscal and trade multipliers for emerging market economies typically in the 1.3–1.5× range for domestic demand shocks. Applied to $12–15B annual import savings to derive GDP uplift of $16–22B (5–7% of ~$340B GDP). GDP base: World Bank Pakistan data 2024.</span></li>
+    <li id="src-28"><span class="src-num">28</span><span class="src-body">Pakistan Finance Division, Economic Survey FY2025. Goods exports $29.7B in FY25 (textiles ~55–60%). Industrial energy cost at captive solar (~Rs 5/kWh) vs. grid (Rs 50+/kWh for industrial). Export competitiveness uplift estimated 0.5–1% of GDP based on energy cost share in textile production. <a href="https://www.finance.gov.pk/survey/chapter_25/8_Trade_and_Payments.pdf" target="_blank">finance.gov.pk</a></span></li>
+    <li id="src-29"><span class="src-num">29</span><span class="src-body">The News (Pakistan), "Pakistan's oil cushion," Mar 2026. Domestic crude production ~80,000–90,000 bbl/day in 2025, representing ~19% of national consumption of ~440,000 bbl/day. <a href="https://www.thenews.com.pk/print/1402722-comment-pakistan-s-oil-cushion" target="_blank">thenews.com.pk</a></span></li>
+    <li id="src-30"><span class="src-num">30</span><span class="src-body">Business Recorder, "Current account slips back into $103m deficit," Jun 2025. Remittances $38.1B (+26% YoY); goods imports $54.1B; goods exports $29.7B. IMF programme visit count based on historical IMF programme records for Pakistan (25 programmes since 1958). State Bank of Pakistan current account data. <a href="https://www.brecorder.com/news/40363064" target="_blank">brecorder.com</a></span></li>
+    <li id="src-31"><span class="src-num">31</span><span class="src-body">Pakistan Bureau of Statistics / INP-WealthPk, "Household income nearly doubles to Rs82,179 as living standards improve," Jan 2026. HIES 2024–25 survey results: average monthly household income Rs 82,179; average monthly consumption Rs 79,150. Survey covered 32,700+ households nationwide. <a href="https://inp.net.pk/article-detail/inp-wealthpk/household-income-nearly-doubles-to-rs82179-as-living-standards-improve-across-pakistan" target="_blank">inp.net.pk</a></span></li>
+    <li id="src-32"><span class="src-num">32</span><span class="src-body">FocusEconomics, Pakistan Economy Profile, Apr 2026. GDP per capita ~$1,643 nominal (World Bank 2024); PKR weakened 63.9% vs US dollar from end-2014 to end-2024 (Rs 108/$ → Rs 278/$). <a href="https://www.focus-economics.com/countries/pakistan/" target="_blank">focus-economics.com</a></span></li>
+    <li id="src-33"><span class="src-num">33</span><span class="src-body">Trading Economics, Pakistan Inflation Rate. Annual inflation peaked above 38% in May 2023; eased to 5.6% in December 2025. Double-digit inflation sustained through most of FY2023-24. Electricity tariff rise of 155% in three years cited per source [1]. <a href="https://tradingeconomics.com/pakistan/inflation-cpi" target="_blank">tradingeconomics.com</a></span></li>
+    <li id="src-34"><span class="src-num">34</span><span class="src-body">Daily Capital / Peace Center PK: National average electricity tariff Rs 39.64/unit as of late 2025–2026. A 400-unit unprotected household bill ~Rs 17,800/month including taxes and fuel charges (at ~40% surcharge on base rate). Slab rates: Rs 23.59–49/unit for unprotected users above 200 units. <a href="https://www.peacecenter.org.pk/1-unit-electricity-price-in-pakistan-updated-2026/" target="_blank">peacecenter.org.pk</a> · <a href="https://dailycapital.pk/electricity-rates-in-pakistan-2025-what-youll-pay-per-unit-and-how-to-keep-bills-down/" target="_blank">dailycapital.pk</a></span></li>
+    <li id="src-35"><span class="src-num">35</span><span class="src-body">World Bank / IGC Pakistan energy reports: Pakistan loses an estimated 2–3% of GDP annually to power outages and load-shedding, through direct productivity losses, generator costs, and spoilage. IGC Sustainable Pakistan energy report references electricity affordability burden. <a href="https://www.theigc.org/publications/sustainable-pakistan-energy-crisis" target="_blank">theigc.org</a></span></li>
+    <li id="src-36"><span class="src-num">36</span><span class="src-body">Trading Economics / World Bank: Pakistan GDP per capita PPP ~$5,531 (2024); equivalent to 31% of world average of $17,847. Pakistan GDP per capita PPP projected $5,908 for 2026. <a href="https://tradingeconomics.com/pakistan/gdp-per-capita-ppp" target="_blank">tradingeconomics.com</a></span></li>
+    <li id="src-37"><span class="src-num">37</span><span class="src-body">Worldometer / Worldometers Oil Statistics: Pakistan domestic crude oil production ~81,000–85,000 bbl/day (2024–2025). Total consumption ~479,000 bbl/day (2024); imports ~82% of consumption. Proven reserves: 243M barrels. Gulf News (Jan 2026): domestic crude output "approximately 66,000 barrels per day" with Baragzai discoveries adding 9,480 bbl/day (+14.5%). The News (Mar 2026): domestic production ~80,000–90,000 bbl/day in 2025. Range of 85,000 bbl/day used as central estimate. <a href="https://www.worldometers.info/oil/pakistan-oil/" target="_blank">worldometers.info</a> · <a href="https://gulfnews.com/world/asia/pakistan/pakistan-discovers-fresh-oil-and-gas-reserves-in-khyber-pakhtunkhwa-1.500415576" target="_blank">gulfnews.com</a></span></li>
+    <li id="src-38"><span class="src-num">38</span><span class="src-body">Business Recorder / Pakistan Economic Survey 2024-25 / S&P Global: Domestic gas production declined 6.8% YoY; average consumption July–March FY2025 ~3,143 MMCFD; RLNG imports ~798 MMCFD. Power sector = 973 MMCFD (largest single consumer). Domestic production ~2,345 MMCFD (derived). <a href="https://www.brecorder.com/news/amp/40366873" target="_blank">brecorder.com</a> · <a href="https://www.spglobal.com/commodity-insights/en/news-research/latest-news/lng/070725-pakistan-lng-demand-may-rise-in-fy-2025-26-on-economic-growth-prospects" target="_blank">spglobal.com</a></span></li>
+    <li id="src-39"><span class="src-num">39</span><span class="src-body">Wikipedia, "Fuel extraction in Pakistan." Five refineries with combined processing capacity ~420,000 bbl/day. EIA estimates potential: 9 billion barrels oil and 105 trillion cubic feet gas (including unproven/shale). <a href="https://en.wikipedia.org/wiki/Fuel_extraction_in_Pakistan" target="_blank">en.wikipedia.org</a></span></li>
+    <li id="src-40"><span class="src-num">40</span><span class="src-body">Dawn, "Govt awards 23 offshore oil exploration blocks after 18 years," Oct 2025. Pakistan's Offshore Bid Round 2025: 23 of 40 blocks awarded covering 53,500 sq km. DeGolyer and MacNaughton basin study confirms significant hydrocarbon potential in Indus and Makran basins. Winning bidders: OGDCL, PPL, MariEnergies, Turkey's TPAO. Phase-I: G&G studies, seismic acquisition. OGDCL 2025 report: five new discoveries, 15 wells spudded, Baragzai X-01 producing 3,100 bbl/day crude + 8.15 MMSCFD gas. <a href="https://www.dawn.com/news/amp/1952380" target="_blank">dawn.com</a> · <a href="https://profit.pakistantoday.com.pk/?p=213140" target="_blank">profit.pakistantoday.com.pk</a></span></li>
+    <li id="src-41"><span class="src-num">41</span><span class="src-body">CREA (Centre for Research on Energy and Clean Air) &amp; Renewables First, joint analysis reported by Geo.tv / The News / Green Central Banking, Mar 2026. Key findings: Pakistan's solar boom has saved $12B in oil and LNG imports since 2020; projects further $6.3B saved in FY2026 alone; fossil-fuel imports fell 40% between 2022 and 2024; installed solar capacity reached ~33 GW by March 2025; lifetime savings from currently installed capacity could exceed $100–180B. Solar cut LNG demand enough for contracted cargoes to be diverted and government to renegotiate LNG terms. Quote by Rabia Babar, Renewables First: "Pakistanis would have been more vulnerable to these price shocks" without the solar surge. <a href="https://www.geo.tv/latest/656048-pakistans-solar-boom-limits-exposure-to-middle-east-energy-turmoil" target="_blank">geo.tv</a> · <a href="https://www.thenews.pk/story/1405022-pakistans-rapid-solar-surge-cuts-exposure-to-middle-east-energy-crisis" target="_blank">thenews.pk</a> · <a href="https://greencentralbanking.com/2026/04/02/pakistans-solar-boom-protects-economy-from-oil-and-lng-disruptions/" target="_blank">greencentralbanking.com</a></span></li>
+    <li id="src-42"><span class="src-num">42</span><span class="src-body">Pakistan Oil Refining Policy for New/Greenfield Refineries, 2023 (Ministry of Energy/Petroleum Division): nameplate refining capacity ~450,000 bpd (20 million tonnes/year); actual utilization ~10–11 million tonnes (55%). Four of five refineries use hydroskimming technology producing ~30–40% furnace oil. Express Tribune, "Why oil refineries are underutilised?": product yield is ~40–45% diesel, 30–40% furnace oil, 15–20% petrol. The Friday Times (Apr 2026): "hydroskimming refineries were originally intended to process crude that produces large quantities of furnace oil, which has almost no domestic demand… we import finished petrol and diesel at a high price and export excess furnace oil at a lower price." <a href="https://petroleum.gov.pk/SiteImage/Downloads/Pakistan%20Oil%20Refining%20Policy%202023%20For%20New%20Greenfield%20Refineries%20160523.pdf" target="_blank">petroleum.gov.pk</a> · <a href="https://tribune.com.pk/story/2328329/why-oil-refineries-are-underutilised" target="_blank">tribune.com.pk</a> · <a href="https://www.thefridaytimes.com/04-Apr-2026/pakistan-s-energy-dependence-now-strategic-liability" target="_blank">thefridaytimes.com</a></span></li>
+    <li id="src-43"><span class="src-num">43</span><span class="src-body">Wikipedia, "Petroleum industry in Pakistan" (updated Apr 2026): domestic refining meets only ~60% of Pakistan's diesel demand and ~30% of motor gasoline demand. Pakistan imports remaining refined products. <a href="https://en.wikipedia.org/wiki/Petroleum_industry_in_Pakistan" target="_blank">en.wikipedia.org</a></span></li>
+    <li id="src-44"><span class="src-num">44</span><span class="src-body">Arab News, "Pakistan in talks with Saudi Arabia, China, banks for $2 billion refinery expansion," Jan 2026. PRL's Refinery Expansion and Upgrade Project (REUP) aims to double capacity to 100,000 bpd and produce Euro-V compliant motor spirit and diesel. Still in financing and EPC contracting stage as of early 2026. Arab News also notes petroleum product imports worth $16B in FY2025, over 27% of total imports. <a href="https://www.arabnews.com/node/2630878/amp" target="_blank">arabnews.com</a></span></li>
+    <li id="src-45"><span class="src-num">45</span><span class="src-body">Wikipedia, "Circular debt" (Pakistan): total circular debt peaked at Rs 5,730 billion (~$20.6B) as of July 2024; reduced to Rs 1.6 trillion by June 2025 after bank settlements. Power sector circular debt: Rs 2.4 trillion (June 2024), Rs 2.396 trillion (March 2025). <a href="https://en.wikipedia.org/wiki/Circular_debt" target="_blank">en.wikipedia.org</a> · Pakistan Banks Association, "Circular Debt: Banks to the Rescue," Aug 2025. <a href="https://pakistanbanks.org.pk/service/circular-debt-banks-to-the-rescue/" target="_blank">pakistanbanks.org.pk</a></span></li>
+    <li id="src-46"><span class="src-num">46</span><span class="src-body">The News, "Pakistan power sector debt jumps by Rs223bn despite bank deals," Jan 2026. Government signed deals with 18 commercial banks in Sep 2025 to raise Rs 1.225 trillion (6-year tenure, 24 quarterly installments) to reduce circular debt, repaid via Rs 3.23/unit Debt Service Surcharge on consumers. Pak Policy Review: "largest financial transaction in Pakistan's history." <a href="https://www.thenews.pk/print/1395263-pakistan-power-sector-debt-jumps-by-rs223bn-despite-bank-deals" target="_blank">thenews.pk</a> · <a href="https://pakpolicyreview.com/pakistans-circular-debt-crisis-a-data-backed-explainer/" target="_blank">pakpolicyreview.com</a></span></li>
+    <li id="src-47"><span class="src-num">47</span><span class="src-body">IEEFA, "Pakistan's PKR2.1 trillion capacity payments crisis triggers PPA renegotiations," Dec 2024. Capacity payments reached PKR 2.1 trillion in 2024; 45,000+ MW installed capacity at average 34% utilization. IGC: "anticipated capacity payments for FY2024 amount to approximately PKR 2 trillion, comparable to Pakistan's defence budget." Express Tribune: IPPs received Rs 979.29 billion in capacity payments FY2024. <a href="https://ieefa.org/articles/pakistans-pkr21-trillion-capacity-payments-crisis-triggers-power-purchase-agreement" target="_blank">ieefa.org</a> · <a href="https://www.theigc.org/publications/sustainable-pakistan-energy-crisis" target="_blank">theigc.org</a></span></li>
+    <li id="src-48"><span class="src-num">48</span><span class="src-body">Consumer solar cost estimate: 33 GW at ~$100–150/kW average installed cost (panels at $0.08/W + inverter + installation; derived from Mordor Intelligence Pakistan Solar Market 2026 and IEEFA estimates). Total private capital: $3.3–5B. IPP/government route at $700–1,000/kW (ADB/World Bank CPEC plant benchmark): $23–33B sovereign equivalent. Capacity payment rate: Rs 2.1T ÷ 46,600 MW ÷ Rs 278/$ = ~$162/kW/year → $5.3B/year for 33 GW equivalent. 25-year NPV at 6% discount rate ≈ $61B–100B range.</span></li>
+    <li id="src-49"><span class="src-num">49</span><span class="src-body">NEPRA data (via PV Magazine, Mar 2025): 283,000 net-metering consumers as of December 2024, growing to 466,000+ by mid-2025. FBR: Pakistan has approximately 4–5 million active tax filers out of 255 million people (~1.6% filing rate). Net-metering connections concentrated in commercial/residential middle-upper income brackets with three-phase electricity connections (NEPRA eligibility requirement).</span></li>
+    <li id="src-50"><span class="src-num">50</span><span class="src-body">PV Tech / Business Recorder, Jun 2025: Pakistan's FY2025-26 budget proposed 18% GST on imported solar panels (revised to 10% subsequently). Federal Tax Ombudsman directed DISCOs to impose 18% sales tax on electricity supplied to net-metering consumers. Solar panel tax expected to raise Rs 20 billion in revenue while potentially slowing adoption. Pakistan Solar Association: "this policy move threatens to reverse the significant progress Pakistan has made in solar energy deployment." <a href="https://www.pv-tech.org/pakistan-proposes-18-tax-on-imported-solar-panels/" target="_blank">pv-tech.org</a> · <a href="https://www.brecorder.com/news/40367012" target="_blank">brecorder.com</a></span></li>
+    <li id="src-51"><span class="src-num">51</span><span class="src-body">World Bank / Solargis, "Solar Resource Mapping in Pakistan — Solar Modeling Report," March 2015 (funded by ESMAP). Mean annual GHI for whole Pakistan: 2,071 kWh/m². Maximum GHI values in southwestern Balochistan: just over 2,300 kWh/m². Over 90% of Pakistan's land area has GHI above 1,500 kWh/m². <a href="https://documents1.worldbank.org/curated/en/200771468096863184/pdf/95710-REVISED-ESM.pdf" target="_blank">documents1.worldbank.org</a></span></li>
+    <li id="src-52"><span class="src-num">52</span><span class="src-body">Encyclopedia.pub / NREL: Pakistan's solar potential ~5,500 TWh/year (NREL estimate), more than 5× current electricity consumption. Sindh and Balochistan provinces have the second-highest solar potential in the world. PV power potential of 1,200–2,100 kWh/kWp/year. <a href="https://encyclopedia.pub/entry/43732" target="_blank">encyclopedia.pub</a></span></li>
+    <li id="src-53"><span class="src-num">53</span><span class="src-body">Carbon Brief, "The Carbon Brief Profile: Pakistan" (updated Jun 2025), citing World Bank analysis: "using just 0.07% of Pakistan's land for solar could generate enough power to meet its current electricity demand." World Bank also calculated this as a least-cost electricity expansion scenario. <a href="https://interactive.carbonbrief.org/the-carbon-brief-profile-pakistan/index.html" target="_blank">carbonbrief.org</a></span></li>
+    <li id="src-54"><span class="src-num">54</span><span class="src-body">ScienceDirect / GHG emissions assessment (2024): Pakistan contributes less than 1% of global GHG emissions. Carbon Brief: 2022 Pakistan floods affected nearly 30 million people; scientists attributed rainfall made 75% more intense by climate change. Pakistan has lost 0.53% per unit GDP and suffered US$3,792.52 million from 152 dangerous weather events in two decades (Global Climate Risk Index 2020). <a href="https://www.sciencedirect.com/science/article/pii/S2590123024006091" target="_blank">sciencedirect.com</a></span></li>
+    <li id="src-55"><span class="src-num">55</span><span class="src-body">ScienceDirect, "GHG emissions estimation and assessment of Pakistan's power sector," Results in Engineering, Jun 2024. Peak GHG emissions: 650 gCO2-eq/kWh (January) and 550 gCO2-eq/kWh (December). About 76.1% of total Pakistan's CO2eq emissions come from energy industries. Power sector 60.9% thermal. <a href="https://doaj.org/article/1c902bc55e9e43968e549f8e5f3e3987" target="_blank">doaj.org</a></span></li>
+    <li id="src-56"><span class="src-num">56</span><span class="src-body">Enerdata, Pakistan Energy Information 2025: Pakistan's updated NDC (2025) commits to cut GHG emissions by up to 50% in 2035 relative to BAU — 17% unconditional, 33% conditional on international support. <a href="https://www.enerdata.net/estore/energy-market/pakistan/" target="_blank">enerdata.net</a></span></li>
+    <li id="src-57"><span class="src-num">57</span><span class="src-body">Masson et al., "Solar panels reduce both global warming and urban heat island," Frontiers in Environmental Science, April 2014. Solar panels shade heat-absorbing surfaces, convert solar radiation to electricity rather than waste heat, and reduce power plant waste heat — delivering urban cooling co-benefits alongside emissions reduction. <a href="https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2014.00014/full" target="_blank">frontiersin.org</a></span></li>
+    <li id="src-58"><span class="src-num">58</span><span class="src-body">Nature Cities, "Rooftop photovoltaic solar panels warm up and cool down cities," October 2024. City-scale RPVSP deployment in Paris metropolitan area reduced urban heat island effect by 0.2°C during day and up to 0.3°C at night, resulting in energy savings for air conditioning of up to 12%. <a href="https://www.nature.com/articles/s44284-024-00137-2" target="_blank">nature.com</a></span></li>
+    <li id="src-59"><span class="src-num">59</span><span class="src-body">Transition Zero / TransitionZero.org, "Shedding light on Pakistan's distributed solar revolution," Oct 2025, citing PRIED nationally representative survey. Solar PV deployed across residential (net-metered, non-net-metered, off-grid), industrial (captive), commercial, and agricultural sectors. PV Magazine (Mar 2025): "between 3 GW and 4 GW of industrial solar capacity, including both in-house and captive solar, has been installed, with most installations being non-net-metered." WRI, Oct 2025: stand-alone solar home systems 1–1.7 GW, "most common off-grid electricity source" in remote areas. Wikipedia / WRI: ~87% of agricultural tube wells powered by diesel or grid power; Punjab solarization project for tube wells launched Feb 2025; estimates suggest 5.6–7.5 GW of distributed PV could come from tube well solarization. <a href="https://www.transitionzero.org/shedding-light-on-pakistans-distributed-solar-revolution" target="_blank">transitionzero.org</a> · <a href="https://www.wri.org/insights/pakistan-solar-energy-boom" target="_blank">wri.org</a></span></li>
+    <li id="src-61"><span class="src-num">61</span><span class="src-body">Al Jazeera, "How Pakistan's solar boom is shielding it from worst of Iran war crisis," Apr 2026. Net-metering has already shifted Rs 159 billion ($570 million) financial burden onto non-solar grid users. Risk of two-tier energy system. Also notes that in rural areas, "solar power has become a source of survival rather than a luxury" for poorer households. <a href="https://www.aljazeera.com/features/2026/4/7/how-pakistans-solar-boom-is-shielding-it-from-worst-of-iran-war-crisis" target="_blank">aljazeera.com</a></span></li>
+    <li id="src-60"><span class="src-num">60</span><span class="src-body">Wikipedia, "Economy of Pakistan" (updated Apr 2026): debt-to-GDP ratio 70–80% as of 2026; servicing public debt occasionally reaches two-thirds of government spending. Ministry of Finance Semi-Annual Public Debt Bulletin: debt-to-GDP improved from 74% (FY22) to 70% (FY25). Gulf News / SBP (Nov 2025): public debt fell to Rs 79.15 trillion (Sep 2025) from Rs 80.52 trillion (Jun 2025) — first quarterly decline since 2019. Trading Economics: government debt-to-GDP ~83% (broader measure). <a href="https://en.wikipedia.org/wiki/Economy_of_Pakistan" target="_blank">en.wikipedia.org</a> · <a href="https://gulfnews.com/business/banking/pakistan-records-pkr137-trillion-drop-in-public-debt-first-drop-in-six-years-1.500350671" target="_blank">gulfnews.com</a></span></li>
+  </ol>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <div style="padding:3rem 0 2rem;border-top:2px solid var(--rule);">
+    <h2 style="font-family:var(--display);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:.4rem;">Leave a Comment</h2>
+    <p style="font-family:var(--serif);font-size:.9rem;color:var(--ink-muted);margin-bottom:1.5rem;">Thoughts, pushback, data I missed — all welcome.</p>
+    <div id="disqus_thread"></div>
+    <script>
+      var disqus_config = function () {
+        this.page.url = window.location.href;
+        this.page.identifier = 'pakistan-solar-revolution';
+      };
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://pakistan-solar-transition-netlify-app.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view comments.</noscript>
+  </div>
+</div>
+<div class="container">
+  <div class="article-footer">
+    All figures sourced and numbered above. Calculation methodology: oil barrel equivalent = 1,700 kWh thermal (IEA). Grid efficiency = 35% (Pakistan mix, NEPRA data). Solar CF = 20% (Pakistan average, IRENA). EV efficiency 88% vs ICE 22% (US DOE). Multiplier 1.3–1.5× (IMF EM standard). CA projections are illustrative scenarios, not forecasts. Written April 2026.
+  </div>
+</div>
+</footer>
+
+<script>
+const G='#01411C',GM='#0F6E56',GL='#1D9E75',BL='#378ADD',GR='#D3D1C7',RD='#C0392B';
+const gc='rgba(180,178,169,0.22)';
+Chart.defaults.font.family="'Source Serif 4',serif";
+Chart.defaults.color='#888780';
+
+new Chart(document.getElementById('oilChart'),{type:'bar',data:{labels:['Today (2026)','Phase 1\n(2026–28)','Phase 2\n(2028–33)','Phase 3\n(2033–40)'],datasets:[{label:'Power savings',data:[0,4.2,4.9,4.9],backgroundColor:GL,stack:'a'},{label:'Transport savings',data:[0,0.5,5.5,9.0],backgroundColor:BL,stack:'a'},{label:'Remaining bill',data:[17.5,12.8,7.1,3.6],backgroundColor:GR,stack:'a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.raw.toFixed(1)}B`}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11},autoSkip:false}},y:{stacked:true,max:20,grid:{color:gc},ticks:{callback:v=>'$'+v+'B',font:{size:11}}}}}});
+
+new Chart(document.getElementById("gdpPie"),{type:"doughnut",data:{labels:["Energy import savings","Hydrocarbon exports + LNG","PKR stability + investment","Exports + new industries","Fiscal space (no new debt)"],datasets:[{data:[50,15,20,10,5],backgroundColor:["#1D9E75","#C8992A","#378ADD","#5DCAA5","#7F77DD"],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+c.label+": "+c.raw+"%"}}},cutout:"60%"}});
+
+new Chart(document.getElementById("citizenPie"),{type:"doughnut",data:{labels:["Electricity savings Rs 180K","Transport fuel Rs 72K","PKR purchasing power Rs 48K","Food price relief Rs 24K","Cheaper credit Rs 30K"],datasets:[{data:[51,20,14,7,8],backgroundColor:["#F5C842","#1D9E75","#378ADD","#5DCAA5","#D4537E"],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+c.label+": "+c.raw+"%"}}},cutout:"60%"}});
+
+new Chart(document.getElementById('debtChart'),{type:'bar',data:{labels:['Consumer solar (33 GW actual)','Equivalent IPP route (hypothetical)'],datasets:[{label:'Capital cost',data:[4,28],backgroundColor:['#1D9E75','#C0392B'],borderRadius:3},{label:'Annual capacity payments',data:[0,5],backgroundColor:['rgba(29,158,117,0.25)','rgba(192,57,43,0.35)'],borderRadius:3},{label:'25-yr NPV capacity payments',data:[0,88],backgroundColor:['rgba(29,158,117,0.07)','rgba(192,57,43,0.15)'],borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw>0?' '+c.dataset.label+': $'+c.raw+'B':''}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:gc},ticks:{callback:v=>'$'+v+'B',font:{size:11}}}}}});
+
+new Chart(document.getElementById('solarChart'),{type:'line',data:{labels:['Jun 2022','Jun 2023','Dec 2023','Jun 2024','Dec 2024','Jun 2025','Apr 2026'],datasets:[{label:'Net-metered (official)',data:[0.5,1.3,2.1,3.5,4.9,6.1,8.0],borderColor:G,backgroundColor:'rgba(1,65,28,0.07)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:G,borderWidth:2.5},{label:'Total estimated',data:[2,5,9,15,22,27,32],borderColor:GL,backgroundColor:'rgba(29,158,117,0.05)',fill:true,tension:0.4,borderDash:[4,3],pointRadius:3,pointBackgroundColor:GL,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw} GW`}}},scales:{x:{grid:{color:gc},ticks:{font:{size:10},autoSkip:false,maxRotation:30}},y:{grid:{color:gc},ticks:{callback:v=>v+' GW',font:{size:11}}}}}});
+
+new Chart(document.getElementById('evChart'),{type:'bar',data:{labels:['ICE vehicles (thermal energy consumed)','EVs (electricity needed)'],datasets:[{data:[138,35],backgroundColor:[RD,GL],borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} TWh/year`}}},scales:{x:{grid:{color:gc},ticks:{callback:v=>v+' TWh',font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+
+new Chart(document.getElementById('caChart'),{type:'line',data:{labels:['2026','2028','2030','2032','2034','2037','2040'],datasets:[{label:'With transition',data:[2,4.5,7,9.5,11.5,13,14.5],borderColor:GL,backgroundColor:'rgba(29,158,117,0.07)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:GL,borderWidth:2.5},{label:'Without transition',data:[2,0.5,-1.5,-3.5,-5,-6.5,-7.5],borderColor:RD,backgroundColor:'rgba(192,57,43,0.05)',fill:true,tension:0.3,borderDash:[5,4],pointRadius:3,pointBackgroundColor:RD,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.raw}B`}}},scales:{x:{grid:{color:gc},ticks:{font:{size:11}}},y:{grid:{color:gc},ticks:{callback:v=>'$'+v+'B',font:{size:11}}}}}});
+
+new Chart(document.getElementById('scenarioChart'),{type:'line',data:{labels:['2026','2028','2030','2032','2034','2037','2040'],datasets:[{label:'Optimal policy (oil bill $B)',data:[17.5,14.5,11.0,8.0,6.0,4.5,3.6],borderColor:GL,backgroundColor:'rgba(29,158,117,0.07)',fill:false,tension:0.4,pointRadius:4,pointBackgroundColor:GL,borderWidth:2.5},{label:'Status quo (oil bill $B)',data:[17.5,16.2,14.5,12.8,11.0,9.5,8.5],borderColor:'#C8992A',backgroundColor:'rgba(200,153,42,0.06)',fill:false,tension:0.4,borderDash:[4,3],pointRadius:3,pointBackgroundColor:'#C8992A',borderWidth:2},{label:'No transition (oil bill $B)',data:[17.5,18.6,19.7,21.0,22.3,24.1,26.0],borderColor:RD,backgroundColor:'rgba(192,57,43,0.05)',fill:false,tension:0.3,borderDash:[5,4],pointRadius:3,pointBackgroundColor:RD,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.raw}B`}}},scales:{x:{grid:{color:gc},ticks:{font:{size:11}}},y:{grid:{color:gc},ticks:{callback:v=>'$'+v+'B',font:{size:11}}}}}});
+
+new Chart(document.getElementById('gdpChart'),{type:'bar',data:{labels:['Direct savings (retained capital × multiplier)','PKR stability → lower interest rates','Export competitiveness (lower industrial power)','New industries (batteries, EVs, solar mfg)'],datasets:[{data:[4.0,1.5,0.75,0.4],backgroundColor:[G,GM,GL,'#5DCAA5'],borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` +${c.raw}% GDP`}}},scales:{x:{grid:{color:gc},ticks:{callback:v=>'+'+v+'%',font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:10},autoSkip:false}}}}});
+
+new Chart(document.getElementById('gdpCapitaChart'),{type:'line',data:{labels:['2026','2028','2030','2032','2034','2037','2040'],datasets:[{label:'With full transition (incl. hydrocarbon exports)',data:[1643,1850,2150,2400,2650,2900,3100],borderColor:'#5DCAA5',backgroundColor:'rgba(93,202,165,0.08)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#5DCAA5',borderWidth:2.5},{label:'Without transition',data:[1643,1700,1740,1760,1780,1810,1850],borderColor:'#f08080',backgroundColor:'rgba(240,128,128,0.06)',fill:true,tension:0.3,borderDash:[5,4],pointRadius:3,pointBackgroundColor:'#f08080',borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.raw.toLocaleString()}`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'rgba(255,255,255,0.35)',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'rgba(255,255,255,0.35)',callback:v=>'$'+v.toLocaleString(),font:{size:11}}}}}});
+
+new Chart(document.getElementById('oilCrossoverChart'),{type:'line',data:{labels:['2026','2028','2030','2032','2034','2036','2038','2040'],datasets:[{label:'Domestic production',data:[85,95,110,120,145,170,190,220],borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#1D9E75',borderWidth:2.5},{label:'Non-electrifiable demand',data:[440,380,300,230,170,135,115,100],borderColor:'#C0392B',backgroundColor:'rgba(192,57,43,0.06)',fill:true,tension:0.4,borderDash:[5,3],pointRadius:3,pointBackgroundColor:'#C0392B',borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw}k bbl/day`}}},scales:{x:{grid:{color:gc},ticks:{font:{size:11}}},y:{grid:{color:gc},ticks:{callback:v=>v+'k',font:{size:11}}}}}});
+
+new Chart(document.getElementById('hydrocarbonChart'),{type:'bar',data:{labels:['Today\n(2026)','Phase 1\n(2026–28)','Phase 2\n(2028–33)','Phase 3\n(2033–38)','Full\n(2038–40)'],datasets:[{label:'Oil import savings',data:[0,4.0,9.5,13.0,14.5],backgroundColor:'#1D9E75',stack:'pos'},{label:'LNG savings',data:[0,1.0,2.5,2.8,3.0],backgroundColor:'#378ADD',stack:'pos'},{label:'Oil export revenue',data:[0,0,0.3,1.5,4.0],backgroundColor:'#C8992A',stack:'pos'},{label:'Remaining unavoidable imports',data:[-17.5,-12.5,-5.7,-3.2,-2.8],backgroundColor:'#C0392B',stack:'neg'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${Math.abs(c.raw).toFixed(1)}B`}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10},autoSkip:false}},y:{stacked:true,grid:{color:gc},ticks:{callback:v=>'$'+v+'B',font:{size:11}}}}}});
+</script>
+</body>
+</html>
