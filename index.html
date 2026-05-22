@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usman Chaudhary — Security & AI Advisor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b;--bg2:#111114;--bg3:#18181c;--bg4:#1f1f24;
+  --text:#f4f1ec;--muted:#a1a1aa;--subtle:#52525b;--border:rgba(255,255,255,0.07);
+  --border-h:rgba(255,255,255,0.14);--accent:#d4a853;--accent-dim:rgba(212,168,83,0.1);
+  --blue:#60a5fa;--green:#4ade80;--max:1080px;
+  --serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.7;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#3f3f46;border-radius:2px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(9,9,11,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--mono);font-size:0.78rem;color:var(--accent);letter-spacing:0.1em;text-decoration:none;cursor:pointer}
+.nav-links{display:flex;list-style:none}
+.nav-links a{display:block;padding:0 1rem;height:58px;line-height:58px;font-size:0.78rem;color:var(--muted);text-decoration:none;letter-spacing:0.03em;transition:color 0.2s;cursor:pointer}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a.active{border-bottom:2px solid var(--accent)}
+
+.page{max-width:var(--max);margin:0 auto;padding:0 2rem}
+.page-view{display:none}
+.page-view.active{display:block}
+
+/* SHARED */
+.eyebrow{font-family:var(--mono);font-size:0.7rem;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--accent)}
+.page-hero{padding-top:110px;padding-bottom:48px}
+.page-h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;margin-bottom:10px}
+.page-sub{font-size:1rem;color:var(--muted);max-width:600px;line-height:1.8}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.sec-num{font-family:var(--mono);font-size:0.65rem;color:var(--accent);letter-spacing:0.15em}
+.sec-title{font-family:var(--serif);font-size:1.5rem;font-weight:400}
+.sec-rule{flex:1;height:1px;background:var(--border)}
+.divider{height:1px;background:var(--border);margin:48px 0}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:3px;font-size:0.82rem;text-decoration:none;letter-spacing:0.02em;transition:all 0.2s;cursor:pointer}
+.btn-gold{background:var(--accent);color:#09090b;font-weight:500}
+.btn-gold:hover{opacity:0.88}
+.btn-outline{border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--border-h);color:var(--text)}
+
+/* ── ABOUT ── */
+.about-hero{padding-top:110px;padding-bottom:48px;display:grid;grid-template-columns:1fr 300px;gap:4rem;align-items:start}
+.about-h1{font-family:var(--serif);font-size:clamp(2.8rem,5vw,4rem);font-weight:400;line-height:1.1;margin-bottom:12px}
+.about-h1 span{font-style:italic;color:var(--accent)}
+.about-tagline{font-size:1.05rem;color:var(--muted);line-height:1.75;margin-bottom:16px;max-width:520px}
+.about-tagline strong{color:var(--text)}
+.about-bio{font-size:0.9rem;color:var(--muted);line-height:1.85;max-width:560px;margin-bottom:20px}
+.about-bio p{margin-bottom:10px}
+.about-bio strong{color:#d1d5db}
+.about-links{display:flex;gap:8px;flex-wrap:wrap}
+.photo-card{position:sticky;top:78px}
+.photo-wrap{border-radius:4px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px}
+.photo-wrap img{width:100%;display:block}
+.photo-meta{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.pmr{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:0.75rem}
+.pmr:last-child{border-bottom:none}
+.pml{font-family:var(--mono);color:var(--subtle);font-size:0.65rem;letter-spacing:0.07em}
+.pmv{color:var(--text)}
+.pmv a{color:var(--blue);text-decoration:none}
+.career-section{padding:48px 0;border-top:1px solid var(--border)}
+.career-row{display:grid;grid-template-columns:120px 1fr;gap:2rem;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:start}
+.career-row:last-child{border-bottom:none}
+.co strong{display:block;color:#d1d5db;font-size:0.82rem;font-weight:500;margin-bottom:2px}
+.co-yr{font-family:var(--mono);font-size:0.62rem;color:var(--subtle)}
+.c-role{font-weight:500;font-size:0.88rem;margin-bottom:4px;color:var(--text)}
+.c-desc{font-size:0.78rem;color:var(--muted);line-height:1.7}
+
+/* ── PROJECTS ── */
+.now-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);border-radius:100px;padding:4px 12px;font-family:var(--mono);font-size:0.7rem;color:var(--blue);margin-bottom:20px}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.proj-list{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:48px}
+.proj-row{display:grid;grid-template-columns:72px 1fr auto;gap:20px;padding:20px;border-bottom:1px solid var(--border);align-items:start;text-decoration:none;color:inherit;transition:background 0.15s}
+.proj-row:last-child{border-bottom:none}
+.proj-row:hover{background:var(--bg3)}
+.proj-row.dim{opacity:0.38;cursor:default}
+.proj-row.dim:hover{background:var(--bg2)}
+.pmon{font-family:var(--mono);font-size:0.65rem;color:var(--subtle);line-height:1.6}
+.pnum{color:var(--accent);display:block;font-size:0.68rem;margin-bottom:3px}
+.pname{font-family:var(--serif);font-size:1.25rem;font-weight:400;margin-bottom:5px;color:var(--text)}
+.pdesc{font-size:0.8rem;color:var(--muted);line-height:1.7;max-width:480px;margin-bottom:10px}
+.pstack{display:flex;gap:4px;flex-wrap:wrap}
+.stk{font-family:var(--mono);font-size:0.6rem;color:var(--subtle);padding:2px 6px;background:var(--bg4);border-radius:2px}
+.pstat{white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.live{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:0.65rem;color:var(--green)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.soon{font-family:var(--mono);font-size:0.65rem;color:var(--subtle)}
+.plink{font-family:var(--mono);font-size:0.68rem;color:var(--blue);text-decoration:none}
+.tl-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.tl{background:var(--bg2);padding:12px 10px}
+.tl.now{background:var(--bg3)}
+.tl-m{font-family:var(--mono);font-size:0.6rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.tl-n{font-size:0.75rem;font-weight:500;margin-bottom:3px;line-height:1.3;color:var(--text)}
+.tl-d{font-size:0.68rem;color:var(--muted);line-height:1.55}
+.tl-now-b{font-family:var(--mono);font-size:0.58rem;color:var(--blue);display:block;margin-top:5px}
+
+/* ── WRITING ── */
+.wr-list{display:flex;flex-direction:column;margin-bottom:48px}
+.wr-row{display:grid;grid-template-columns:80px 1fr 90px;gap:20px;align-items:baseline;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;transition:opacity 0.2s}
+.wr-row:hover{opacity:0.65}
+.wr-date{font-family:var(--mono);font-size:0.68rem;color:var(--subtle)}
+.wr-title{font-size:0.92rem;color:var(--text);line-height:1.5}
+.wr-tag{font-family:var(--mono);font-size:0.62rem;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;text-align:right}
+
+/* ── PERSPECTIVES ── */
+.tt-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:20px;margin-bottom:14px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;text-decoration:none;color:inherit;transition:border-color 0.2s}
+.tt-card:hover{border-color:var(--border-h)}
+.tt-label{font-family:var(--mono);font-size:0.62rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px}
+.tt-title{font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:7px;line-height:1.3;color:var(--text)}
+.tt-desc{font-size:0.8rem;color:var(--muted);line-height:1.75;max-width:520px}
+.tt-meta{white-space:nowrap;text-align:right;display:flex;flex-direction:column;gap:5px}
+.tt-date{font-family:var(--mono);font-size:0.65rem;color:var(--subtle)}
+.tt-link{font-family:var(--mono);font-size:0.68rem;color:var(--blue)}
+
+.idea-tag{font-family:var(--mono);font-size:0.6rem;color:var(--subtle);white-space:nowrap}
+
+/* ── CONNECT ── */
+.connect-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;padding-top:32px;padding-bottom:48px}
+.conn-stmt{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,1.9rem);font-weight:400;line-height:1.55;margin-bottom:14px;color:var(--text)}
+.conn-stmt em{font-style:italic;color:var(--accent)}
+.conn-body{font-size:0.88rem;color:var(--muted);line-height:1.85}
+.cl-list{display:flex;flex-direction:column;gap:8px}
+.cl{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--text);transition:border-color 0.2s}
+.cl:hover{border-color:var(--border-h)}
+.cl-plat{font-family:var(--mono);font-size:0.62rem;color:var(--subtle);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px}
+.cl-handle{font-size:0.85rem;color:var(--text)}
+.cl-arr{color:var(--accent);font-size:1.1rem}
+
+/* ── SOLAR ARTICLE ── */
+.solar-nav{display:flex;align-items:center;gap:8px;margin-bottom:32px;font-size:0.8rem}
+.solar-nav a{color:var(--blue);text-decoration:none;font-family:var(--mono);font-size:0.72rem}
+.solar-nav span{color:var(--subtle)}
+.solar-header{padding:110px 0 40px}
+.solar-cat{font-family:var(--mono);font-size:0.68rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:14px}
+.solar-h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,3rem);font-weight:400;line-height:1.15;margin-bottom:16px;max-width:720px}
+.solar-sub{font-size:1rem;color:var(--muted);line-height:1.8;max-width:640px;margin-bottom:20px}
+.solar-meta{display:flex;align-items:center;gap:20px;font-size:0.78rem;color:var(--subtle);padding-bottom:24px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.solar-meta strong{color:var(--muted)}
+.solar-body{max-width:680px;padding-bottom:80px}
+.solar-body h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;margin:2.5rem 0 1rem;color:var(--text)}
+.solar-body h3{font-size:1rem;font-weight:500;margin:1.75rem 0 0.75rem;color:var(--text)}
+.solar-body p{font-size:0.92rem;color:var(--muted);line-height:1.9;margin-bottom:1rem}
+.solar-body p strong{color:#d1d5db}
+.solar-body ul{margin:0.75rem 0 1rem 1.25rem}
+.solar-body li{font-size:0.88rem;color:var(--muted);line-height:1.8;margin-bottom:0.35rem}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:1.5rem 0}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px 16px}
+.stat-num{font-family:var(--serif);font-size:1.6rem;color:var(--accent);line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:0.75rem;color:var(--muted);line-height:1.5}
+.phase-grid{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin:1.5rem 0}
+.phase-row{background:var(--bg2);padding:12px 16px;display:grid;grid-template-columns:100px 1fr;gap:16px}
+.ph-label{font-family:var(--mono);font-size:0.65rem;color:var(--accent);letter-spacing:0.08em}
+.ph-desc{font-size:0.8rem;color:var(--muted);line-height:1.6}
+.solar-back{font-family:var(--mono);font-size:0.72rem;color:var(--blue);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;background:none;border:none;padding:0}
+
+footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--max);margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.fl{font-family:var(--mono);font-size:0.68rem;color:var(--subtle)}
+.fr{font-family:var(--mono);font-size:0.68rem;color:var(--subtle)}
+.fr a{color:var(--accent);text-decoration:none}
+
+.fade{opacity:0;transform:translateY(10px);transition:opacity 0.5s,transform 0.5s}
+.fade.in{opacity:1;transform:none}
+
+@media(max-width:768px){
+  .about-hero{grid-template-columns:1fr;padding-top:90px}
+  .photo-card{position:static}
+  .career-row{grid-template-columns:1fr;gap:4px}
+  .proj-row{grid-template-columns:1fr;gap:12px}
+  .pstat{align-items:flex-start}
+  .tl-grid{grid-template-columns:repeat(2,1fr)}
+  .wr-row{grid-template-columns:1fr;gap:3px}
+  .connect-grid{grid-template-columns:1fr;gap:3rem}
+  .tt-card{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .nav-links a{padding:0 0.65rem;font-size:0.72rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo" onclick="showPage('about')">USMAN CHAUDHARY</span>
+    <ul class="nav-links">
+      <li><a onclick="showPage('about')" id="nav-about" class="active">About</a></li>
+      <li><a onclick="showPage('projects')" id="nav-projects">AI Projects</a></li>
+      <li><a onclick="showPage('writing')" id="nav-writing">Writing</a></li>
+      <li><a onclick="showPage('perspectives')" id="nav-perspectives">Perspectives</a></li>
+      <li><a onclick="showPage('connect')" id="nav-connect">Connect</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ══════════ ABOUT ══════════ -->
+<div id="page-about" class="page-view active">
+<div class="page">
+  <div class="about-hero fade">
+    <div>
+      <div class="eyebrow">Security & AI Advisor</div>
+      <h1 class="about-h1">Usman<br><span>Chaudhary</span></h1>
+      <p class="about-tagline"><strong>17 years at the intersection of engineering, strategy, and security.</strong> Advising CISOs and boards on AI-era threats — and building AI systems to explore what's possible when deep domain expertise meets hands-on AI mastery.</p>
+      <div class="about-bio">
+        <p>I'm a <strong>Field CISO and AI Security Executive at Google Cloud</strong>, advising Fortune 500 enterprises and federal agencies on AI governance, SecOps transformation, and sovereign AI strategy. Previously at <strong>Palo Alto Networks</strong> as Business Value Director, and <strong>Accenture</strong> and <strong>KPMG</strong> as a strategy consultant.</p>
+        <p>My background spans deep engineering, management consulting, and enterprise security GTM: <strong>MS Electrical Engineering, University of Michigan</strong> (research in secure vehicular communications) · <strong>MBA, University of Chicago Booth</strong> (Dean's Honor List) · 9 years at Ericsson architecting hybrid cloud and IoT security infrastructure.</p>
+        <p>I speak at Billington CyberSecurity, GovExec, and enterprise security forums. I write on AI-era threats and what it means to build genuinely AI-native security programs. In 2026, I started building AI agents — exploring AI applications across every field of life.</p>
+      </div>
+      <div class="about-links">
+        <a href="https://linkedin.com/in/usmanchaudhary" target="_blank" class="btn btn-gold">LinkedIn ↗</a>
+        <a onclick="showPage('projects')" class="btn btn-outline">AI Projects →</a>
+        <a onclick="showPage('writing')" class="btn btn-outline">Writing →</a>
+      </div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-wrap"><img src="usman.jpg" alt="Usman Chaudhary"></div>
+      <div class="photo-meta">
+        <div class="pmr"><span class="pml">ROLE</span><span class="pmv">Field CISO, Google Cloud</span></div>
+        <div class="pmr"><span class="pml">LOCATION</span><span class="pmv">Washington DC Area</span></div>
+        <div class="pmr"><span class="pml">EDUCATION</span><span class="pmv">Booth MBA · Michigan MS EE</span></div>
+        <div class="pmr"><span class="pml">EMAIL</span><span class="pmv"><a href="mailto:usmanamin.ch@gmail.com" onclick="window.location.href='mailto:usmanamin.ch@gmail.com';return false;">usmanamin.ch@gmail.com</a></span></div>
+        <div class="pmr"><span class="pml">LINKEDIN</span><span class="pmv"><a href="https://linkedin.com/in/usmanchaudhary" target="_blank">linkedin.com/in/usmanchaudhary ↗</a></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="career-section fade">
+    <div class="sec-head">
+      <span class="sec-num">EXPERIENCE</span>
+      <h2 class="sec-title">Career</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div>
+      <div class="career-row">
+        <div class="co"><strong>Google Cloud</strong><div class="co-yr">2022 – Present</div></div>
+        <div><div class="c-role">Field CISO & Strategic Growth Executive</div><div class="c-desc">Trusted advisor to CISOs and C-suite across Fortune 500 and federal agencies on AI-era threat posture, SecOps modernization, and sovereign AI strategy. Speaker at Billington CyberSecurity and GovExec. Developed Legacy SOC Displacement framework and AI security training for 300+ sales reps globally.</div></div>
+      </div>
+      <div class="career-row">
+        <div class="co"><strong>Palo Alto Networks</strong><div class="co-yr">2021 – 2022</div></div>
+        <div><div class="c-role">Business Value Director</div><div class="c-desc">Engineered commercial frameworks resulting in the two largest contracts in company history. Advised Fortune 500 boards on cybersecurity and digital transformation investment decisions.</div></div>
+      </div>
+      <div class="career-row">
+        <div class="co"><strong>Accenture</strong><div class="co-yr">2019 – 2021</div></div>
+        <div><div class="c-role">Business Strategy Manager</div><div class="c-desc">Multi-year digital transformation strategies for Fortune 500 across media, telecom, and technology. Built joint B2B GTM strategy for a SaaS IoT product identifying enterprise AI and edge computing market trends.</div></div>
+      </div>
+      <div class="career-row">
+        <div class="co"><strong>KPMG</strong><div class="co-yr">2017 – 2019</div></div>
+        <div><div class="c-role">Senior Strategy Consultant</div><div class="c-desc">Performance improvement and GTM strategy for healthcare and industrial clients. Dealer profitability model for a Global Automotive OEM resulting in multi-million dollar implementation.</div></div>
+      </div>
+      <div class="career-row">
+        <div class="co"><strong>Ericsson</strong><div class="co-yr">2008 – 2017</div></div>
+        <div><div class="c-role">Technical Product Manager / Product Architect</div><div class="c-desc">9 years leading hybrid cloud and NFV architecture for major Tier-1 US telecom. Established client's IoT Innovation Lab and produced 6-year infrastructure security forecast.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<div id="page-projects" class="page-view">
+<div class="page">
+  <div class="page-hero fade">
+    <div class="eyebrow">AI Builder</div>
+    <h1 class="page-h1">Building AI agents</h1>
+    <p class="page-sub">Exploring AI applications across every field of life — finance, security, family, content, real estate. One project per month, everything documented and shipped.</p>
+    <br>
+    <div class="now-badge"><span class="pulse"></span>Month 1 of 7 — Chief of Staff Agent — Live now</div>
+  </div>
+  <div class="proj-list fade">
+    <a href="https://usman-chief-of-staff.streamlit.app" target="_blank" class="proj-row">
+      <div class="pmon"><span class="pnum">01</span>MAY<br>2026</div>
+      <div>
+        <div class="pname">AI Chief of Staff</div>
+        <div class="pdesc">Reads Gmail and Google Calendar, prioritizes the day, and drafts email replies — powered by Claude API. Built in 3 days from zero. First agent in a planned fleet of 10 that will run every domain of life.</div>
+        <div class="pstack"><span class="stk">Claude API</span><span class="stk">Gmail API</span><span class="stk">Google Calendar</span><span class="stk">OAuth 2.0</span><span class="stk">Python</span><span class="stk">Streamlit</span></div>
+      </div>
+      <div class="pstat"><div class="live"><span class="live-dot"></span>LIVE</div><a class="plink" target="_blank">Demo ↗</a><a href="https://github.com/usmanaminch/ai-mastery-2026" class="plink" target="_blank">GitHub ↗</a></div>
+    </a>
+    <div class="proj-row dim">
+      <div class="pmon"><span class="pnum">02</span>JUN<br>2026</div>
+      <div><div class="pname">AI Content Engine</div><div class="pdesc">Agent that turns project notes and learnings into LinkedIn posts, blog articles, and newsletters. Eliminates the content creation bottleneck.</div><div class="pstack"><span class="stk">LangChain</span><span class="stk">Claude API</span><span class="stk">Gemini</span><span class="stk">Automation</span></div></div>
+      <div class="pstat"><span class="soon">COMING</span></div>
+    </div>
+    <div class="proj-row dim">
+      <div class="pmon"><span class="pnum">03</span>JUL<br>2026</div>
+      <div><div class="pname">Quant Finance Intelligence</div><div class="pdesc">LLM reads earnings call transcripts, extracts structured signals, generates investment intelligence. RAG on financial documents, backtested against price movement.</div><div class="pstack"><span class="stk">LlamaIndex</span><span class="stk">RAG</span><span class="stk">Embeddings</span><span class="stk">Google Colab</span></div></div>
+      <div class="pstat"><span class="soon">COMING</span></div>
+    </div>
+    <div class="proj-row dim">
+      <div class="pmon"><span class="pnum">04</span>AUG<br>2026</div>
+      <div><div class="pname">Local Model Lab — Private AI</div><div class="pdesc">Fully private RAG system running on local hardware. No data leaves the machine. Explores SLMs, quantization, and on-device AI for enterprise security use cases.</div><div class="pstack"><span class="stk">Ollama</span><span class="stk">Llama 3</span><span class="stk">Mistral</span><span class="stk">GGUF / QLoRA</span></div></div>
+      <div class="pstat"><span class="soon">COMING</span></div>
+    </div>
+    <div class="proj-row dim">
+      <div class="pmon"><span class="pnum">05</span>SEP<br>2026</div>
+      <div><div class="pname">Trading Signal System + Fine-tuning</div><div class="pdesc">Domain-specific fine-tuning on financial data. LoRA/QLoRA on consumer hardware. Eval framework to measure whether fine-tuned models beat baseline prompting.</div><div class="pstack"><span class="stk">HuggingFace</span><span class="stk">LoRA</span><span class="stk">Evals</span><span class="stk">Backtesting</span></div></div>
+      <div class="pstat"><span class="soon">COMING</span></div>
+    </div>
+    <div class="proj-row dim">
+      <div class="pmon"><span class="pnum">06</span>OCT<br>2026</div>
+      <div><div class="pname">Physical AI + Robotics Security</div><div class="pdesc">LLM connected to a robotics simulator. Exploring the security implications of physical AI systems — an emerging field with almost no dedicated security practitioners.</div><div class="pstack"><span class="stk">ROS Simulator</span><span class="stk">Python</span><span class="stk">Physical AI</span></div></div>
+      <div class="pstat"><span class="soon">COMING</span></div>
+    </div>
+  </div>
+  <div class="fade">
+    <div class="sec-head">
+      <span class="sec-num">ROADMAP</span>
+      <h2 class="sec-title">7-month journey</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="tl-grid">
+      <div class="tl now"><div class="tl-m">May</div><div class="tl-n">Agent Architecture</div><div class="tl-d">APIs, OAuth, Gmail, Calendar</div><span class="tl-now-b">● NOW</span></div>
+      <div class="tl"><div class="tl-m">Jun</div><div class="tl-n">Content Engine</div><div class="tl-d">LangChain, automation</div></div>
+      <div class="tl"><div class="tl-m">Jul</div><div class="tl-n">Quant Finance</div><div class="tl-d">RAG, embeddings</div></div>
+      <div class="tl"><div class="tl-m">Aug</div><div class="tl-n">Local Models</div><div class="tl-d">Ollama, SLMs</div></div>
+      <div class="tl"><div class="tl-m">Sep</div><div class="tl-n">Fine-tuning</div><div class="tl-d">LoRA, evals</div></div>
+      <div class="tl"><div class="tl-m">Oct</div><div class="tl-n">Physical AI</div><div class="tl-d">Robotics security</div></div>
+      <div class="tl"><div class="tl-m">Nov–Dec</div><div class="tl-n">Open Source</div><div class="tl-d">Contributions</div></div>
+    </div>
+  </div>
+  <div style="height:48px"></div>
+</div>
+</div>
+
+<!-- ══════════ WRITING ══════════ -->
+<div id="page-writing" class="page-view">
+<div class="page">
+  <div class="page-hero fade">
+    <div class="eyebrow">Writing</div>
+    <h1 class="page-h1">AI, Security & Ideas</h1>
+    <p class="page-sub">Original analysis on AI-era threats, autonomous attack surfaces, and what it means to build genuinely AI-native security programs.</p>
+  </div>
+  <div class="wr-list fade">
+    <a href="https://www.linkedin.com/pulse/ai-vulnerability-onslaught-part-2-vs-googles-answer-vibe-chaudhary-ud38e/" target="_blank" class="wr-row">
+      <span class="wr-date">2026</span>
+      <span class="wr-title">AI Vulnerability Onslaught Part 2: Vibe Coding vs. Google's Answer</span>
+      <span class="wr-tag">AI Security</span>
+    </a>
+    <a href="https://www.linkedin.com/pulse/velocity-trap-why-vibe-coding-fueling-ai-onslaught-usman-chaudhary-zqexc/" target="_blank" class="wr-row">
+      <span class="wr-date">2026</span>
+      <span class="wr-title">The Velocity Trap: Why Vibe Coding is Fueling the AI Onslaught</span>
+      <span class="wr-tag">AI Security</span>
+    </a>
+    <a href="https://www.linkedin.com/pulse/what-edge-computing-usman-chaudhary/" target="_blank" class="wr-row">
+      <span class="wr-date">Earlier</span>
+      <span class="wr-title">What is Edge Computing?</span>
+      <span class="wr-tag">Technology</span>
+    </a>
+  </div>
+  <div style="height:48px"></div>
+</div>
+</div>
+
+<!-- ══════════ PERSPECTIVES ══════════ -->
+<div id="page-perspectives" class="page-view">
+<div class="page">
+  <div class="page-hero fade">
+    <div class="eyebrow">Perspectives</div>
+    <h1 class="page-h1">Policy, Economics & Social Good</h1>
+    <p class="page-sub">Long-form analysis on technology's impact on emerging economies, energy transitions, and social systems. Data-driven, independently written, intentionally contrarian where the evidence demands it.</p>
+  </div>
+  <a href="solar.html" class="tt-card fade">
+    <div>
+      <div class="tt-label">Energy · Economics · Pakistan</div>
+      <div class="tt-title">Running on Sun: How Pakistan's Consumer Revolution Could Break the Oil Trap Forever</div>
+      <div class="tt-desc">Pakistan has accidentally launched one of the fastest energy transitions in the developing world — entirely without government planning. 27–33 GW of consumer-deployed solar, $12B already saved in oil imports, and a credible path to energy sovereignty by 2040. A data-driven analysis with full source citations.</div>
+    </div>
+    <div class="tt-meta">
+      <span class="tt-date">APR 2026</span>
+      <span class="tt-link">Read ↗</span>
+    </div>
+  </a>
+  <div style="height:48px"></div>
+</div>
+</div>
+
+<!-- ══════════ CONNECT ══════════ -->
+<div id="page-connect" class="page-view">
+<div class="page">
+  <div class="page-hero fade">
+    <div class="eyebrow">Connect</div>
+    <h1 class="page-h1">Let's connect</h1>
+  </div>
+  <div class="connect-grid fade">
+    <div>
+      <p class="conn-stmt">Security executive, <em>AI builder</em>, and independent researcher — exploring what happens when deep domain expertise meets hands-on AI mastery.</p>
+      <p class="conn-body">Particularly interested in conversations around enterprise AI security, agentic AI risk, agent orchestration architecture, and the emerging intersection of physical robotics and AI security.<br><br>If you're building in these spaces, advising enterprises on AI adoption, or just want to compare notes on what you're seeing in the field — reach out.</p>
+    </div>
+    <div class="cl-list">
+      <a href="mailto:usmanamin.ch@gmail.com" class="cl" onclick="window.location.href='mailto:usmanamin.ch@gmail.com';return false;">
+        <div><div class="cl-plat">Email</div><div class="cl-handle">usmanamin.ch@gmail.com</div></div>
+        <span class="cl-arr">↗</span>
+      </a>
+      <a href="https://linkedin.com/in/usmanchaudhary" target="_blank" class="cl">
+        <div><div class="cl-plat">LinkedIn</div><div class="cl-handle">linkedin.com/in/usmanchaudhary</div></div>
+        <span class="cl-arr">↗</span>
+      </a>
+      <a href="https://github.com/usmanaminch" target="_blank" class="cl">
+        <div><div class="cl-plat">GitHub</div><div class="cl-handle">github.com/usmanaminch</div></div>
+        <span class="cl-arr">↗</span>
+      </a>
+      <a href="https://usman-chief-of-staff.streamlit.app" target="_blank" class="cl">
+        <div><div class="cl-plat">Live Project</div><div class="cl-handle">AI Chief of Staff Agent</div></div>
+        <span class="cl-arr">↗</span>
+      </a>
+      <a href="https://github.com/usmanaminch/ai-mastery-2026" target="_blank" class="cl">
+        <div><div class="cl-plat">Source Code</div><div class="cl-handle">ai-mastery-2026 repository</div></div>
+        <span class="cl-arr">↗</span>
+      </a>
+    </div>
+  </div>
+  <div style="height:48px"></div>
+</div>
+</div>
+
+<footer>
+  <span class="fl">© 2026 Usman Chaudhary</span>
+  <span class="fr"></span>
+</footer>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page-view').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  if(document.getElementById('page-'+id)) document.getElementById('page-'+id).classList.add('active');
+  const navEl = document.getElementById('nav-'+id);
+  if(navEl) navEl.classList.add('active');
+  window.scrollTo(0,0);
+  setTimeout(()=>{
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+    },{threshold:0.08});
+    document.querySelectorAll('.page-view.active .fade').forEach(el=>{
+      el.classList.remove('in');
+      obs.observe(el);
+    });
+  },50);
+}
+document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+setTimeout(()=>{
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+  },{threshold:0.08});
+  document.querySelectorAll('.page-view.active .fade').forEach(el=>obs.observe(el));
+},100);
+</script>
+</body>
+</html>
