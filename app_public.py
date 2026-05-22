@@ -11,8 +11,6 @@ st.set_page_config(
 st.title("🎯 AI Chief of Staff")
 st.caption(f"Built by Usman Chaudhary | Field CISO → AI Engineer | {datetime.now().strftime('%B %d, %Y')}")
 
-st.info("This agent is powered by Claude. In the full version it connects to Gmail and Google Calendar. Ask it anything about productivity, priorities, or decision-making.")
-
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -57,7 +55,6 @@ with st.sidebar:
     - 📈 Sep: Trading Signals
     - 🌐 Oct: Portfolio Site
     """)
-    
     st.markdown("---")
     st.markdown("**Connect:**")
     st.markdown("[GitHub](https://github.com/usmanaminch) | [LinkedIn](https://linkedin.com/in/usmanaminch)")
@@ -67,15 +64,51 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 if not st.session_state.messages:
-    st.markdown("**Try asking:**")
+    st.info("Ask anything about productivity, priorities, or decision-making.")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Help me prioritize my day"):
-            st.session_state.messages.append({
-                "role": "user",
-                "content": "Help me prioritize my day"
-            })
+        if st.button("🎯 Help me prioritize my day", use_container_width=True):
+            prompt = "Help me prioritize my day"
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+            response = client.messages.create(
+                model="claude-haiku-4-5",
+                max_tokens=500,
+                system=SYSTEM_PROMPT,
+                messages=st.session_state.messages
+            )
+            reply = response.content[0].text
+            st.session_state.messages.append({"role": "assistant", "content": reply})
             st.rerun()
     with col2:
-        if st.button("I'm overwhelmed, where do I start?"):
-            st.session_state.m
+        if st.button("😰 I'm overwhelmed, where do I start?", use_container_width=True):
+            prompt = "I'm overwhelmed, where do I start?"
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+            response = client.messages.create(
+                model="claude-haiku-4-5",
+                max_tokens=500,
+                system=SYSTEM_PROMPT,
+                messages=st.session_state.messages
+            )
+            reply = response.content[0].text
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+            st.rerun()
+
+if prompt := st.chat_input("Ask your Chief of Staff anything..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            response = client.messages.create(
+                model="claude-haiku-4-5",
+                max_tokens=500,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": m["role"], "content": m["content"]}
+                          for m in st.session_state.messages]
+            )
+        reply = response.content[0].text
+        st.markdown(reply)
+    st.session_state.messages.append({"role": "assistant", "content": reply})
