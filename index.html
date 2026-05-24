@@ -186,6 +186,19 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
   .stat-grid{grid-template-columns:1fr 1fr}
   .nav-links a{padding:0 0.65rem;font-size:0.72rem}
 }
+
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--muted);border-radius:2px;transition:all 0.2s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+@media(max-width:640px){
+  .hamburger{display:flex}
+  .nav-links{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(9,9,11,0.98);backdrop-filter:blur(16px);flex-direction:column;padding:1rem 0;border-bottom:1px solid var(--border);z-index:99}
+  .nav-links.open{display:flex}
+  .nav-links a{height:auto;line-height:1;padding:0.9rem 2rem;font-size:0.85rem;border-bottom:none}
+  .nav-links a.active{border-bottom:none;color:var(--accent)}
+}
 </style>
 </head>
 <body>
@@ -193,13 +206,16 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
 <nav>
   <div class="nav-inner">
     <span class="nav-logo" onclick="showPage('about')">USMAN CHAUDHARY</span>
-    <ul class="nav-links">
-      <li><a onclick="showPage('about')" id="nav-about" class="active">About</a></li>
-      <li><a onclick="showPage('projects')" id="nav-projects">AI Projects</a></li>
-      <li><a onclick="showPage('writing')" id="nav-writing">Writing</a></li>
-      <li><a onclick="showPage('perspectives')" id="nav-perspectives">Perspectives</a></li>
-      <li><a onclick="showPage('connect')" id="nav-connect">Connect</a></li>
+    <ul class="nav-links" id="nav-menu">
+      <li><a onclick="showPage('about');closeMenu()" id="nav-about" class="active">About</a></li>
+      <li><a onclick="showPage('projects');closeMenu()" id="nav-projects">AI Projects</a></li>
+      <li><a onclick="showPage('writing');closeMenu()" id="nav-writing">Writing</a></li>
+      <li><a onclick="showPage('perspectives');closeMenu()" id="nav-perspectives">Perspectives</a></li>
+      <li><a onclick="showPage('connect');closeMenu()" id="nav-connect">Connect</a></li>
     </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -356,6 +372,18 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <span class="wr-tag">Technology</span>
     </a>
   </div>
+  <div class="sec-head fade" style="margin-top:3rem">
+    <span class="sec-num">RESEARCH</span>
+    <h2 class="sec-title">Academic Publications</h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="wr-list fade">
+    <a href="https://aes.org/publications/elibrary-page/?id=15676" target="_blank" class="wr-row">
+      <span class="wr-date">Nov 2010</span>
+      <span class="wr-title">Automatic Recording Environment Identification Using Acoustic Reverberation — Audio Engineering Society</span>
+      <span class="wr-tag">Research</span>
+    </a>
+  </div>
   <div style="height:48px"></div>
 </div>
 </div>
@@ -444,6 +472,15 @@ function showPage(id){
       obs.observe(el);
     });
   },50);
+}
+
+function toggleMenu(){
+  document.getElementById('nav-menu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('nav-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
 }
 document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
 setTimeout(()=>{
