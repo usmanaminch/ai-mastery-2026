@@ -321,3 +321,87 @@ Always shows status for every URL processed:
 - Auto-scraped sites: Google Cloud, CSA, Dark Reading, Ars Technica
 - Paste needed: Medium, LinkedIn, paywalled content
 - Transcript auto-fetched: YouTube, podcast links
+
+
+---
+
+## MONTH 2 — CONTENT ENGINE
+*Started May 25, 2026*
+
+### What We Built (Session 1)
+
+**Core Infrastructure:**
+- intelligence_library.py — JSON database for all synthesized content
+  - Stores: TLDR, key points, author, source, tier, themes, status, used_in
+  - Duplicate URL detection via url_exists()
+  - Status tracking: synthesized → drafting → published
+  - search_library() for keyword/theme search
+
+- scraper.py — Multi-source content fetcher and synthesizer
+  - Auto-scrapes: Google Cloud blogs, CSA, Dark Reading, Ars Technica
+  - YouTube transcript fetching (podcasts, videos)
+  - Manual paste handler for Medium, LinkedIn, paywalled content
+  - depth=quick: Claude Haiku — TLDR + 4 bullet points (fast scanning)
+  - depth=deep: Claude Sonnet — full breakdown for writing
+  - Suggested piece format: what/why now/audience/value/usman angle/coined term/tier
+
+- app.py — Full Streamlit GUI with 5 tabs
+  - Daily Brief: batch URL processing, inline results, paste handler
+  - Add Content: URL/paste/idea input with preview and save
+  - Library: filterable by status/tier/theme, TLDR+bullets format
+  - Write: Claude chat panel + Tier 1/2/3 output selector + draft editor
+  - Search: theme browser grid + published content + cross-synthesis
+
+**Key Design Decisions:**
+- Haiku for quick synthesis (speed/cost), Sonnet for deep synthesis and writing (quality)
+- Three content tiers:
+  Tier 1: Full article on usmanc.com (800-1200 words, coined term, original analysis)
+  Tier 2: Substantive LinkedIn post (300-500 words, strong POV)
+  Tier 3: Quick reaction post (150-300 words, top 3 takeaways, link in comments)
+- Intelligence library compounds over time — every article feeds future writing
+- Attribution rules baked in — source/author always stored, cited inline in drafts
+- Research Chat in Write tab — interrogate topic with Claude before writing
+
+**Security:**
+- .env and intelligence_library.json in .gitignore — never committed
+- API key rotated after accidental .env commit
+
+### Tomorrow — Session 2 Plan
+
+1. Google Sheets API integration
+   - Connect to reading list spreadsheet
+   - Bulk import unprocessed links (column F blank = not processed)
+   - Mark as processed after synthesis
+   - Keep processed links available for consolidation
+
+2. Daily monitored sources scraper
+   - Anton Chuvakin blog (medium.com/anton-on-security)
+   - Google Cloud CISO blog
+   - CSA Labs
+   - Dark Reading
+   - Google Cloud Transform
+   - Runs on demand or scheduled
+
+3. Search string monitoring
+   - Google News API for keyword alerts
+   - Search strings: agentic AI security, AI vulnerability 2026,
+     CISO AI governance, LLM security enterprise, autonomous attack
+
+4. Deploy to Streamlit Cloud
+   - usman-content-engine.streamlit.app
+   - Update usmanc.com AI Projects page
+
+### Usman Voice System Prompt (encoded in app)
+- Opens with urgency + emoji + coined term
+- Emoji bullets for scannability
+- Short paragraphs, no corporate fluff
+- Always cites sources inline
+- Ends with LET'S CTA + hashtags
+- Never reproduces large portions of source
+
+### Model Routing
+- Quick synthesis: claude-haiku-4-5
+- Deep synthesis: claude-sonnet-4-5
+- Article drafting: claude-sonnet-4-5
+- Research chat: claude-sonnet-4-5
+- Daily brief generation: claude-haiku-4-5
