@@ -275,3 +275,49 @@ This is how production enterprise AI systems are built.
 ### Why This Matters for MTS at Anthropic
 Context window management and multi-agent coordination are core
 unsolved problems at the frontier. Deep understanding = direct MTS relevance.
+
+
+---
+
+## SELF-IMPROVING AGENT ARCHITECTURE
+*Added May 25, 2026*
+
+### The Concept
+Every product we build gets a meta-agent — an agent that watches 
+the product, measures performance, and suggests improvements weekly.
+This is called evals in production AI systems.
+
+### Weekly Product Improvement Agent (add to every project Month 3+)
+Runs every Sunday. Analyzes:
+- What outputs performed best
+- Which pipeline steps produced weak results  
+- Which sources/inputs consistently produce high value
+- Where the system broke or needed manual intervention
+
+Produces:
+- What is working well
+- What to change
+- Suggested system prompt improvements
+- You approve → agent updates itself
+
+### Why This Matters for MTS
+Anthropic researchers work on evals and self-improving systems.
+This is frontier AI engineering. Building it from Month 3 onwards
+means by Month 7 you have real experience with production evals.
+
+### Daily Reading List Process
+Every day the Content Engine:
+1. Checks Google Sheet for new unprocessed links
+2. Checks monitored sources for new content
+3. For each item: tries to scrape automatically
+4. Shows transparency report:
+   - Scraped successfully — here is the synthesis
+   - Needs paste — shows inline text box
+   - Failed — explains why
+5. You review, approve, add to library
+
+### Scrape Transparency
+Always shows status for every URL processed:
+- Auto-scraped sites: Google Cloud, CSA, Dark Reading, Ars Technica
+- Paste needed: Medium, LinkedIn, paywalled content
+- Transcript auto-fetched: YouTube, podcast links
