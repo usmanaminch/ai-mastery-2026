@@ -241,3 +241,37 @@ Building in public.
 4. Did I post on LinkedIn 3x?
 5. Did I do the networking 30 min after Fajr?
 
+
+
+---
+
+## AGENT HARNESSES & CONTEXT MANAGEMENT
+*Added May 24, 2026*
+
+### What is an Agent Harness?
+A framework that manages how AI agents run, fail, retry, and coordinate.
+Handles: error handling, retries, logging, evals, memory, orchestration.
+
+### Context Window Management — Key Architecture
+Problem: Single agent fills up context window → fails or forgets
+Solution: Multi-agent harness with specialists
+
+Orchestrator Agent (master) delegates to:
+- Gmail Agent: only sees emails (fresh small context)
+- Calendar Agent: only sees calendar events
+- Writer Agent: only sees the draft request
+- Research Agent: only sees research task
+- Synthesizer: gets summaries, produces final output
+
+Each sub-agent has fresh focused context. Master coordinates.
+This is how production enterprise AI systems are built.
+
+### Frameworks for Agent Harnesses
+- LangChain: Agent orchestration — Month 2
+- LangGraph: Graph-based multi-agent workflows — Month 3
+- CrewAI: Multiple agents with defined roles — Month 3-4
+- AutoGen: Agents that talk to each other — Month 4
+
+### Why This Matters for MTS at Anthropic
+Context window management and multi-agent coordination are core
+unsolved problems at the frontier. Deep understanding = direct MTS relevance.
