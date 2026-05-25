@@ -6,7 +6,7 @@
 
 | # | Project | Description | Status | Demo |
 |---|---------|-------------|--------|------|
-| 01 | **Chief of Staff Agent** | AI agent that reads Gmail + Calendar, prioritizes your day, and triages your inbox — powered by Claude API | ✅ Live | [Demo](https://usman-chief-of-staff.streamlit.app) |
+| 01 | **Chief of Staff Agent** | AI agent that reads Gmail + Calendar, prioritizes your day, and triages your inbox — powered by Claude API | ✅ Live | [Demo](https://usman-chief-of-staff-demo.streamlit.app) |
 | 02 | **Content Engine** | Multi-agent system that turns project notes into LinkedIn posts and articles | 🔨 Jun 2026 | Coming |
 | 03 | **Quant Finance Intelligence** | LLM reads earnings transcripts, generates investment signals via RAG | 📅 Jul 2026 | Coming |
 | 04 | **Local Model Lab** | Fully private RAG system — no data leaves the machine | 📅 Aug 2026 | Coming |
@@ -46,4 +46,4 @@
 | Python 3.9 | Core language |
 
 ## Connect
-[usmanc.com](https://usmanc.com) · [LinkedIn](https://linkedin.com/in/usmanchaudhary) · [Live App](https://usman-chief-of-staff.streamlit.app)
+[usmanc.com](https://usmanc.com) · [LinkedIn](https://linkedin.com/in/usmanchaudhary) · [Live App](https://usman-chief-of-staff-demo.streamlit.app)
