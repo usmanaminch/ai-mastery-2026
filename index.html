@@ -292,15 +292,19 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <div class="now-badge"><span class="pulse"></span>Month 2 of 7 — Content Engine — Starting June 2026</div>
   </div>
   <div class="proj-list fade">
-    <a href="https://usman-chief-of-staff-demo.streamlit.app" target="_blank" class="proj-row">
+    <div class="proj-row" style="cursor:pointer" onclick="window.open('https://usman-chief-of-staff-demo.streamlit.app','_blank')">
       <div class="pmon"><span class="pnum">01</span>MAY<br>2026</div>
       <div>
         <div class="pname">AI Chief of Staff</div>
         <div class="pdesc">Reads real Gmail inbox and Google Calendar, prioritizes the day, triages emails with specific actions — powered by Claude API. Connects via server-side OAuth. Built in Week 1 from zero. First agent in a planned fleet of 10.</div>
         <div class="pstack"><span class="stk">Claude API</span><span class="stk">Gmail API</span><span class="stk">Google Calendar</span><span class="stk">OAuth 2.0</span><span class="stk">Python</span><span class="stk">Streamlit</span></div>
+        <div style="display:flex;gap:12px;margin-top:10px;align-items:center">
+          <div class="live"><span class="live-dot"></span>LIVE</div>
+          <a href="https://usman-chief-of-staff-demo.streamlit.app" class="plink" target="_blank" onclick="event.stopPropagation()">Demo ↗</a>
+          <a href="https://github.com/usmanaminch/ai-mastery-2026" class="plink" target="_blank" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
       </div>
-      <div class="pstat"><div class="live"><span class="live-dot"></span>LIVE</div><a href="https://usman-chief-of-staff-demo.streamlit.app" class="plink" target="_blank">Demo ↗</a><a href="https://github.com/usmanaminch/ai-mastery-2026" class="plink" target="_blank">GitHub ↗</a></div>
-    </a>
+    </div>
     <div class="proj-row dim">
       <div class="pmon"><span class="pnum">02</span>JUN<br>2026</div>
       <div><div class="pname">AI Content Engine</div><div class="pdesc">Agent that turns project notes and learnings into LinkedIn posts, blog articles, and newsletters. Eliminates the content creation bottleneck.</div><div class="pstack"><span class="stk">LangChain</span><span class="stk">Claude API</span><span class="stk">Gemini</span><span class="stk">Automation</span></div></div>
