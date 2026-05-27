@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 from scraper import process_url, process_pasted_text
+from sheets import get_unprocessed_links, get_all_links, mark_as_synthesized
 from intelligence_library import (
     add_record, load_library, get_library_stats,
     get_records_by_status, search_library, update_record_status, url_exists
@@ -93,7 +94,7 @@ with col3:
 with col4:
     st.metric("Published", stats["published"])
 
-tabs = st.tabs(["📰 Daily Brief", "➕ Add Content", "📚 Library", "✍️ Write", "🔍 Search"])
+tabs = st.tabs(["📰 Daily Brief", "📋 Reading List", "➕ Add Content", "📚 Library", "✍️ Write", "🔍 Search"])
 
 # ═══════════════════════════════════════════════════════
 # TAB 1 — DAILY BRIEF
@@ -293,10 +294,331 @@ with tabs[0]:
             r = tier3[0]
             st.info(f"💬 Quick post: **{r['title'][:40]}**")
 
+
+# ═══════════════════════════════════════════════════════
+# TAB 2 — READING LIST (Google Sheets Import)
+# ═══════════════════════════════════════════════════════
+with tabs[1]:
+    st.subheader("📋 Reading List — Google Sheets Import")
+    st.caption("Bulk synthesize your curated reading list. Column G tracks what the Content Engine has processed.")
+
+    # Session state for reading list
+    if "sheet_links" not in st.session_state:
+        st.session_state.sheet_links = []
+    if "sheet_processing" not in st.session_state:
+        st.session_state.sheet_processing = False
+    if "sheet_results" not in st.session_state:
+        st.session_state.sheet_results = []
+    if "last_synced" not in st.session_state:
+        st.session_state.last_synced = None
+    if "sync_stats" not in st.session_state:
+        st.session_state.sync_stats = {}
+
+    # Auto-sync status
+    from datetime import datetime as dt
+    now = dt.now()
+
+    # ── PERSISTENT ACTION REQUIRED ─────────────────────────
+    # Always show at top — pulled from session state regardless of batch
+    persistent_paste = [r for r in st.session_state.get("sheet_results", [])
+                       if r.get("status") == "needs_paste"]
+    if persistent_paste:
+        st.error(f"🔴 ACTION REQUIRED — {len(persistent_paste)} links need your input")
+        for item in persistent_paste:
+            url = item['url']
+            with st.expander(f"📋 Row {item['row']}: {url[:65]}"):
+                pasted = st.text_area("Paste article content",
+                                     key=f"persist_paste_{url}", height=150)
+                c1, c2 = st.columns(2)
+                with c1:
+                    p_title = st.text_input("Title (optional)", key=f"persist_title_{url}")
+                with c2:
+                    p_author = st.text_input("Author (optional)", key=f"persist_author_{url}")
+                if st.button("Process", key=f"persist_btn_{url}"):
+                    if pasted:
+                        title = p_title or url.split("/")[-2].replace("-"," ").title()
+                        author = p_author or "Unknown"
+                        source = url.split("/")[2].replace("www.","") if "//" in url else "Unknown"
+                        result = process_pasted_text(
+                            text=pasted, url=url,
+                            source_name=source, author=author,
+                            title=title, depth="quick"
+                        )
+                        if result["success"]:
+                            sp = result.get("suggested_piece", {})
+                            record = add_record(
+                                source_url=url,
+                                source_name=source, author=author,
+                                title=result.get("title") or title,
+                                synthesis=json.dumps({
+                                    "tldr": result.get("tldr",""),
+                                    "key_points": result.get("key_points",[]),
+                                    "why_timely": result.get("why_timely","")
+                                }),
+                                key_quotes=result.get("key_quotes",[]),
+                                content_angle=json.dumps(sp),
+                                tier=sp.get("recommended_tier",3),
+                                themes=result.get("themes",[]),
+                                raw_content=pasted[:2000]
+                            )
+                            mark_as_synthesized(item['row'])
+                            st.session_state.sheet_results = [
+                                r for r in st.session_state.sheet_results
+                                if r['url'] != url
+                            ]
+                            st.success(f"✅ Added as Record #{record['id']}!")
+                            st.rerun()
+        st.markdown("---")
+
+    # Show last synced status
+    if st.session_state.last_synced:
+        elapsed = (now - st.session_state.last_synced).seconds // 60
+        if elapsed < 60:
+            sync_label = f"Last synced {elapsed} min ago"
+        else:
+            sync_label = f"Last synced {elapsed // 60}h ago"
+        new_count = st.session_state.sync_stats.get("new_found", 0)
+        if new_count > 0:
+            st.info(f"🔄 {sync_label} — {new_count} new links found")
+        else:
+            st.success(f"✅ {sync_label} — library up to date")
+
+    # Overview
+    col1, col2, col3 = st.columns(3)
+
+    if st.button("🔄 Refresh from Google Sheets", type="primary", use_container_width=False):
+        with st.spinner("Reading your Google Sheet..."):
+            all_links = get_all_links()
+            unprocessed = get_unprocessed_links()
+            st.session_state.sheet_links = unprocessed
+            st.session_state.last_synced = now
+            st.session_state.sync_stats = {"new_found": len(unprocessed)}
+            synthesized_count = len([l for l in all_links if l['synthesized']])
+            viewed_count = len([l for l in all_links if l['usman_viewed']])
+
+            with col1:
+                st.metric("Total in Sheet", len(all_links))
+            with col2:
+                st.metric("You've Viewed", viewed_count)
+            with col3:
+                st.metric("Ready to Synthesize", len(unprocessed))
+
+    if st.session_state.sheet_links:
+        st.markdown(f"### {len(st.session_state.sheet_links)} links ready to synthesize")
+
+        # Filter options
+        col_a, col_b = st.columns(2)
+        with col_a:
+            show_viewed_only = st.checkbox("Show only links you've viewed (col F = Yes)")
+        with col_b:
+            batch_size = st.slider("Batch size (process at a time)", 5, 30, 10)
+
+        links_to_show = st.session_state.sheet_links
+        if show_viewed_only:
+            links_to_show = [l for l in links_to_show if l.get('usman_viewed') in ['yes', 'y']]
+
+        st.caption(f"Showing {len(links_to_show)} links")
+
+        # Preview list
+        with st.expander(f"Preview links ({len(links_to_show[:batch_size])} will be processed)"):
+            for item in links_to_show[:batch_size]:
+                viewed = "👁" if item.get('usman_viewed') in ['yes','y'] else "○"
+                st.caption(f"{viewed} Row {item['row']}: {item['url'][:80]}")
+
+        st.markdown("---")
+
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            process_btn = st.button(
+                f"🚀 Synthesize next {min(batch_size, len(links_to_show))} links",
+                type="primary",
+                use_container_width=True
+            )
+        with col_btn2:
+            st.caption("⚠️ Instagram, TikTok, and LinkedIn links will need manual paste")
+
+        if process_btn:
+            batch = links_to_show[:batch_size]
+            st.session_state.sheet_results = []
+            needs_paste = []
+
+            progress = st.progress(0)
+            status_box = st.empty()
+
+            for i, item in enumerate(batch):
+                url = item['url']
+                status_box.info(f"Processing {i+1}/{len(batch)}: {url[:60]}...")
+
+                # Skip platforms that can't be scraped
+                skip_domains = ['instagram.com', 'tiktok.com', 'twitter.com', 'x.com', 'facebook.com']
+                if any(domain in url for domain in skip_domains):
+                    st.session_state.sheet_results.append({
+                        "url": url, "row": item['row'],
+                        "status": "skip", "reason": "Platform cannot be auto-scraped"
+                    })
+                    progress.progress((i + 1) / len(batch))
+                    continue
+
+                # Skip if already in library
+                if url_exists(url):
+                    mark_as_synthesized(item['row'])
+                    st.session_state.sheet_results.append({
+                        "url": url, "row": item['row'],
+                        "status": "exists", "title": "Already in library"
+                    })
+                    progress.progress((i + 1) / len(batch))
+                    continue
+
+                result = process_url(url, depth="quick")
+
+                if result["success"]:
+                    sp = result.get("suggested_piece", {})
+                    record = add_record(
+                        source_url=url,
+                        source_name=result.get("source_name", "Unknown"),
+                        author=result.get("author", "Unknown"),
+                        title=result.get("title", "Untitled"),
+                        synthesis=json.dumps({
+                            "tldr": result.get("tldr", ""),
+                            "key_points": result.get("key_points", []),
+                            "why_timely": result.get("why_timely", "")
+                        }),
+                        key_quotes=result.get("key_quotes", []),
+                        content_angle=json.dumps(sp),
+                        tier=sp.get("recommended_tier", result.get("tier", 3)),
+                        themes=result.get("themes", []),
+                        raw_content=result.get("raw_content", "")
+                    )
+                    # Mark as Done in column G
+                    mark_as_synthesized(item['row'])
+                    st.session_state.sheet_results.append({
+                        "url": url, "row": item['row'],
+                        "status": "success",
+                        "title": result.get("title", ""),
+                        "tier": sp.get("recommended_tier", result.get("tier", 3)),
+                        "tldr": result.get("tldr", ""),
+                        "record_id": record["id"]
+                    })
+                else:
+                    st.session_state.sheet_results.append({
+                        "url": url, "row": item['row'],
+                        "status": "needs_paste",
+                        "error": result.get("error", "")
+                    })
+                    needs_paste.append(item)
+
+                progress.progress((i + 1) / len(batch))
+
+            status_box.empty()
+
+            # Remove processed from session list
+            processed_urls = {r['url'] for r in st.session_state.sheet_results
+                            if r['status'] in ['success', 'exists', 'skip']}
+            st.session_state.sheet_links = [
+                l for l in st.session_state.sheet_links
+                if l['url'] not in processed_urls
+            ]
+
+            success_count = len([r for r in st.session_state.sheet_results if r['status'] == 'success'])
+            needs_paste_count = len([r for r in st.session_state.sheet_results if r['status'] == 'needs_paste'])
+            # Refresh count from sheet
+            st.session_state.sheet_links = get_unprocessed_links()
+            st.session_state.last_synced = now
+            st.success(f"Done! {success_count} synthesized, {needs_paste_count} need manual paste.")
+            st.rerun()
+
+        # ── RESULTS — ACTION REQUIRED AT TOP ─────────────────
+        if st.session_state.sheet_results:
+            needs_paste = [r for r in st.session_state.sheet_results if r['status'] == 'needs_paste']
+            skipped = [r for r in st.session_state.sheet_results if r['status'] == 'skip']
+            succeeded = [r for r in st.session_state.sheet_results if r['status'] == 'success']
+            existed = [r for r in st.session_state.sheet_results if r['status'] == 'exists']
+
+            # 🔴 ACTION REQUIRED — top, impossible to miss
+            if needs_paste:
+                st.markdown("---")
+                st.error(f"🔴 ACTION REQUIRED — {len(needs_paste)} links need your input")
+                for item in needs_paste:
+                    url = item['url']
+                    with st.expander(f"📋 Row {item['row']}: {url[:65]}"):
+                        pasted = st.text_area("Paste article content", key=f"rl_paste_{url}", height=150)
+                        c1, c2 = st.columns(2)
+                        with c1:
+                            p_title = st.text_input("Title (optional)", key=f"rl_title_{url}")
+                        with c2:
+                            p_author = st.text_input("Author (optional)", key=f"rl_author_{url}")
+                        if st.button("Process", key=f"rl_btn_{url}"):
+                            if pasted:
+                                title = p_title or url.split("/")[-2].replace("-"," ").title()
+                                author = p_author or "Unknown"
+                                source = url.split("/")[2].replace("www.","") if "//" in url else "Unknown"
+                                result = process_pasted_text(
+                                    text=pasted, url=url,
+                                    source_name=source, author=author,
+                                    title=title, depth="quick"
+                                )
+                                if result["success"]:
+                                    sp = result.get("suggested_piece", {})
+                                    record = add_record(
+                                        source_url=url,
+                                        source_name=source, author=author,
+                                        title=result.get("title") or title,
+                                        synthesis=json.dumps({
+                                            "tldr": result.get("tldr",""),
+                                            "key_points": result.get("key_points",[]),
+                                            "why_timely": result.get("why_timely","")
+                                        }),
+                                        key_quotes=result.get("key_quotes",[]),
+                                        content_angle=json.dumps(sp),
+                                        tier=sp.get("recommended_tier",3),
+                                        themes=result.get("themes",[]),
+                                        raw_content=pasted[:2000]
+                                    )
+                                    mark_as_synthesized(item['row'])
+                                    # Remove from needs_paste list
+                                    st.session_state.sheet_results = [
+                                        r for r in st.session_state.sheet_results
+                                        if r['url'] != url
+                                    ]
+                                    st.success(f"✅ Added as Record #{record['id']}!")
+                                    st.rerun()
+
+            # ⏭️ SKIPPED — platforms that can't be auto-scraped
+            if skipped:
+                st.markdown("---")
+                st.warning(f"⏭️ SKIPPED — {len(skipped)} links from platforms that can't be auto-scraped")
+                st.caption("Instagram, TikTok, Twitter — open these manually and paste content above")
+                for item in skipped:
+                    st.caption(f"  Row {item['row']}: {item['url'][:70]}")
+
+            # ✅ SYNTHESIZED — successful results
+            if succeeded:
+                st.markdown("---")
+                st.markdown(f"### ✅ Synthesized ({len(succeeded)})")
+                for item in succeeded:
+                    tier = item.get('tier', 3)
+                    emoji = "🟡" if tier == 1 else ("🟣" if tier == 2 else "🔵")
+                    with st.expander(f"{emoji} {item.get('title','')[:60]} | #{item.get('record_id')}"):
+                        st.markdown(f"**TLDR:** {item.get('tldr','')}")
+                        col_x, col_y = st.columns(2)
+                        with col_x:
+                            st.caption(f"Tier {tier} | Row {item['row']}")
+                        with col_y:
+                            if st.button("✍️ Write", key=f"sheet_write_{item.get('record_id')}"):
+                                library = load_library()
+                                rec = next((r for r in library["records"] if r["id"] == item["record_id"]), None)
+                                if rec:
+                                    st.session_state.active_record = rec
+                                    st.rerun()
+
+            # Already existed
+            if existed:
+                st.caption(f"⏭️ {len(existed)} already in library — marked Done in Sheet")
+
 # ═══════════════════════════════════════════════════════
 # TAB 2 — ADD CONTENT
 # ═══════════════════════════════════════════════════════
-with tabs[1]:
+with tabs[2]:
     st.subheader("Add Content to Library")
 
     input_method = st.radio(
@@ -438,7 +760,7 @@ with tabs[1]:
 # ═══════════════════════════════════════════════════════
 # TAB 3 — LIBRARY
 # ═══════════════════════════════════════════════════════
-with tabs[2]:
+with tabs[3]:
     st.subheader("Intelligence Library")
 
     c1, c2, c3 = st.columns(3)
@@ -499,7 +821,7 @@ with tabs[2]:
 # ═══════════════════════════════════════════════════════
 # TAB 4 — WRITE
 # ═══════════════════════════════════════════════════════
-with tabs[3]:
+with tabs[4]:
     st.subheader("Write Content")
 
     library = load_library()
@@ -727,7 +1049,7 @@ Follow the voice and format exactly for the tier requested."""
 # ═══════════════════════════════════════════════════════
 # TAB 5 — SEARCH & BROWSE
 # ═══════════════════════════════════════════════════════
-with tabs[4]:
+with tabs[5]:
     st.subheader("Search & Browse by Theme")
 
     # ── Search bar ─────────────────────────────────────
