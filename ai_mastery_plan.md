@@ -405,3 +405,54 @@ Always shows status for every URL processed:
 - Article drafting: claude-sonnet-4-5
 - Research chat: claude-sonnet-4-5
 - Daily brief generation: claude-haiku-4-5
+
+
+---
+
+## LEARNING ARCHITECTURE — Updated May 25, 2026
+
+### Three Layers
+1. BUILD — ship working projects, GitHub portfolio, live apps
+2. UNDERSTAND — explain every concept, connect threads across projects
+3. TEACH — pitch university course by Month 5-6
+
+### The Teaching Goal
+Target: Guest lecture / course pitch at DMV universities by Month 6
+Working title: AI Agents in Practice: A Practitioners Journey
+Each month = one lecture module
+Differentiator: Enterprise CISO credibility + hands-on building + documented journey
+
+### Connecting Thread — How Each Month Builds on the Last
+Month 1: Agent Foundations — APIs, OAuth, prompt engineering, session state
+Month 2: Intelligence + Voice — model routing, prompt chaining, synthesis (builds on M1 API calls)
+Month 3: Memory + Knowledge — RAG, embeddings, vector search (builds on M2 intelligence library)
+Month 4: Local Models — quantization, Ollama, private AI, LLM from scratch (builds on M3 understanding)
+Month 5: Teaching Models — fine-tuning, LoRA, evals (builds on M4 model understanding)
+Month 6: Physical AI — robotics, physical security (builds on M1-M2 agent architecture)
+Month 7: Contributing Back — open source, research, evals at scale
+
+### Biweekly Consolidation Sessions
+Every 2 weeks — one full session dedicated to:
+1. Demo what we built end to end
+2. Explain every concept without notes
+3. Connect to previous months
+4. Identify what is still fuzzy
+5. Update narrative thread document
+
+Next consolidation: June 8
+
+### Narrative Thread Document
+Running doc — 2-3 paragraphs per project in plain English
+Explains what was built and why it matters
+Becomes course pitch or Anthropic application narrative by Month 7
+
+### Session Structure Going Forward
+End of every session:
+- What to read/review before next session
+- 5 questions testing understanding not memory
+- One explain it to a non-technical person challenge
+
+### LinkedIn Strategy
+Not ready yet: single basic projects
+Ready at Month 3: body of work narrative
+Ready now: AI security articles using Content Engine (existing voice, zero credibility risk)
