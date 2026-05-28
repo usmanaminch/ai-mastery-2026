@@ -4,7 +4,11 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 from scraper import process_url, process_pasted_text
-from sheets import get_unprocessed_links, get_all_links, mark_as_synthesized
+from sheets import (
+    get_unprocessed_links, get_all_links,
+    mark_as_synthesized, mark_as_skipped, mark_as_pending_paste,
+    mark_as_duplicate, mark_as_dismissed,
+)
 from firebase_library import (
     add_record, load_library, get_library_stats,
     get_records_by_status, search_library, update_record_status, url_exists,
@@ -334,7 +338,27 @@ with tabs[1]:
                     p_title = st.text_input("Title (optional)", key=f"persist_title_{url}")
                 with c2:
                     p_author = st.text_input("Author (optional)", key=f"persist_author_{url}")
-                if st.button("Process", key=f"persist_btn_{url}"):
+
+                # Process | Skip buttons side-by-side
+                btn_proc, btn_skip = st.columns([3, 1])
+                with btn_proc:
+                    process_clicked = st.button("✍️ Process", key=f"persist_btn_{url}",
+                                                use_container_width=True, type="primary")
+                with btn_skip:
+                    skip_clicked = st.button("🚫 Skip", key=f"persist_skip_{url}",
+                                             use_container_width=True,
+                                             help="Remove from queue, mark Dismissed in sheet")
+
+                if skip_clicked:
+                    remove_pending_paste(url)
+                    mark_as_dismissed(item['row'])
+                    st.session_state.sheet_results = [
+                        r for r in st.session_state.sheet_results if r['url'] != url
+                    ]
+                    st.success(f"Dismissed row {item['row']}. Won't come back.")
+                    st.rerun()
+
+                if process_clicked:
                     if pasted:
                         title = p_title or url.split("/")[-2].replace("-"," ").title()
                         author = p_author or "Unknown"
@@ -369,6 +393,8 @@ with tabs[1]:
                             ]
                             st.success(f"✅ Added as Record #{record['id']}!")
                             st.rerun()
+                    else:
+                        st.warning("Paste content or click Skip to dismiss.")
         st.markdown("---")
 
     # Show last synced status
@@ -441,30 +467,31 @@ with tabs[1]:
         if process_btn:
             batch = links_to_show[:batch_size]
             st.session_state.sheet_results = []
-            needs_paste = []
 
             progress = st.progress(0)
             status_box = st.empty()
 
             for i, item in enumerate(batch):
                 url = item['url']
+                row = item['row']
                 status_box.info(f"Processing {i+1}/{len(batch)}: {url[:60]}...")
 
-                # Skip platforms that can't be scraped
+                # Skip platforms that can't be scraped → mark "Skipped" in sheet
                 skip_domains = ['instagram.com', 'tiktok.com', 'twitter.com', 'x.com', 'facebook.com']
                 if any(domain in url for domain in skip_domains):
+                    mark_as_skipped(row)
                     st.session_state.sheet_results.append({
-                        "url": url, "row": item['row'],
+                        "url": url, "row": row,
                         "status": "skip", "reason": "Platform cannot be auto-scraped"
                     })
                     progress.progress((i + 1) / len(batch))
                     continue
 
-                # Skip if already in library
+                # Already in library (exact or normalized URL match) → mark "Duplicate"
                 if url_exists(url):
-                    mark_as_synthesized(item['row'])
+                    mark_as_duplicate(row)
                     st.session_state.sheet_results.append({
-                        "url": url, "row": item['row'],
+                        "url": url, "row": row,
                         "status": "exists", "title": "Already in library"
                     })
                     progress.progress((i + 1) / len(batch))
@@ -490,10 +517,9 @@ with tabs[1]:
                         themes=result.get("themes", []),
                         raw_content=result.get("raw_content", "")
                     )
-                    # Mark as Done in column G
-                    mark_as_synthesized(item['row'])
+                    mark_as_synthesized(row)
                     st.session_state.sheet_results.append({
-                        "url": url, "row": item['row'],
+                        "url": url, "row": row,
                         "status": "success",
                         "title": result.get("title", ""),
                         "tier": sp.get("recommended_tier", result.get("tier", 3)),
@@ -501,32 +527,31 @@ with tabs[1]:
                         "record_id": record["id"]
                     })
                 else:
+                    # Scrape failed → queue for paste AND mark "Pending Paste" in sheet
+                    add_pending_paste(url, row)
+                    mark_as_pending_paste(row)
                     st.session_state.sheet_results.append({
-                        "url": url, "row": item['row'],
+                        "url": url, "row": row,
                         "status": "needs_paste",
                         "error": result.get("error", "")
                     })
-                    add_pending_paste(url, item['row'])
-                    needs_paste.append(item)
 
                 progress.progress((i + 1) / len(batch))
 
             status_box.empty()
 
-            # Remove processed from session list
-            processed_urls = {r['url'] for r in st.session_state.sheet_results
-                            if r['status'] in ['success', 'exists', 'skip']}
-            st.session_state.sheet_links = [
-                l for l in st.session_state.sheet_links
-                if l['url'] not in processed_urls
-            ]
+            # All processed URLs now have terminal status → refresh the unprocessed list
+            st.session_state.sheet_links = get_unprocessed_links()
+            st.session_state.last_synced = now
 
             success_count = len([r for r in st.session_state.sheet_results if r['status'] == 'success'])
             needs_paste_count = len([r for r in st.session_state.sheet_results if r['status'] == 'needs_paste'])
-            # Refresh count from sheet
-            st.session_state.sheet_links = get_unprocessed_links()
-            st.session_state.last_synced = now
-            st.success(f"Done! {success_count} synthesized, {needs_paste_count} need manual paste.")
+            skipped_count = len([r for r in st.session_state.sheet_results if r['status'] == 'skip'])
+            dup_count = len([r for r in st.session_state.sheet_results if r['status'] == 'exists'])
+            st.success(
+                f"Done! {success_count} synthesized · {dup_count} duplicate · "
+                f"{skipped_count} skipped · {needs_paste_count} need manual paste"
+            )
             st.rerun()
 
         # ── BATCH RESULTS (action-required handled at top via persistent_paste) ──
@@ -538,8 +563,8 @@ with tabs[1]:
             # ⏭️ SKIPPED — platforms that can't be auto-scraped
             if skipped:
                 st.markdown("---")
-                st.warning(f"⏭️ SKIPPED — {len(skipped)} links from platforms that can't be auto-scraped")
-                st.caption("Instagram, TikTok, Twitter — open these manually and paste content above")
+                st.warning(f"⏭️ SKIPPED — {len(skipped)} links from platforms that can't be auto-scraped (marked Skipped in sheet)")
+                st.caption("Instagram, TikTok, Twitter — open these manually and paste content via ➕ Add Content tab if you want them in the library")
                 for item in skipped:
                     st.caption(f"  Row {item['row']}: {item['url'][:70]}")
 
@@ -563,9 +588,10 @@ with tabs[1]:
                                     st.session_state.active_record = rec
                                     st.rerun()
 
-            # Already existed
+            # Duplicates — caught by url_exists or normalized_url match
             if existed:
-                st.caption(f"⏭️ {len(existed)} already in library — marked Done in Sheet")
+                st.markdown("---")
+                st.caption(f"♻️ {len(existed)} duplicate{'s' if len(existed) != 1 else ''} — marked Duplicate in sheet (already in library)")
 
 # ═══════════════════════════════════════════════════════
 # TAB 2 — ADD CONTENT

@@ -15,11 +15,54 @@ import json
 import os
 from datetime import datetime
 from typing import Optional
+from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
 COLLECTION = "intelligence_records"
+
+# Query params that are tracking junk and don't change the underlying article
+TRACKING_PARAMS = {
+    'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id',
+    'fbclid', 'gclid', 'msclkid', 'dclid', 'igshid', 'si',
+    'mc_eid', 'mc_cid',
+    'linkid', 'rcm', 'ad_id', 'adset_id', 'campaign_id', 'placement',
+    'site_source_name', 'aem',
+    'e',                    # Google Cloud blog tracking
+    'usp',                  # Google sharing tracking
+    '_hsenc', '_hsmi',      # HubSpot
+    'mkt_tok',              # Marketo
+}
+
+
+def normalize_url(url: str) -> str:
+    """
+    Canonical form of a URL for deduplication.
+    Strips tracking params, trailing slashes, fragments; lowercases scheme/host.
+
+    Example:
+      https://cloud.google.com/blog/foo/?utm_source=x&utm_campaign=y#section
+      → https://cloud.google.com/blog/foo
+    """
+    try:
+        parsed = urlparse(url.strip())
+        params = [
+            (k, v) for k, v in parse_qsl(parsed.query, keep_blank_values=False)
+            if k.lower() not in TRACKING_PARAMS
+        ]
+        cleaned_query = urlencode(params)
+        return urlunparse((
+            parsed.scheme.lower(),
+            parsed.netloc.lower(),
+            parsed.path.rstrip('/'),
+            '',                  # params (rare; drop)
+            cleaned_query,
+            '',                  # fragment
+        ))
+    except Exception:
+        return url
+
 
 def _get_db():
     """
@@ -62,9 +105,17 @@ def add_record(
     db = _get_db()
     col = db.collection(COLLECTION)
 
-    # Duplicate check
+    normalized = normalize_url(source_url)
+
+    # Duplicate check — match against exact OR normalized URL
     if not allow_duplicate:
+        # Exact match
         existing = col.where("source_url", "==", source_url).limit(1).get()
+        if list(existing):
+            doc = list(existing)[0]
+            return {"id": doc.id, **doc.to_dict()}
+        # Normalized match (catches URLs that differ only by tracking params)
+        existing = col.where("normalized_url", "==", normalized).limit(1).get()
         if list(existing):
             doc = list(existing)[0]
             return {"id": doc.id, **doc.to_dict()}
@@ -77,6 +128,7 @@ def add_record(
         "id": record_id,
         "date_found": datetime.now().isoformat(),
         "source_url": source_url,
+        "normalized_url": normalized,    # NEW — enables smarter dedup
         "source_name": source_name,
         "author": author,
         "title": title,
@@ -98,12 +150,50 @@ def add_record(
 
 
 def url_exists(url: str) -> bool:
-    """Check if a URL already exists in Firestore"""
+    """
+    Check if a URL (or its normalized form) already exists in Firestore.
+    Catches duplicates that differ only by tracking params or trailing slashes.
+    """
     db = _get_db()
+
+    # Exact match
     existing = db.collection(COLLECTION).where(
         "source_url", "==", url
     ).limit(1).get()
-    return len(list(existing)) > 0
+    if list(existing):
+        return True
+
+    # Normalized match (only catches records with normalized_url stored)
+    normalized = normalize_url(url)
+    if normalized != url:
+        existing = db.collection(COLLECTION).where(
+            "normalized_url", "==", normalized
+        ).limit(1).get()
+        if list(existing):
+            return True
+
+    return False
+
+
+def backfill_normalized_urls() -> int:
+    """
+    One-time migration: add normalized_url field to existing records that lack it.
+    Run via: python firebase_library.py
+    Returns number of records updated.
+    """
+    db = _get_db()
+    docs = db.collection(COLLECTION).get()
+    updated = 0
+    for doc in docs:
+        data = doc.to_dict()
+        if "normalized_url" not in data and data.get("source_url"):
+            normalized = normalize_url(data["source_url"])
+            db.collection(COLLECTION).document(doc.id).update({
+                "normalized_url": normalized
+            })
+            updated += 1
+            print(f"  Backfilled #{doc.id}: {normalized[:70]}")
+    return updated
 
 
 def load_library() -> dict:
@@ -259,7 +349,11 @@ if __name__ == "__main__":
     stats = get_library_stats()
     print(f"Library stats: {stats}")
 
-    print("\nRunning migration from JSON...")
+    print("\nBackfilling normalized_url on existing records...")
+    n = backfill_normalized_urls()
+    print(f"Backfilled {n} records")
+
+    print("\nRunning migration from JSON (if file exists)...")
     migrated = migrate_from_json()
     print(f"Migration complete: {migrated} records moved")
 
