@@ -16,6 +16,40 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
 }
 
+# ── Reusable prompt blocks ───────────────────────────────────────────
+TIER_CRITERIA = """
+TIER CLASSIFICATION — evaluate THIS ARTICLE rigorously before answering:
+
+Tier 1 (RARE — ~20% of items):
+  Full article (800-1200 words) for usmanc.com.
+  Requires: strong original POV opportunity, data-rich, evergreen,
+  room for a coined framework, deep enough for sustained reading.
+  Reserve for major industry shifts, deep technical breakdowns, or
+  topics where Usman can write the definitive piece — NOT just a recap.
+
+Tier 2 (~40% of items):
+  Substantive LinkedIn post (300-500 words).
+  Single strong insight, news plus commentary with CISO angle,
+  framework explanation. One focused point, not multi-section.
+
+Tier 3 (~40% of items — most podcast episodes, news items, quick reads):
+  Quick LinkedIn reaction (150-300 words).
+  Timely news, top 3 takeaways, link to source.
+
+DEFAULT bias: Tier 2 or 3. If the article is news, a podcast episode,
+a LinkedIn post, or a single-point blog — it is almost certainly NOT Tier 1.
+Only mark Tier 1 when you can articulate WHY this specific piece deserves
+a long-form treatment that other commentators have not given.
+"""
+
+ALLOWED_THEMES = """
+THEMES — use ONLY values from this list, never invent new ones:
+agentic SOC, AI security, AI governance, post-quantum, cloud security,
+zero trust, SecOps, threat intelligence, AI risk, enterprise AI,
+vibe coding, data strategy
+"""
+
+
 def fetch_article(url: str) -> dict:
     """Fetch and extract article content from a URL"""
     try:
@@ -143,10 +177,6 @@ def synthesize_article(article: dict, depth: str = "quick") -> dict:
 
     depth = "quick"  -> Haiku, TLDR + bullets for daily scanning
     depth = "deep"   -> Sonnet, full breakdown for writing
-
-    Model routing:
-    - Quick: Haiku — fast and cheap, good enough for scanning
-    - Deep: Sonnet — quality matters when this feeds your writing
     """
     if not article["content"]:
         return {"success": False, "error": "No content to synthesize"}
@@ -166,39 +196,43 @@ URL: {article['url']}
 CONTENT:
 {article['content'][:6000]}
 
-Respond ONLY with valid JSON, no markdown:
+{TIER_CRITERIA}
+
+{ALLOWED_THEMES}
+
+Now evaluate this specific article against the tier criteria above, then respond
+ONLY with valid JSON in the structure below. Replace every <placeholder> with
+real content based on YOUR evaluation — do not copy placeholders literally.
 
 {{
-  "title": "clean article title",
-  "author": "author name or Unknown",
-  "tldr": "ONE sentence — the single most important point from this article",
+  "title": "<clean article title>",
+  "author": "<author name or Unknown>",
+  "tldr": "<ONE sentence — the single most important point>",
   "key_points": [
-    "Point 1 — specific claim, stat, or argument from the article",
-    "Point 2 — specific claim, stat, or argument from the article",
-    "Point 3 — specific claim, stat, or argument from the article",
-    "Point 4 — specific claim, stat, or argument from the article"
+    "<Point 1 — specific claim, stat, or argument from the article>",
+    "<Point 2 — specific claim, stat, or argument from the article>",
+    "<Point 3 — specific claim, stat, or argument from the article>",
+    "<Point 4 — specific claim, stat, or argument from the article>"
   ],
-  "why_timely": "One sentence on why this matters right now for CISOs",
-  "key_quotes": ["most notable quote if any"],
+  "why_timely": "<One sentence on why this matters right now for CISOs>",
+  "key_quotes": ["<most notable quote if any>"],
   "suggested_piece": {{
-    "what_to_write": "Specific article or post concept — not vague",
-    "why_now": "What makes this urgent or timely today",
-    "audience": "Who specifically — e.g. Fortune 500 CISOs, security boards, SOC leaders",
-    "value_to_audience": "What they get from reading it — specific benefit",
-    "usman_angle": "What Usman adds from his Google Cloud CISO experience that others cannot",
-    "coined_term": "A memorable term Usman could coin for the core concept",
-    "recommended_tier": 1
+    "what_to_write": "<specific article or post concept — not vague>",
+    "why_now": "<what makes this urgent or timely today>",
+    "audience": "<who specifically — e.g. Fortune 500 CISOs, security boards, SOC leaders>",
+    "value_to_audience": "<what they get from reading — specific benefit>",
+    "usman_angle": "<what Usman adds from his Google Cloud CISO experience>",
+    "coined_term": "<a memorable term Usman could coin for the core concept>",
+    "recommended_tier": <ACTIVELY EVALUATE — integer 1, 2, or 3 per criteria above. Most items are 2 or 3.>
   }},
-  "tier": 1,
-  "themes": ["theme1", "theme2"]
+  "tier": <SAME integer as recommended_tier above>,
+  "themes": ["<select 1-3 from ALLOWED_THEMES list>", "<select from list only>"]
 }}
 
-Tier 1 = worth a full article on usmanc.com (strong original POV, data-rich, evergreen)
-Tier 2 = substantive LinkedIn post 300-500 words (good POV but not full article)
-Tier 3 = quick LinkedIn reaction 150-300 words (timely, top 3 takeaways, link to source)
-
-Themes: agentic SOC, AI security, AI governance, post-quantum, cloud security,
-zero trust, SecOps, threat intelligence, AI risk, enterprise AI, vibe coding, data strategy"""
+CRITICAL OUTPUT RULES:
+- recommended_tier and tier MUST be integers 1, 2, or 3 — actively evaluated, not defaulted to 1
+- themes MUST only contain strings from the ALLOWED_THEMES list — do not invent new themes
+- Output valid JSON only, no markdown fences, no commentary"""
 
     else:  # deep — Sonnet for quality
         prompt = f"""You are doing a deep synthesis of an article for a Field CISO writing a detailed piece.
@@ -214,50 +248,54 @@ URL: {article['url']}
 CONTENT:
 {article['content'][:8000]}
 
-Respond ONLY with valid JSON, no markdown:
+{TIER_CRITERIA}
+
+{ALLOWED_THEMES}
+
+Now evaluate this specific article against the tier criteria above, then respond
+ONLY with valid JSON in the structure below. Replace every <placeholder> with
+real content based on YOUR evaluation — do not copy placeholders literally.
 
 {{
-  "title": "clean article title",
-  "author": "author name or Unknown",
-  "tldr": "ONE sentence — the single most important point",
-  "core_argument": "2-3 sentences: the central thesis",
+  "title": "<clean article title>",
+  "author": "<author name or Unknown>",
+  "tldr": "<ONE sentence — the single most important point>",
+  "core_argument": "<2-3 sentences: the central thesis>",
   "key_points": [
-    "Point 1 with specific detail, stat, or claim and its source",
-    "Point 2 with specific detail, stat, or claim and its source",
-    "Point 3 with specific detail, stat, or claim and its source",
-    "Point 4 with specific detail, stat, or claim and its source",
-    "Point 5 with specific detail, stat, or claim and its source"
+    "<Point 1 with specific detail, stat, or claim and its source>",
+    "<Point 2 with specific detail, stat, or claim and its source>",
+    "<Point 3 with specific detail, stat, or claim and its source>",
+    "<Point 4 with specific detail, stat, or claim and its source>",
+    "<Point 5 with specific detail, stat, or claim and its source>"
   ],
-  "key_stats": ["stat with attribution", "stat with attribution"],
-  "key_quotes": ["exact notable quote 1", "exact notable quote 2"],
-  "frameworks_mentioned": ["framework or model name"],
-  "counterarguments": "limitations or opposing views mentioned",
-  "why_timely": "2 sentences on urgency for CISOs",
+  "key_stats": ["<stat with attribution>", "<stat with attribution>"],
+  "key_quotes": ["<exact notable quote 1>", "<exact notable quote 2>"],
+  "frameworks_mentioned": ["<framework or model name>"],
+  "counterarguments": "<limitations or opposing views mentioned>",
+  "why_timely": "<2 sentences on urgency for CISOs>",
   "suggested_piece": {{
-    "what_to_write": "Specific article concept with working title",
-    "why_now": "What makes this urgent or timely today",
-    "audience": "Who specifically — e.g. Fortune 500 CISOs, security boards, SOC leaders",
-    "value_to_audience": "What they get from reading — specific benefit",
-    "usman_angle": "What Usman adds from Google Cloud CISO experience that others cannot",
-    "coined_term": "A memorable term Usman could coin for the core concept",
-    "recommended_tier": 1
+    "what_to_write": "<specific article concept with working title>",
+    "why_now": "<what makes this urgent or timely today>",
+    "audience": "<who specifically — e.g. Fortune 500 CISOs, security boards, SOC leaders>",
+    "value_to_audience": "<what they get from reading — specific benefit>",
+    "usman_angle": "<what Usman adds from Google Cloud CISO experience>",
+    "coined_term": "<a memorable term Usman could coin for the core concept>",
+    "recommended_tier": <ACTIVELY EVALUATE — integer 1, 2, or 3 per criteria above. Most items are 2 or 3.>
   }},
   "draft_outline": {{
-    "headline": "suggested article headline using the coined term",
-    "hook": "suggested opening line that creates urgency",
-    "sections": ["section 1 title", "section 2 title", "section 3 title"],
-    "call_to_action": "suggested closing CTA"
+    "headline": "<suggested article headline using the coined term>",
+    "hook": "<suggested opening line that creates urgency>",
+    "sections": ["<section 1 title>", "<section 2 title>", "<section 3 title>"],
+    "call_to_action": "<suggested closing CTA>"
   }},
-  "tier": 1,
-  "themes": ["theme1", "theme2"]
+  "tier": <SAME integer as recommended_tier above>,
+  "themes": ["<select 1-3 from ALLOWED_THEMES list>", "<select from list only>"]
 }}
 
-Tier 1 = full article on usmanc.com
-Tier 2 = substantive LinkedIn post 300-500 words
-Tier 3 = quick LinkedIn reaction 150-300 words, top 3 takeaways, link to source
-
-Themes: agentic SOC, AI security, AI governance, post-quantum, cloud security,
-zero trust, SecOps, threat intelligence, AI risk, enterprise AI, vibe coding, data strategy"""
+CRITICAL OUTPUT RULES:
+- recommended_tier and tier MUST be integers 1, 2, or 3 — actively evaluated, not defaulted to 1
+- themes MUST only contain strings from the ALLOWED_THEMES list — do not invent new themes
+- Output valid JSON only, no markdown fences, no commentary"""
 
     response = client.messages.create(
         model=model,
@@ -348,6 +386,7 @@ def process_pasted_text(
 
 
 if __name__ == "__main__":
+    # Test on a known item — should NOT default to tier 1
     test_url = 'https://cloud.google.com/blog/topics/threat-intelligence/defending-enterprise-ai-vulnerabilities'
 
     print("=== QUICK SYNTHESIS (Haiku) ===")
@@ -363,6 +402,8 @@ if __name__ == "__main__":
         print(f"  Audience: {sp.get('audience')}")
         print(f"  Usman's angle: {sp.get('usman_angle')}")
         print(f"  Coined term: {sp.get('coined_term')}")
-        print(f"  Tier: {sp.get('recommended_tier')}")
+        print(f"  Recommended tier: {sp.get('recommended_tier')}")
+        print(f"  Top-level tier: {result.get('tier')}")
+        print(f"  Themes: {result.get('themes')}")
     else:
         print(f"Failed: {result['error']}")
