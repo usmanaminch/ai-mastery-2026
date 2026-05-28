@@ -1,3 +1,4 @@
 CLAUDE.md
 content-engine/.env
 content-engine/intelligence_library.json
+content-engine/firebase-key.json
