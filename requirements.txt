@@ -4,3 +4,7 @@ google-auth-httplib2
 google-api-python-client
 streamlit
 python-dotenv
+firebase-admin
+beautifulsoup4
+requests
+youtube-transcript-api
