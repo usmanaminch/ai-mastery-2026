@@ -1,5 +1,8 @@
 import pickle
+import json
+import os
 from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 import warnings
 warnings.filterwarnings('ignore')
@@ -9,25 +12,45 @@ SHEET_NAME = "Sheet1"
 TOKEN_PATH = "../chief-of-staff/token.pickle"
 
 def get_creds():
-    """Load and refresh Google credentials"""
-    with open(TOKEN_PATH, 'rb') as f:
-        creds = pickle.load(f)
-    if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-    return creds
+    """
+    Load credentials — works both locally and on Streamlit Cloud.
+    Local: reads token.pickle
+    Cloud: reads GOOGLE_TOKEN from Streamlit secrets
+    """
+    try:
+        # Try Streamlit secrets first (cloud deployment)
+        import streamlit as st
+        token_data = json.loads(st.secrets["GOOGLE_TOKEN"])
+        creds = Credentials(
+            token=token_data.get('token'),
+            refresh_token=token_data.get('refresh_token'),
+            token_uri=token_data.get('token_uri'),
+            client_id=token_data.get('client_id'),
+            client_secret=token_data.get('client_secret'),
+            scopes=token_data.get('scopes')
+        )
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        return creds
+    except Exception:
+        # Fall back to local token.pickle
+        with open(TOKEN_PATH, 'rb') as f:
+            creds = pickle.load(f)
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        return creds
 
 def get_unprocessed_links() -> list:
     """
-    Read the Google Sheet and return URLs where column G is blank.
+    Return URLs where column G (Content Engine Synthesis) is blank.
     Column A = URL
-    Column F = Usman Viewed (ignored for processing decisions)
-    Column G = Content Engine Synthesis — blank = not yet processed, Done = synthesized
+    Column F = Usman Viewed
+    Column G = Content Engine Synthesis (blank = not processed, Done = synthesized)
     """
     try:
         creds = get_creds()
         service = build('sheets', 'v4', credentials=creds)
 
-        # Read columns A through G
         result = service.spreadsheets().values().get(
             spreadsheetId=SPREADSHEET_ID,
             range=f"{SHEET_NAME}!A:G"
@@ -39,22 +62,14 @@ def get_unprocessed_links() -> list:
         for i, row in enumerate(rows):
             if not row:
                 continue
-
-            # Column A = URL
             url = row[0].strip() if len(row) > 0 else ""
-
-            # Skip if not a valid URL
             if not url.startswith('http'):
                 continue
-
-            # Column G = Content Engine Synthesis status (index 6)
             synthesis_status = row[6].strip().lower() if len(row) > 6 else ""
-
-            # Only process if column G is blank
             if synthesis_status not in ['done', 'yes']:
                 unprocessed.append({
                     "url": url,
-                    "row": i + 1,  # 1-indexed for Sheets API
+                    "row": i + 1,
                     "usman_viewed": row[5].strip().lower() if len(row) > 5 else "",
                     "synthesis_status": synthesis_status
                 })
@@ -66,7 +81,7 @@ def get_unprocessed_links() -> list:
         return []
 
 def get_all_links() -> list:
-    """Get all links with their status — for overview and consolidation"""
+    """Get all links with status for overview"""
     try:
         creds = get_creds()
         service = build('sheets', 'v4', credentials=creds)
@@ -85,10 +100,8 @@ def get_all_links() -> list:
             url = row[0].strip() if len(row) > 0 else ""
             if not url.startswith('http'):
                 continue
-
             synthesis_status = row[6].strip().lower() if len(row) > 6 else ""
             usman_viewed = row[5].strip().lower() if len(row) > 5 else ""
-
             all_links.append({
                 "url": url,
                 "row": i + 1,
@@ -103,41 +116,29 @@ def get_all_links() -> list:
         return []
 
 def mark_as_synthesized(row_number: int):
-    """
-    Mark a row as synthesized by writing 'Done' to column G.
-    Called automatically after successful synthesis.
-    """
+    """Write 'Done' to column G after successful synthesis"""
     try:
         creds = get_creds()
         service = build('sheets', 'v4', credentials=creds)
-
         service.spreadsheets().values().update(
             spreadsheetId=SPREADSHEET_ID,
             range=f"{SHEET_NAME}!G{row_number}",
             valueInputOption="RAW",
             body={"values": [["Done"]]}
         ).execute()
-
-        print(f"Marked row {row_number} as Done in column G")
         return True
-
     except Exception as e:
         print(f"Error marking row: {e}")
         return False
 
 if __name__ == "__main__":
     print("=== Sheets Connection Test ===\n")
-
     all_links = get_all_links()
     synthesized = [l for l in all_links if l['synthesized']]
-    viewed = [l for l in all_links if l['usman_viewed']]
     unprocessed = get_unprocessed_links()
-
-    print(f"Total links in sheet: {len(all_links)}")
-    print(f"Usman viewed (col F): {len(viewed)}")
-    print(f"Content Engine synthesized (col G): {len(synthesized)}")
-    print(f"Ready to synthesize (col G blank): {len(unprocessed)}")
-    print(f"\nFirst 5 unprocessed:")
+    print(f"Total links: {len(all_links)}")
+    print(f"Synthesized (col G): {len(synthesized)}")
+    print(f"Ready to process: {len(unprocessed)}")
     for item in unprocessed[:5]:
-        viewed_label = "👁 viewed" if item['usman_viewed'] in ['yes','y'] else "unseen"
-        print(f"  Row {item['row']} [{viewed_label}]: {item['url'][:65]}")
+        viewed = "👁" if item['usman_viewed'] in ['yes','y'] else "○"
+        print(f"  {viewed} Row {item['row']}: {item['url'][:65]}")
