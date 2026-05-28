@@ -5,9 +5,10 @@ from datetime import datetime
 import json
 from scraper import process_url, process_pasted_text
 from sheets import get_unprocessed_links, get_all_links, mark_as_synthesized
-from intelligence_library import (
+from firebase_library import (
     add_record, load_library, get_library_stats,
-    get_records_by_status, search_library, update_record_status, url_exists
+    get_records_by_status, search_library, update_record_status, url_exists,
+    get_pending_paste, add_pending_paste, remove_pending_paste
 )
 
 load_dotenv()
@@ -149,7 +150,7 @@ with tabs[0]:
                             }),
                             key_quotes=result.get("key_quotes", []),
                             content_angle=json.dumps(sp),
-                            tier=sp.get("recommended_tier", result.get("tier", 3)),
+                            tier=sp.get("recommended_tier", result.get("tier", 3) if result else 3),
                             themes=result.get("themes", []),
                             raw_content=result.get("raw_content", "")
                         )
@@ -320,8 +321,7 @@ with tabs[1]:
 
     # ── PERSISTENT ACTION REQUIRED ─────────────────────────
     # Always show at top — pulled from session state regardless of batch
-    persistent_paste = [r for r in st.session_state.get("sheet_results", [])
-                       if r.get("status") == "needs_paste"]
+    persistent_paste = get_pending_paste()
     if persistent_paste:
         st.error(f"🔴 ACTION REQUIRED — {len(persistent_paste)} links need your input")
         for item in persistent_paste:
@@ -485,7 +485,7 @@ with tabs[1]:
                         }),
                         key_quotes=result.get("key_quotes", []),
                         content_angle=json.dumps(sp),
-                        tier=sp.get("recommended_tier", result.get("tier", 3)),
+                        tier=sp.get("recommended_tier", result.get("tier", 3) if result else 3),
                         themes=result.get("themes", []),
                         raw_content=result.get("raw_content", "")
                     )
@@ -505,6 +505,7 @@ with tabs[1]:
                         "status": "needs_paste",
                         "error": result.get("error", "")
                     })
+                    add_pending_paste(url, item['row'])
                     needs_paste.append(item)
 
                 progress.progress((i + 1) / len(batch))
@@ -576,10 +577,7 @@ with tabs[1]:
                                     )
                                     mark_as_synthesized(item['row'])
                                     # Remove from needs_paste list
-                                    st.session_state.sheet_results = [
-                                        r for r in st.session_state.sheet_results
-                                        if r['url'] != url
-                                    ]
+                                    remove_pending_paste(url)
                                     st.success(f"✅ Added as Record #{record['id']}!")
                                     st.rerun()
 
