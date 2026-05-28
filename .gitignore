@@ -2,3 +2,7 @@ CLAUDE.md
 content-engine/.env
 content-engine/intelligence_library.json
 content-engine/firebase-key.json
+content-engine/venv/
+chief-of-staff/venv/
+**/__pycache__/
+**/*.pyc
