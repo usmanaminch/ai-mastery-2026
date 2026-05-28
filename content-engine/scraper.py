@@ -18,28 +18,38 @@ HEADERS = {
 
 # ── Reusable prompt blocks ───────────────────────────────────────────
 TIER_CRITERIA = """
-TIER CLASSIFICATION — evaluate THIS ARTICLE rigorously before answering:
+TIER CLASSIFICATION — evaluate THIS ARTICLE carefully before answering:
 
-Tier 1 (RARE — ~20% of items):
-  Full article (800-1200 words) for usmanc.com.
-  Requires: strong original POV opportunity, data-rich, evergreen,
-  room for a coined framework, deep enough for sustained reading.
-  Reserve for major industry shifts, deep technical breakdowns, or
-  topics where Usman can write the definitive piece — NOT just a recap.
-
-Tier 2 (~40% of items):
-  Substantive LinkedIn post (300-500 words).
-  Single strong insight, news plus commentary with CISO angle,
-  framework explanation. One focused point, not multi-section.
-
-Tier 3 (~40% of items — most podcast episodes, news items, quick reads):
+Tier 3 (DEFAULT — most articles, ~60%):
   Quick LinkedIn reaction (150-300 words).
-  Timely news, top 3 takeaways, link to source.
+  The article is interesting and worth sharing, but a single source.
+  Best as: a few lines of commentary, top 3 takeaways, link to original.
+  Use for: news items, podcast episodes, single-point blog posts,
+  LinkedIn posts from others, quick reads, opinion pieces.
+  When in doubt, this is the right tier.
 
-DEFAULT bias: Tier 2 or 3. If the article is news, a podcast episode,
-a LinkedIn post, or a single-point blog — it is almost certainly NOT Tier 1.
-Only mark Tier 1 when you can articulate WHY this specific piece deserves
-a long-form treatment that other commentators have not given.
+Tier 2 (~35% of articles):
+  Standalone blog post (300-800 words).
+  The article has enough depth, original insight, or unique data to justify
+  its own dedicated write-up — the source alone can support a full post.
+  Usman can add a clear CISO perspective that changes the reader's view.
+  Use for: detailed technical breakdowns, articles with original research or
+  real stats, frameworks with genuine application to enterprise security.
+
+Tier 1 (RARE — ~5%, only for landmark single sources):
+  Full long-form article (800-1200 words) for usmanc.com.
+  A single article qualifies ONLY if it is a landmark primary source — a major
+  original report, industry study, or primary document with enough data,
+  frameworks, and depth to anchor a comprehensive piece entirely on its own.
+  Think: Verizon DBIR, Google Threat Horizons, a major government regulation.
+
+  IMPORTANT: Most Tier 1 content is NOT produced from individual articles.
+  It comes from cross-article synthesis — multiple T2/T3 articles on the same
+  theme synthesized together into one definitive piece. Do NOT force Tier 1
+  on a single article that would work better as part of a cluster.
+
+DEFAULT RULE: Classify T3 unless the article clearly has standalone substance
+for a full blog post (T2) or is a landmark primary source document (T1, rare).
 """
 
 ALLOWED_THEMES = """
@@ -177,6 +187,11 @@ def synthesize_article(article: dict, depth: str = "quick") -> dict:
 
     depth = "quick"  -> Haiku, TLDR + bullets for daily scanning
     depth = "deep"   -> Sonnet, full breakdown for writing
+
+    Tier model:
+    - T3 (default): single article → quick LinkedIn reaction
+    - T2: single article with depth → standalone blog post
+    - T1 (rare): landmark primary source only, OR a theme cluster synthesized separately
     """
     if not article["content"]:
         return {"success": False, "error": "No content to synthesize"}
@@ -200,7 +215,7 @@ CONTENT:
 
 {ALLOWED_THEMES}
 
-Now evaluate this specific article against the tier criteria above, then respond
+Evaluate this specific article against the tier criteria above, then respond
 ONLY with valid JSON in the structure below. Replace every <placeholder> with
 real content based on YOUR evaluation — do not copy placeholders literally.
 
@@ -223,14 +238,14 @@ real content based on YOUR evaluation — do not copy placeholders literally.
     "value_to_audience": "<what they get from reading — specific benefit>",
     "usman_angle": "<what Usman adds from his Google Cloud CISO experience>",
     "coined_term": "<a memorable term Usman could coin for the core concept>",
-    "recommended_tier": <ACTIVELY EVALUATE — integer 1, 2, or 3 per criteria above. Most items are 2 or 3.>
+    "recommended_tier": <EVALUATE — integer 1, 2, or 3. Default to 3. Only upgrade to 2 if this single article supports a full standalone blog post. Only 1 if it is a landmark primary source document.>
   }},
   "tier": <SAME integer as recommended_tier above>,
-  "themes": ["<select 1-3 from ALLOWED_THEMES list>", "<select from list only>"]
+  "themes": ["<select 1-3 from ALLOWED_THEMES list only>"]
 }}
 
 CRITICAL OUTPUT RULES:
-- recommended_tier and tier MUST be integers 1, 2, or 3 — actively evaluated, not defaulted to 1
+- Default tier is 3. Justify any upgrade to 2 or 1 against the criteria.
 - themes MUST only contain strings from the ALLOWED_THEMES list — do not invent new themes
 - Output valid JSON only, no markdown fences, no commentary"""
 
@@ -252,7 +267,7 @@ CONTENT:
 
 {ALLOWED_THEMES}
 
-Now evaluate this specific article against the tier criteria above, then respond
+Evaluate this specific article against the tier criteria above, then respond
 ONLY with valid JSON in the structure below. Replace every <placeholder> with
 real content based on YOUR evaluation — do not copy placeholders literally.
 
@@ -280,7 +295,7 @@ real content based on YOUR evaluation — do not copy placeholders literally.
     "value_to_audience": "<what they get from reading — specific benefit>",
     "usman_angle": "<what Usman adds from Google Cloud CISO experience>",
     "coined_term": "<a memorable term Usman could coin for the core concept>",
-    "recommended_tier": <ACTIVELY EVALUATE — integer 1, 2, or 3 per criteria above. Most items are 2 or 3.>
+    "recommended_tier": <EVALUATE — integer 1, 2, or 3. Default to 3. Only upgrade to 2 if this single article supports a full standalone blog post. Only 1 if it is a landmark primary source document.>
   }},
   "draft_outline": {{
     "headline": "<suggested article headline using the coined term>",
@@ -289,11 +304,11 @@ real content based on YOUR evaluation — do not copy placeholders literally.
     "call_to_action": "<suggested closing CTA>"
   }},
   "tier": <SAME integer as recommended_tier above>,
-  "themes": ["<select 1-3 from ALLOWED_THEMES list>", "<select from list only>"]
+  "themes": ["<select 1-3 from ALLOWED_THEMES list only>"]
 }}
 
 CRITICAL OUTPUT RULES:
-- recommended_tier and tier MUST be integers 1, 2, or 3 — actively evaluated, not defaulted to 1
+- Default tier is 3. Justify any upgrade to 2 or 1 against the criteria.
 - themes MUST only contain strings from the ALLOWED_THEMES list — do not invent new themes
 - Output valid JSON only, no markdown fences, no commentary"""
 
@@ -375,7 +390,7 @@ def process_pasted_text(
     print(f"Synthesizing pasted content ({depth}) with {model_name}: {title[:60]}...")
     synthesis = synthesize_article(article, depth=depth)
     if not synthesis["success"]:
-        return {"success": False, "error": synthesis.get("error")}
+        return {"success": synthesis.get("error")}
     return {
         "success": True,
         "url": url,
@@ -386,24 +401,17 @@ def process_pasted_text(
 
 
 if __name__ == "__main__":
-    # Test on a known item — should NOT default to tier 1
-    test_url = 'https://cloud.google.com/blog/topics/threat-intelligence/defending-enterprise-ai-vulnerabilities'
+    # Test — podcast episode should come back T3, not T1
+    test_url = 'https://cloud.withgoogle.com/cloudsecurity/podcast/ep264-measuring-your-agentic-soc-two-security-leaders-walk-into-a-podcast/'
 
     print("=== QUICK SYNTHESIS (Haiku) ===")
     result = process_url(test_url, depth="quick")
     if result['success']:
+        print(f"Title: {result.get('title')}")
         print(f"TLDR: {result.get('tldr')}")
-        print(f"Key Points:")
-        for p in result.get('key_points', []):
-            print(f"  • {p}")
         sp = result.get('suggested_piece', {})
-        print(f"\nSuggested Piece:")
-        print(f"  What: {sp.get('what_to_write')}")
-        print(f"  Audience: {sp.get('audience')}")
-        print(f"  Usman's angle: {sp.get('usman_angle')}")
-        print(f"  Coined term: {sp.get('coined_term')}")
-        print(f"  Recommended tier: {sp.get('recommended_tier')}")
-        print(f"  Top-level tier: {result.get('tier')}")
-        print(f"  Themes: {result.get('themes')}")
+        print(f"Recommended tier: {sp.get('recommended_tier')}  ← should be 3 for a podcast episode")
+        print(f"Top-level tier:   {result.get('tier')}")
+        print(f"Themes: {result.get('themes')}")
     else:
         print(f"Failed: {result['error']}")
