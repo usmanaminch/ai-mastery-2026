@@ -226,9 +226,14 @@ def migrate_from_json(json_path: str = "intelligence_library.json") -> int:
 
 def get_pending_paste() -> list:
     """Get URLs that need manual paste — persists across sessions"""
-    db = _get_db()
-    docs = db.collection("pending_paste").order_by("added").get()
-    return [doc.to_dict() for doc in docs]
+    try:
+        db = _get_db()
+        docs = db.collection("pending_paste").order_by("added").get()
+        return [doc.to_dict() for doc in docs]
+    except Exception as e:
+        import streamlit as st
+        st.warning(f"⚠️ Could not load pending paste queue: {e}")
+        return []
 
 def add_pending_paste(url: str, row: int):
     """Add a URL to persistent paste queue"""

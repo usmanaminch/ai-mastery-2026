@@ -320,7 +320,7 @@ with tabs[1]:
     now = dt.now()
 
     # ── PERSISTENT ACTION REQUIRED ─────────────────────────
-    # Always show at top — pulled from session state regardless of batch
+    # Single source of truth — pulled from Firestore, survives refresh
     persistent_paste = get_pending_paste()
     if persistent_paste:
         st.error(f"🔴 ACTION REQUIRED — {len(persistent_paste)} links need your input")
@@ -362,6 +362,7 @@ with tabs[1]:
                                 raw_content=pasted[:2000]
                             )
                             mark_as_synthesized(item['row'])
+                            remove_pending_paste(url)
                             st.session_state.sheet_results = [
                                 r for r in st.session_state.sheet_results
                                 if r['url'] != url
@@ -528,58 +529,11 @@ with tabs[1]:
             st.success(f"Done! {success_count} synthesized, {needs_paste_count} need manual paste.")
             st.rerun()
 
-        # ── RESULTS — ACTION REQUIRED AT TOP ─────────────────
+        # ── BATCH RESULTS (action-required handled at top via persistent_paste) ──
         if st.session_state.sheet_results:
-            needs_paste = [r for r in st.session_state.sheet_results if r['status'] == 'needs_paste']
             skipped = [r for r in st.session_state.sheet_results if r['status'] == 'skip']
             succeeded = [r for r in st.session_state.sheet_results if r['status'] == 'success']
             existed = [r for r in st.session_state.sheet_results if r['status'] == 'exists']
-
-            # 🔴 ACTION REQUIRED — top, impossible to miss
-            if needs_paste:
-                st.markdown("---")
-                st.error(f"🔴 ACTION REQUIRED — {len(needs_paste)} links need your input")
-                for item in needs_paste:
-                    url = item['url']
-                    with st.expander(f"📋 Row {item['row']}: {url[:65]}"):
-                        pasted = st.text_area("Paste article content", key=f"rl_paste_{url}", height=150)
-                        c1, c2 = st.columns(2)
-                        with c1:
-                            p_title = st.text_input("Title (optional)", key=f"rl_title_{url}")
-                        with c2:
-                            p_author = st.text_input("Author (optional)", key=f"rl_author_{url}")
-                        if st.button("Process", key=f"rl_btn_{url}"):
-                            if pasted:
-                                title = p_title or url.split("/")[-2].replace("-"," ").title()
-                                author = p_author or "Unknown"
-                                source = url.split("/")[2].replace("www.","") if "//" in url else "Unknown"
-                                result = process_pasted_text(
-                                    text=pasted, url=url,
-                                    source_name=source, author=author,
-                                    title=title, depth="quick"
-                                )
-                                if result["success"]:
-                                    sp = result.get("suggested_piece", {})
-                                    record = add_record(
-                                        source_url=url,
-                                        source_name=source, author=author,
-                                        title=result.get("title") or title,
-                                        synthesis=json.dumps({
-                                            "tldr": result.get("tldr",""),
-                                            "key_points": result.get("key_points",[]),
-                                            "why_timely": result.get("why_timely","")
-                                        }),
-                                        key_quotes=result.get("key_quotes",[]),
-                                        content_angle=json.dumps(sp),
-                                        tier=sp.get("recommended_tier",3),
-                                        themes=result.get("themes",[]),
-                                        raw_content=pasted[:2000]
-                                    )
-                                    mark_as_synthesized(item['row'])
-                                    # Remove from needs_paste list
-                                    remove_pending_paste(url)
-                                    st.success(f"✅ Added as Record #{record['id']}!")
-                                    st.rerun()
 
             # ⏭️ SKIPPED — platforms that can't be auto-scraped
             if skipped:
