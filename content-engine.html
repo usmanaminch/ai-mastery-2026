@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Content Engine — Usman Chaudhary</title>
+<style>
+:root{--gold:#d4a853;--dark:#0f0f0f;--surface:#161616;--surface2:#1e1e1e;--text:#e8e8e8;--muted:#666;--border:#222}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--dark);color:var(--text);line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+a:hover{opacity:.8}
+
+/* Nav */
+nav{border-bottom:1px solid var(--border);padding:1.25rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{color:var(--gold);font-weight:700;font-size:.9rem;letter-spacing:.08em}
+.nav-back{color:var(--muted);font-size:.85rem;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+
+/* Hero */
+.hero{max-width:860px;margin:0 auto;padding:5rem 2rem 4rem;text-align:center}
+.hero-eyebrow{color:var(--gold);font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;color:#fff}
+.hero h1 span{color:var(--gold)}
+.hero-sub{color:#888;font-size:1.1rem;max-width:600px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-badges{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:3rem}
+.badge{background:var(--surface2);border:1px solid var(--border);padding:.3rem .8rem;border-radius:100px;font-size:.75rem;color:#888}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:#111;font-weight:700;padding:.75rem 2rem;border-radius:6px;font-size:.9rem;transition:opacity .2s}
+.btn-primary:hover{opacity:.85;color:#111}
+.btn-outline{border:1px solid var(--border);color:#888;padding:.75rem 2rem;border-radius:6px;font-size:.9rem;transition:all .2s}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* How it works */
+.flow{max-width:900px;margin:0 auto;padding:4rem 2rem}
+.section-label{color:var(--gold);font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:2rem}
+.flow-steps{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:1rem}
+.step{flex:1;min-width:160px;text-align:center;position:relative}
+.step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:20px;color:var(--muted);font-size:1.2rem}
+.step-icon{width:44px;height:44px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.2rem}
+.step-label{font-size:.8rem;font-weight:600;color:#fff;margin-bottom:.3rem}
+.step-sub{font-size:.72rem;color:var(--muted);line-height:1.4}
+
+/* Features */
+.features{max-width:900px;margin:0 auto;padding:2rem 2rem 4rem}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;transition:border-color .2s}
+.feature-card:hover{border-color:#333}
+.feature-icon{font-size:1.5rem;margin-bottom:.75rem}
+.feature-title{font-weight:700;color:#fff;margin-bottom:.5rem;font-size:.95rem}
+.feature-desc{color:#888;font-size:.83rem;line-height:1.6}
+.feature-tag{display:inline-block;background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.2);color:var(--gold);font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:3px;margin-top:.75rem;letter-spacing:.06em}
+
+/* Output examples */
+.outputs{max-width:900px;margin:0 auto;padding:2rem 2rem 4rem}
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.tier-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem}
+.tier-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:.5rem}
+.tier-name{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:.4rem}
+.tier-format{color:var(--muted);font-size:.78rem;margin-bottom:.75rem}
+.tier-example{background:var(--surface2);border-radius:6px;padding:.75rem;font-size:.75rem;color:#aaa;line-height:1.5;font-style:italic}
+
+/* Stack */
+.stack{max-width:900px;margin:0 auto;padding:2rem 2rem 4rem}
+.stack-grid{display:flex;flex-wrap:wrap;gap:.75rem}
+.stk{background:var(--surface2);border:1px solid var(--border);padding:.4rem 1rem;border-radius:6px;font-size:.8rem;color:#aaa}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:.83rem;margin-top:2rem}
+footer a{color:var(--gold)}
+
+@media(max-width:600px){
+  .tier-grid{grid-template-columns:1fr}
+  .flow-steps{flex-direction:column;align-items:center}
+  .step:not(:last-child)::after{content:'↓';right:auto;top:auto;bottom:-16px;left:50%}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">USMAN CHAUDHARY</span>
+  <a href="https://usmanc.com" class="nav-back">← Back to usmanc.com</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">AI Project 2 · May 2026 · 11 Days</div>
+  <h1>AI <span>Content Engine</span></h1>
+  <p class="hero-sub">A system that synthesizes a curated reading list into intelligence records, then generates Tier 1/2/3 content — full articles, blog posts, and LinkedIn reactions — in your voice.</p>
+  <div class="hero-badges">
+    <span class="badge">Claude API</span>
+    <span class="badge">Google Firestore</span>
+    <span class="badge">Google Sheets API</span>
+    <span class="badge">Google Imagen 3</span>
+    <span class="badge">Python</span>
+    <span class="badge">Streamlit</span>
+    <span class="badge">Web Search</span>
+  </div>
+  <div class="hero-cta">
+    <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/content-engine" target="_blank" class="btn-primary">View on GitHub ↗</a>
+    <a href="https://usmanc.com" class="btn-outline">← Back to site</a>
+  </div>
+</div>
+
+<!-- How it works -->
+<div class="flow">
+  <div class="section-label">How It Works</div>
+  <div class="flow-steps">
+    <div class="step">
+      <div class="step-icon">📋</div>
+      <div class="step-label">Reading List</div>
+      <div class="step-sub">Google Sheets → bulk synthesize URLs</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">🔬</div>
+      <div class="step-label">Synthesis</div>
+      <div class="step-sub">Claude extracts TLDR, key points, tier, themes</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">📚</div>
+      <div class="step-label">Library</div>
+      <div class="step-sub">Firestore-backed intelligence database</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">✍️</div>
+      <div class="step-label">Write</div>
+      <div class="step-sub">Web research + Claude generates tiered drafts</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">🚀</div>
+      <div class="step-label">Publish</div>
+      <div class="step-sub">HTML export + LinkedIn content pack</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="features">
+  <div class="section-label">Features</div>
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon">📰</div>
+      <div class="feature-title">Daily Intelligence Brief</div>
+      <div class="feature-desc">Claude searches the web daily based on your auto-derived interest profile from your library. Finds 8-10 fresh articles. One-click synthesize any or all.</div>
+      <span class="feature-tag">AGENTIC</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">Web-Researched Drafts</div>
+      <div class="feature-desc">T1 and T2 generation searches 4-6 authoritative sources before writing. Every claim is cited. Output is publishable with your professional reputation behind it.</div>
+      <span class="feature-tag">WEB SEARCH</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <div class="feature-title">LinkedIn Content Pack</div>
+      <div class="feature-desc">One article → five LinkedIn posts with genuinely different angles: Board Case, Practitioner, Urgency, Contrarian, Story. Each with image prompts and posting schedule.</div>
+      <span class="feature-tag">5 ANGLES</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">AI Image Generation</div>
+      <div class="feature-desc">Claude reads your draft and suggests 3 contextual image concepts. Google Imagen 3 generates blog headers (16:9) and LinkedIn cards (1:1) with one click.</div>
+      <span class="feature-tag">IMAGEN 3</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⬇️</div>
+      <div class="feature-title">HTML Export</div>
+      <div class="feature-desc">T1 articles export as complete, styled HTML pages — dark/gold theme — ready to drop into any static site. Header image auto-embeds.</div>
+      <span class="feature-tag">PUBLISH-READY</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <div class="feature-title">Save Draft for Later</div>
+      <div class="feature-desc">Right topic, wrong timing? Save any draft to Firestore. Returns when you're ready. Library tracks: synthesized → drafting → draft saved → published.</div>
+      <span class="feature-tag">FIRESTORE</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">Cross-Article Synthesis</div>
+      <div class="feature-desc">Search tab → pick a theme → synthesize N sources into one definitive take. How T3 articles become T1: accumulate evidence, then synthesize.</div>
+      <span class="feature-tag">MULTI-SOURCE</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-title">Google Sheets Integration</div>
+      <div class="feature-desc">Your reading list lives in Google Sheets. The engine reads it, synthesizes in batches, writes back status per row: Done / Duplicate / Skipped / Pending Paste.</div>
+      <span class="feature-tag">GOOGLE API</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Tier Classification</div>
+      <div class="feature-desc">Claude classifies every article: T1 landmark sources, T2 standalone posts, T3 reactions. Auto-deduplication across 50+ articles via URL normalization.</div>
+      <span class="feature-tag">HAIKU + SONNET</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Output types -->
+<div class="outputs">
+  <div class="section-label">Content Tiers</div>
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div><span class="tier-dot" style="background:#d4a853"></span><span class="tier-name">Tier 1 — Full Article</span></div>
+      <div class="tier-format">1200-1800 words · usmanc.com</div>
+      <div class="tier-example">"Searches 4-6 authoritative sources. Full inline citations. Published as HTML with blog header image. The definitive CISO take."</div>
+    </div>
+    <div class="tier-card">
+      <div><span class="tier-dot" style="background:#8b5cf6"></span><span class="tier-name">Tier 2 — Blog Post</span></div>
+      <div class="tier-format">500-800 words · LinkedIn article</div>
+      <div class="tier-example">"Searches 2-3 sources. One focused angle. Cited claims. Sources section. Publishable standalone on LinkedIn or usmanc.com."</div>
+    </div>
+    <div class="tier-card">
+      <div><span class="tier-dot" style="background:#3b82f6"></span><span class="tier-name">Tier 3 — Reaction</span></div>
+      <div class="tier-format">150-300 words · LinkedIn post</div>
+      <div class="tier-example">"Top 3 CISO takeaways. Emoji bullets. Named concepts. 'Link to original in comments.' Done in under 2 minutes."</div>
+    </div>
+  </div>
+</div>
+
+<!-- Stack -->
+<div class="stack">
+  <div class="section-label">Tech Stack</div>
+  <div class="stack-grid">
+    <span class="stk">Anthropic Claude API (Sonnet + Haiku)</span>
+    <span class="stk">Web Search Tool</span>
+    <span class="stk">Google Firestore</span>
+    <span class="stk">Google Sheets API</span>
+    <span class="stk">Google Imagen 3 (AI Studio)</span>
+    <span class="stk">Python 3.9</span>
+    <span class="stk">Streamlit</span>
+    <span class="stk">BeautifulSoup (scraping)</span>
+    <span class="stk">Firebase Admin SDK</span>
+    <span class="stk">URL normalization (dedup)</span>
+    <span class="stk">GitHub Pages (this site)</span>
+    <span class="stk">Streamlit Cloud (app)</span>
+  </div>
+</div>
+
+<footer>
+  <p>Built by <a href="https://usmanc.com">Usman Chaudhary</a> · AI Mastery Project 2 · May 2026</p>
+  <p style="margin-top:.4rem"><a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/content-engine">GitHub ↗</a> &nbsp;·&nbsp; <a href="https://usmanc.com">usmanc.com ↗</a></p>
+</footer>
+
+</body>
+</html>
