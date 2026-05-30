@@ -260,7 +260,7 @@ with col3:
 with col4:
     st.metric("Published", stats["published"])
 
-tabs = st.tabs(["📰 Daily Brief", "📋 Reading List", "➕ Add Content", "📚 Library", "✍️ Write", "🔍 Search"])
+tabs = st.tabs(["📰 Daily Brief", "📋 Reading List", "➕ Add Content", "📚 Library", "✍️ Write", "🔍 Search", "📅 Briefs"])
 
 
 # ── HTML article export ──────────────────────────────────────────
@@ -451,7 +451,7 @@ def generate_with_research(prompt: str, system: str, max_tokens: int = 3000) -> 
 
 
 # ═══════════════════════════════════════════════════════
-# TAB 1 — DAILY BRIEF (real version)
+# TAB 1 — DAILY BRIEF
 # ═══════════════════════════════════════════════════════
 
 def get_interest_profile() -> list:
@@ -468,72 +468,112 @@ def get_interest_profile() -> list:
 
 
 def generate_daily_brief(profile: list) -> dict:
-    """Search web for articles matching interest profile. Returns structured dict."""
+    """
+    Generate a narrative intelligence brief via Claude web search.
+    Returns: {brief_text, articles, generated_at}
+    """
+    from datetime import date as _date
+    today = datetime.now().strftime("%A, %B %d, %Y")
     topics = "\n".join(f"- {t}" for t in profile)
-    prompt = f"""You are a content discovery agent for a Field CISO at Google Cloud.
 
-Search for 8-10 high-quality articles published in the last 7 days on these topics:
+    prompt = f"""Search the web for the most important developments published in the last 7 days
+on these topics for a Field CISO at Google Cloud:
 {topics}
 
-Return ONLY valid JSON (no markdown fences, no preamble):
-{{
-  "articles": [
-    {{
-      "title": "article title",
-      "source": "publication name",
-      "url": "https://...",
-      "summary": "one sentence — why this matters for a CISO",
-      "topic": "which interest topic above",
-      "date": "date if known, else empty string"
-    }}
-  ]
-}}
+Then write a professional intelligence brief following this EXACT format:
 
-Requirements:
-- Last 7 days only (prefer most recent)
-- Authoritative: major security pubs, AI labs blogs, analyst reports
-- Skip podcasts, pure opinion, PR fluff
-- Return only valid JSON"""
+---
+## 📰 Intelligence Brief — {today}
 
-    raw = generate_with_research(prompt,
-        "You are a content discovery agent. Return ONLY valid JSON, no markdown.",
-        max_tokens=3000)
+**Top Story**
+[2-3 sentences on the single most important development. Name the source.]
 
-    import json as _json
-    try:
-        clean = raw.strip()
-        # Strip markdown fences if present
-        if clean.startswith("```"):
-            clean = "\n".join(clean.split("\n")[1:])
-            if clean.endswith("```"):
-                clean = "\n".join(clean.split("\n")[:-1])
-        return _json.loads(clean.strip())
-    except Exception:
-        # Try to extract JSON from the text
-        import re as _re
-        m = _re.search(r'\{.*"articles".*\}', clean, _re.DOTALL)
-        if m:
-            try:
-                return _json.loads(m.group())
-            except Exception:
-                pass
-        return {"articles": [], "parse_error": raw[:300]}
+## Key Developments
+
+**[Topic area]: [Headline]**
+[2-3 sentences. What happened, why it matters for enterprise security. Cite source.]
+
+**[Topic area]: [Headline]**
+[2-3 sentences. Cite source.]
+
+**[Topic area]: [Headline]**
+[2-3 sentences. Cite source.]
+
+**[Topic area]: [Headline]**
+[2-3 sentences. Cite source.]
+
+## What CISOs Should Watch This Week
+- [Specific thing to monitor with brief reason]
+- [Specific thing to monitor with brief reason]
+- [Specific thing to monitor with brief reason]
+
+## 📚 Sources
+1. [Exact article title] — [Publication] — [full URL]
+2. [Exact article title] — [Publication] — [full URL]
+3. [Exact article title] — [Publication] — [full URL]
+4. [Exact article title] — [Publication] — [full URL]
+5. [Exact article title] — [Publication] — [full URL]
+---
+
+Rules:
+- Write in the style of a professional intelligence analyst briefing a CISO
+- Be specific — name companies, numbers, dates
+- Every claim must reference a real article you searched
+- Keep total length 400-600 words
+- Sources section must have real URLs you found"""
+
+    brief_text = generate_with_research(
+        prompt,
+        "You are an intelligence analyst writing a daily brief for a Field CISO. Be specific and cite real sources.",
+        max_tokens=2500
+    )
+
+    # Extract article URLs from the Sources section
+    import re as _re
+    articles = []
+    sources_match = _re.search(r'##\s*📚\s*Sources\s*\n(.*?)(?:\n---|\Z)', brief_text, _re.DOTALL)
+    if sources_match:
+        for line in sources_match.group(1).strip().split('\n'):
+            url_match = _re.search(r'https?://[^\s\)]+', line)
+            title_match = _re.match(r'\d+\.\s*\*?\*?([^\*\—]+)', line)
+            pub_match = _re.search(r'—\s*([^—\n]+)\s*—\s*https?://', line)
+            if url_match:
+                articles.append({
+                    "title": title_match.group(1).strip() if title_match else "Article",
+                    "source": pub_match.group(1).strip() if pub_match else "",
+                    "url": url_match.group().rstrip(')')
+                })
+
+    return {
+        "brief_text": brief_text,
+        "articles": articles,
+        "generated_at": datetime.now().isoformat(),
+        "date": today,
+        "profile": profile
+    }
 
 
 def save_daily_brief(data: dict) -> None:
     from firebase_library import _get_db
     from datetime import date
     db = _get_db()
-    data["generated_at"] = datetime.now().isoformat()
     db.collection("daily_briefs").document(date.today().isoformat()).set(data)
 
 
-def load_daily_brief() -> dict:
+def load_daily_brief(date_str: str = None) -> dict:
     from firebase_library import _get_db
     from datetime import date
     db = _get_db()
-    doc = db.collection("daily_briefs").document(date.today().isoformat()).get()
+    key = date_str or date.today().isoformat()
+    doc = db.collection("daily_briefs").document(key).get()
     return doc.to_dict() if doc.exists else {}
+
+
+def list_saved_briefs() -> list:
+    from firebase_library import _get_db
+    db = _get_db()
+    docs = db.collection("daily_briefs").order_by("generated_at", direction="DESCENDING").limit(14).get()
+    return [{"id": d.id, **d.to_dict()} for d in docs]
 
 
 with tabs[0]:
@@ -548,139 +588,96 @@ with tabs[0]:
         st.markdown("  ".join([f"`{t}`" for t in profile]))
     else:
         st.caption("Add articles to your library — interest profile builds automatically.")
+    st.markdown("")
 
     # ── Generate / Refresh ────────────────────────────────────────
     col_btn, col_cache = st.columns([3, 1])
     with col_btn:
-        btn_label = "🔍 Generate Today\'s Brief" if not cached else "🔄 Refresh Brief"
+        btn_label = "🔍 Generate Today's Brief" if not cached else "🔄 Refresh Brief"
         gen_clicked = st.button(btn_label, type="primary", use_container_width=True)
     with col_cache:
         if cached and cached.get("generated_at"):
-            st.caption(f"Cached: {cached['generated_at'][11:16]}")
+            st.caption(f"Cached {cached['generated_at'][11:16]}")
 
     if gen_clicked and profile:
-        with st.spinner("Searching for today\'s most relevant articles... (30-60 sec)"):
+        with st.spinner("Searching the web and writing your brief... (30-60 sec)"):
             brief = generate_daily_brief(profile)
-            if brief.get("articles"):
+            if brief.get("brief_text"):
                 save_daily_brief(brief)
                 cached = brief
                 st.rerun()
-            elif brief.get("parse_error"):
-                st.error(f"Generation failed: {brief['parse_error'][:200]}")
             else:
-                st.warning("No articles found — try again or check your library has themes set.")
+                st.warning("Generation failed — try again.")
     elif gen_clicked and not profile:
         st.warning("Your library has no themes yet. Synthesize some articles first.")
 
-    # ── Brief articles ────────────────────────────────────────────
-    if cached and cached.get("articles"):
-        articles = cached["articles"]
+    # ── Display the brief ─────────────────────────────────────────
+    if cached and cached.get("brief_text"):
+        st.markdown("---")
+        st.markdown(cached["brief_text"])
 
-        # Dedup against library
-        new_articles = [a for a in articles if not url_exists(a.get("url", "fake"))]
-        already_in = len(articles) - len(new_articles)
+        # ── Source articles → Add to Library ─────────────────────
+        articles = cached.get("articles", [])
+        if articles:
+            st.markdown("---")
+            st.markdown("### Add to Library")
+            st.caption("Synthesize individual articles from today's brief into your intelligence library.")
 
-        if already_in:
-            st.caption(f"↳ {already_in} article(s) already in your library — hidden")
+            for i, a in enumerate(articles):
+                url = a.get("url", "")
+                title = a.get("title", "Article")[:70]
+                source = a.get("source", "")
+                already = url_exists(url) if url else False
 
-        st.markdown(f"**{len(new_articles)} new articles found:**")
-
-        # Bulk synthesize
-        if len(new_articles) > 1:
-            selected = []
-            for a in new_articles:
-                if st.checkbox(
-                    f"**{a.get('title','')[:70]}**  `{a.get('source','')}`",
-                    key=f"sel_{a.get('url','')}",
-                    value=False
-                ):
-                    selected.append(a)
-
-            if selected:
-                if st.button(f"🚀 Synthesize Selected ({len(selected)})", type="primary"):
-                    prog = st.progress(0)
-                    for i, a in enumerate(selected):
-                        url = a.get("url", "")
-                        if url and not url_exists(url):
-                            with st.spinner(f"Synthesizing {i+1}/{len(selected)}: {a.get('title','')[:40]}..."):
+                col_t, col_btn = st.columns([4, 1])
+                with col_t:
+                    if url:
+                        st.markdown(f"**{title}** `{source}`")
+                    else:
+                        st.markdown(f"**{title}** `{source}`")
+                with col_btn:
+                    if already:
+                        st.caption("✅ In library")
+                    elif url:
+                        if st.button("＋ Add", key=f"add_{i}_{url[-20:]}", use_container_width=True):
+                            with st.spinner(f"Synthesizing..."):
                                 result = process_url(url, depth="quick")
                                 if result and result.get("success"):
                                     sp = result.get("suggested_piece", {})
-                                    add_record(
+                                    record = add_record(
                                         source_url=url,
-                                        source_name=result.get("source_name", a.get("source", "Unknown")),
+                                        source_name=result.get("source_name", source),
                                         author=result.get("author", "Unknown"),
-                                        title=result.get("title", a.get("title", "Untitled")),
+                                        title=result.get("title", title),
                                         synthesis=json.dumps({
-                                            "tldr": result.get("tldr", a.get("summary", "")),
+                                            "tldr": result.get("tldr", ""),
                                             "key_points": result.get("key_points", []),
                                             "why_timely": result.get("why_timely", "")
                                         }),
                                         key_quotes=result.get("key_quotes", []),
                                         content_angle=json.dumps(sp),
                                         tier=sp.get("recommended_tier", result.get("tier", 3)),
-                                        themes=result.get("themes", [a.get("topic", "")]),
+                                        themes=result.get("themes", []),
                                         raw_content=result.get("raw_content", "")
                                     )
-                        prog.progress((i + 1) / len(selected))
-                    st.success(f"✅ {len(selected)} articles synthesized and added to library!")
-                    st.rerun()
-        else:
-            # Show individual cards without checkboxes if only 1-2 articles
-            for a in new_articles:
-                with st.expander(f"📄 **{a.get('title','')[:70]}**", expanded=False):
-                    st.caption(f"**{a.get('source','')}** · {a.get('topic','')} · {a.get('date','')}")
-                    st.markdown(a.get("summary", ""))
-                    c1, c2 = st.columns([1, 2])
-                    with c1:
-                        if st.button("⚡ Synthesize", key=f"s_{a.get('url','')}"):
-                            url = a.get("url", "")
-                            if url:
-                                with st.spinner("Synthesizing..."):
-                                    result = process_url(url, depth="quick")
-                                    if result and result.get("success"):
-                                        sp = result.get("suggested_piece", {})
-                                        add_record(
-                                            source_url=url,
-                                            source_name=result.get("source_name", a.get("source", "Unknown")),
-                                            author=result.get("author", "Unknown"),
-                                            title=result.get("title", a.get("title", "")),
-                                            synthesis=json.dumps({
-                                                "tldr": result.get("tldr", ""),
-                                                "key_points": result.get("key_points", []),
-                                                "why_timely": result.get("why_timely", "")
-                                            }),
-                                            key_quotes=result.get("key_quotes", []),
-                                            content_angle=json.dumps(sp),
-                                            tier=sp.get("recommended_tier", 3),
-                                            themes=result.get("themes", []),
-                                            raw_content=result.get("raw_content", "")
-                                        )
-                                        st.success(f"Added to library!")
-                                        st.rerun()
-                    with c2:
-                        st.markdown(f"[Read original ↗]({a.get('url','')})")
+                                    st.success(f"✅ Added as #{record['id']} — T{sp.get('recommended_tier', 3)}")
+                                    st.rerun()
+                                else:
+                                    st.error("Could not scrape — try via Reading List tab")
 
-    # ── URL Processor (secondary) ─────────────────────────────────
+    # ── URL Processor (collapsed) ─────────────────────────────────
     st.markdown("---")
-    with st.expander("🔗 Add content manually (URL processor)", expanded=False):
-        urls_input = st.text_area(
-            "Paste URLs (one per line)",
-            height=100,
-            placeholder="https://cloud.google.com/blog/...",
-            key="manual_urls"
-        )
-        if st.button("🚀 Process URLs", type="primary", use_container_width=True):
+    with st.expander("🔗 Add content manually", expanded=False):
+        urls_input = st.text_area("Paste URLs (one per line)", height=80, key="manual_urls")
+        if st.button("🚀 Process", type="primary", use_container_width=True, key="proc_manual"):
             if urls_input.strip():
                 urls = [u.strip() for u in urls_input.strip().split("\n") if u.strip()]
-                st.session_state.processing_status = []
-                progress = st.progress(0)
-                for i, url in enumerate(urls):
+                for url in urls:
                     if url_exists(url):
-                        st.session_state.processing_status.append({"url": url, "status": "duplicate", "title": "Already in library"})
-                        progress.progress((i + 1) / len(urls))
+                        st.info(f"⏭️ Already in library: `{url[:60]}`")
                         continue
-                    result = process_url(url, depth="quick")
+                    with st.spinner(f"Processing {url[:50]}..."):
+                        result = process_url(url, depth="quick")
                     if result and result["success"]:
                         sp = result.get("suggested_piece", {})
                         record = add_record(
@@ -699,44 +696,10 @@ with tabs[0]:
                             themes=result.get("themes", []),
                             raw_content=result.get("raw_content", "")
                         )
-                        st.session_state.processing_status.append({"url": url, "status": "success", "title": result.get("title", ""), "tier": sp.get("recommended_tier", 3), "record_id": record["id"]})
+                        st.success(f"✅ Added #{record['id']}: **{result.get('title','')[:50]}** — T{sp.get('recommended_tier',3)}")
                     else:
-                        st.session_state.processing_status.append({"url": url, "status": "needs_paste", "error": result.get("error", "")})
-                    progress.progress((i + 1) / len(urls))
-                st.rerun()
+                        st.warning(f"⚠️ Needs paste: `{url[:60]}`")
 
-        if st.session_state.processing_status:
-            for item in st.session_state.processing_status:
-                if item["status"] == "success":
-                    tier = item.get("tier", 3)
-                    emoji = "🟡" if tier == 1 else ("🟣" if tier == 2 else "🔵")
-                    st.success(f"{emoji} Added: **{item.get('title','')[:60]}** (T{tier})")
-                elif item["status"] == "duplicate":
-                    st.info(f"⏭️ Already in library: `{item['url'][:60]}`")
-                else:
-                    st.warning(f"⚠️ Needs paste: `{item['url'][:60]}`")
-
-    # ── Library stats sidebar ─────────────────────────────────────
-    with st.sidebar:
-        st.markdown("### 📊 Library")
-        st.metric("Total Records", stats["total"])
-        st.metric("T1 Articles", stats["tier1"])
-        st.metric("T2 Posts", stats.get("tier2", 0))
-        st.metric("T3 Reactions", stats["tier3"])
-        st.markdown("### 💡 Write Today")
-        ready = get_records_by_status("synthesized")
-        tier1_r = [r for r in ready if r["tier"] == 1]
-        tier3_r = [r for r in ready if r["tier"] == 3]
-        if tier1_r:
-            r = tier1_r[0]
-            if st.button(f"📄 {r['title'][:35]}...", use_container_width=True):
-                st.session_state.active_record = r
-                st.rerun()
-        if tier3_r:
-            r = tier3_r[0]
-            if st.button(f"💬 {r['title'][:35]}...", use_container_width=True):
-                st.session_state.active_record = r
-                st.rerun()
 
 # ═══════════════════════════════════════════════════════
 # TAB 2 — READING LIST
@@ -1939,3 +1902,32 @@ SOURCES:
                         st.markdown(f"**TLDR:** {syn.get('tldr', '')}")
                     except Exception:
                         st.markdown(r['synthesis'][:150])
+
+# ═══════════════════════════════════════════════════════
+# TAB 7 — SAVED BRIEFS
+# ═══════════════════════════════════════════════════════
+with tabs[6]:
+    st.subheader("📅 Saved Intelligence Briefs")
+    st.caption("Your daily briefs — last 14 days")
+
+    briefs = list_saved_briefs()
+
+    if not briefs:
+        st.info("No briefs saved yet. Generate your first brief in the Daily Brief tab.")
+    else:
+        for b in briefs:
+            date_label = b.get("date", b.get("id", "Unknown date"))
+            gen_time = b.get("generated_at", "")[:16] if b.get("generated_at") else ""
+            is_today = b.get("id") == datetime.now().strftime("%Y-%m-%d")
+            label = f"{'🟢 Today — ' if is_today else ''}{date_label}"
+            if gen_time:
+                label += f"  `{gen_time}`"
+
+            with st.expander(label, expanded=is_today):
+                if b.get("brief_text"):
+                    st.markdown(b["brief_text"])
+                    if b.get("profile"):
+                        st.caption(f"Generated for: {' · '.join(b['profile'])}")
+                else:
+                    st.caption("Brief text not available")
+
