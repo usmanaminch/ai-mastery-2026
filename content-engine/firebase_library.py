@@ -341,6 +341,48 @@ def remove_pending_paste(url: str):
     doc_id = url.replace("/","_").replace(".","_").replace("?","_")[:100]
     db.collection("pending_paste").document(doc_id).delete()
 
+def save_draft(record_id: str, draft_content: str) -> None:
+    """Save a draft for a record to Firestore."""
+    db = _get_db()
+    db.collection("intelligence_records").document(record_id).update({
+        "draft": draft_content,
+        "status": "draft_saved",
+        "draft_saved_at": datetime.now().isoformat()
+    })
+
+def delete_draft(record_id: str) -> None:
+    """Remove saved draft from a record."""
+    db = _get_db()
+    db.collection("intelligence_records").document(record_id).update({
+        "draft": "",
+        "status": "synthesized",
+        "draft_saved_at": ""
+    })
+
+def save_daily_brief(data: dict) -> None:
+    """Save today's daily brief to Firestore."""
+    from datetime import date
+    db = _get_db()
+    data["generated_at"] = datetime.now().isoformat()
+    db.collection("daily_briefs").document(date.today().isoformat()).set(data)
+
+def load_daily_brief(date_str: str = None) -> dict:
+    """Load a daily brief from Firestore. Defaults to today."""
+    from datetime import date
+    db = _get_db()
+    key = date_str or date.today().isoformat()
+    doc = db.collection("daily_briefs").document(key).get()
+    return doc.to_dict() if doc.exists else {}
+
+def list_saved_briefs(limit: int = 14) -> list:
+    """List the last N saved briefs, most recent first."""
+    db = _get_db()
+    docs = db.collection("daily_briefs").order_by(
+        "generated_at", direction="DESCENDING"
+    ).limit(limit).get()
+    return [{"id": d.id, **d.to_dict()} for d in docs]
+
+
 if __name__ == "__main__":
     print("Testing Firebase connection...")
     db = _get_db()
