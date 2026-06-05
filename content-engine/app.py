@@ -727,8 +727,28 @@ with tabs[1]:
         st.error(f"🔴 ACTION REQUIRED — {len(persistent_paste)} links need your input")
         for item in persistent_paste:
             url = item['url']
-            with st.expander(f"📋 Row {item['row']}: {url[:65]}"):
-                pasted = st.text_area("Paste article content", key=f"persist_paste_{url}", height=150)
+            with st.expander(f"📋 Row {item['row']}: {url.split('/')[2] if '//' in url else url[:40]}"):
+                # Full clickable link
+                st.markdown(f"**Source:** [{url}]({url})")
+                st.markdown("---")
+
+                # Input method
+                input_choice = st.radio(
+                    "How do you want to add this?",
+                    ["📋 Paste text", "📎 Upload PDF"],
+                    horizontal=True,
+                    key=f"input_choice_{url}"
+                )
+
+                pasted = ""
+                pdf_uploaded = None
+
+                if input_choice == "📋 Paste text":
+                    pasted = st.text_area("Paste article content", key=f"persist_paste_{url}", height=150)
+                else:
+                    pdf_uploaded = st.file_uploader("Upload PDF", type=["pdf"], key=f"pdf_{url}")
+                    st.caption("Claude will read the PDF directly — charts, tables, and visuals preserved")
+
                 c1, c2 = st.columns(2)
                 with c1:
                     p_title = st.text_input("Title (optional)", key=f"persist_title_{url}")
@@ -742,6 +762,66 @@ with tabs[1]:
                 with btn_skip:
                     skip_clicked = st.button("🚫 Skip", key=f"persist_skip_{url}",
                                              use_container_width=True)
+
+                # Handle PDF upload processing
+                if process_clicked and pdf_uploaded and not pasted:
+                    import base64, json, time as _time
+                    with st.spinner("Claude is reading the PDF..."):
+                        try:
+                            pdf_b64 = base64.standard_b64encode(pdf_uploaded.read()).decode("utf-8")
+                            PDF_PROMPT = """Synthesize this document for a Field CISO content strategy.
+Return ONLY valid JSON:
+{
+  "tldr": "2-3 sentence summary",
+  "key_points": ["point 1", "point 2", "point 3", "point 4", "point 5"],
+  "why_timely": "why this matters now for security leaders",
+  "themes": ["theme1", "theme2", "theme3"],
+  "tier": 1,
+  "content_angle": "the CISO angle worth writing about"
+}
+Tier: 1=landmark primary source, 2=substantive research, 3=news/blog."""
+
+                            resp = client.messages.create(
+                                model="claude-sonnet-4-5",
+                                max_tokens=1500,
+                                messages=[{"role": "user", "content": [
+                                    {"type": "document", "source": {
+                                        "type": "base64",
+                                        "media_type": "application/pdf",
+                                        "data": pdf_b64
+                                    }},
+                                    {"type": "text", "text": PDF_PROMPT}
+                                ]}]
+                            )
+                            raw = resp.content[0].text.strip()
+                            if raw.startswith("```"):
+                                raw = "\n".join(raw.split("\n")[1:-1])
+                            result = json.loads(raw)
+
+                            title = p_title or pdf_uploaded.name.replace(".pdf", "").replace("-", " ").title()
+                            author = p_author or "Unknown"
+                            source = url.split("/")[2].replace("www.", "") if "//" in url else "Unknown"
+                            record = {
+                                "id": None,
+                                "title": title,
+                                "source_name": source,
+                                "source_url": url,
+                                "author": author,
+                                "synthesis": raw,
+                                "tier": result.get("tier", 2),
+                                "themes": result.get("themes", []),
+                                "status": "done",
+                                "date_found": _time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                "input_type": "pdf",
+                            }
+                            add_record(record)
+                            remove_pending_paste(url)
+                            mark_as_synthesized(item["row"])
+                            st.success(f"✅ PDF synthesized — Tier {result.get('tier')} · {title[:50]}")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"PDF failed: {e}")
+                    process_clicked = False  # prevent double-processing below
 
                 if skip_clicked:
                     remove_pending_paste(url)
