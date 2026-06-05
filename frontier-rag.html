@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontier AI Intelligence — Usman Chaudhary</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --border: #1e1e1e;
+    --gold: #c9a84c;
+    --gold-dim: rgba(201,168,76,0.12);
+    --blue: #4a9eff;
+    --blue-dim: rgba(74,158,255,0.12);
+    --green: #4ade80;
+    --text: #e5e5e5;
+    --muted: #666;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  html { background: var(--bg); color: var(--text); font-family: var(--sans); }
+  body { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* Header */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0; border-bottom: 1px solid var(--border); margin-bottom: 64px;
+  }
+  .back-link {
+    font-size: 0.78rem; color: var(--muted); text-decoration: none;
+    font-family: var(--mono); letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+  .top-badge {
+    font-family: var(--mono); font-size: 0.68rem; color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Hero */
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--gold);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 24px;
+  }
+  h1 span { color: var(--gold); }
+  .hero-desc {
+    font-size: 1.05rem; color: #999; line-height: 1.7; max-width: 640px;
+    margin-bottom: 36px;
+  }
+
+  /* Stack chips */
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .chip {
+    font-family: var(--mono); font-size: 0.72rem; padding: 5px 12px;
+    border: 1px solid var(--border); border-radius: 4px; color: var(--muted);
+    background: var(--surface);
+  }
+
+  /* Buttons */
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 72px; }
+  .btn-primary {
+    display: inline-block; padding: 12px 28px; background: var(--gold);
+    color: #111; font-weight: 700; font-size: 0.85rem; border-radius: 5px;
+    text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    display: inline-block; padding: 12px 28px; border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.85rem; border-radius: 5px;
+    text-decoration: none; transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Section */
+  .section-label {
+    font-family: var(--mono); font-size: 0.65rem; color: var(--gold);
+    letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 32px;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  /* Pipeline flow */
+  .pipeline {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 0; margin-bottom: 56px;
+  }
+  .pipe-step { text-align: center; position: relative; }
+  .pipe-step:not(:last-child)::after {
+    content: '→'; position: absolute; right: -10px; top: 22px;
+    color: var(--muted); font-size: 1.1rem;
+  }
+  .pipe-icon {
+    width: 48px; height: 48px; border-radius: 10px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; background: var(--surface); border: 1px solid var(--border);
+  }
+  .pipe-name {
+    font-weight: 600; font-size: 0.82rem; color: var(--text); margin-bottom: 4px;
+  }
+  .pipe-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+
+  /* Features grid */
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin-bottom: 56px;
+  }
+  .feature {
+    background: var(--bg); padding: 28px;
+  }
+  .feature-icon { font-size: 1.3rem; margin-bottom: 12px; }
+  .feature-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .feature-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+  /* Architecture */
+  .arch-row {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .arch-row:last-child { border-bottom: none; }
+  .arch-label {
+    font-family: var(--mono); font-size: 0.68rem; color: var(--gold);
+    min-width: 110px; padding-top: 2px; letter-spacing: 0.06em;
+  }
+  .arch-val { font-size: 0.85rem; color: #aaa; line-height: 1.6; }
+  .arch-val strong { color: var(--text); }
+
+  /* ZT highlight */
+  .zt-box {
+    border: 1px solid var(--blue); background: var(--blue-dim);
+    border-radius: 8px; padding: 24px 28px; margin-bottom: 56px;
+  }
+  .zt-title { font-size: 0.88rem; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+  .zt-desc { font-size: 0.82rem; color: #8ab4f8; line-height: 1.6; }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding-top: 48px;
+    font-family: var(--mono); font-size: 0.7rem; color: var(--muted);
+  }
+  .footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .pipeline { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .pipe-step::after { display: none; }
+    .features { grid-template-columns: 1fr; }
+    h1 { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="https://usmanc.com" class="back-link">← usmanc.com</a>
+  <span class="top-badge">AI PROJECT 3 &nbsp;·&nbsp; JUN 2026 &nbsp;·&nbsp; 3 WEEKS</span>
+</div>
+
+<div class="eyebrow">AI Project 3 — RAG + Vector Search</div>
+<h1>Frontier AI<br><span>Intelligence</span></h1>
+<p class="hero-desc">
+  A Retrieval-Augmented Generation system querying 30+ documents across frontier AI labs,
+  safety evaluations, and regulatory frameworks — with hybrid BM25 + vector search,
+  Field CISO Mode, live model leaderboard, and a Zero Trust audit trail on every query.
+</p>
+
+<div class="stack">
+  <span class="chip">Claude API</span>
+  <span class="chip">Cloud SQL</span>
+  <span class="chip">pgvector</span>
+  <span class="chip">Vertex AI</span>
+  <span class="chip">Python</span>
+  <span class="chip">Streamlit</span>
+  <span class="chip">GCP</span>
+  <span class="chip">BM25 + RRF</span>
+</div>
+
+<div class="actions">
+  <a href="https://usman-frontier-rag.streamlit.app" target="_blank" class="btn-primary">Live Demo ↗</a>
+  <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/frontier-rag" target="_blank" class="btn-secondary">GitHub ↗</a>
+  <a href="https://usmanc.com" class="btn-secondary">← Back to site</a>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">How it works</div>
+<div class="pipeline">
+  <div class="pipe-step">
+    <div class="pipe-icon">🕷️</div>
+    <div class="pipe-name">Ingest</div>
+    <div class="pipe-desc">Auto-watcher fetches 9 AI lab sources, hash-detects changes</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🧮</div>
+    <div class="pipe-name">Embed</div>
+    <div class="pipe-desc">Vertex AI text-embedding-004 generates 768-dim vectors per chunk</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🔍</div>
+    <div class="pipe-name">Retrieve</div>
+    <div class="pipe-desc">Hybrid BM25 + vector search fused with Reciprocal Rank Fusion</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🧠</div>
+    <div class="pipe-name">Synthesize</div>
+    <div class="pipe-desc">Claude reads top chunks, forms position with citations</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">💬</div>
+    <div class="pipe-name">Query</div>
+    <div class="pipe-desc">5-tab Streamlit UI — standard or Field CISO mode</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Key Features</div>
+<div class="features">
+  <div class="feature">
+    <div class="feature-icon">🛡️</div>
+    <div class="feature-title">Field CISO Mode</div>
+    <div class="feature-desc">Every query reframed through security, procurement, and compliance lens. Same corpus, different synthesis angle.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <div class="feature-title">Find Disagreements</div>
+    <div class="feature-desc">Explicitly maps tensions between sources — where Anthropic, Google, and regulators diverge on the same topic.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">📊</div>
+    <div class="feature-title">Live Model Leaderboard</div>
+    <div class="feature-desc">Scraped from llm-stats.com — Intelligence, Reasoning, Coding, Agent scores, pricing. Refreshes on demand.</div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🔄</div>
+    <div class="feature-title">Auto-Watcher</div>
+    <div class="feature-desc">Monitors 9 AI lab URLs daily. Hash-based change detection — only re-ingests when content actually changes.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Architecture</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">DATABASE</span>
+    <span class="arch-val"><strong>Cloud SQL PostgreSQL 15</strong> on GCP (us-east4). pgvector 0.8.1 extension for 768-dim embeddings. ivfflat index for approximate nearest neighbor search.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">EMBEDDINGS</span>
+    <span class="arch-val"><strong>Vertex AI text-embedding-004</strong> — 768 dimensions, RETRIEVAL_DOCUMENT task type for ingestion, RETRIEVAL_QUERY for search. Service account auth for Streamlit Cloud deployment.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">RETRIEVAL</span>
+    <span class="arch-val"><strong>Hybrid BM25 + vector search</strong> with Reciprocal Rank Fusion (k=60, 60/40 weighting). Diversity filter limits 2 chunks per document. Field CISO mode appends security context to query embeddings.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">SYNTHESIS</span>
+    <span class="arch-val"><strong>Claude Sonnet</strong> reads top 8 chunks across sources and forms a synthesized answer with inline citations. Disagreement mode explicitly maps conflicting positions.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">CORPUS</span>
+    <span class="arch-val"><strong>30+ documents</strong> across Anthropic, OpenAI, Google DeepMind, Meta, Mistral, DeepSeek, Alibaba, Microsoft, Amazon, CISA, UK AI Safety Institute, METR, Apollo Research, NIST.</span>
+  </div>
+</div>
+
+<div class="zt-box">
+  <div class="zt-title">🔐 claude-zt Foundation Tier — Zero Trust for AI Agents</div>
+  <div class="zt-desc">
+    Every query runs through a Zero Trust wrapper: <strong>AgentIdentity</strong> (UUID v4 per session, role-scoped),
+    <strong>InputValidator</strong> (10 prompt injection patterns blocked, 2000-char limit),
+    and <strong>AuditLogger</strong> (every query logged to PostgreSQL with agent_id, role, chunks retrieved, latency).
+    This is the Foundation Tier of a progressive ZT architecture that scales through P7.
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">What I learned</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">RAG CORE</span>
+    <span class="arch-val">Chunking strategy matters more than model choice. Paragraph-aware chunking with 200-char overlap + title prepending significantly improves retrieval accuracy over naive fixed-size splits.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">HYBRID SEARCH</span>
+    <span class="arch-val">BM25 contributes most for exact technical terms (model names, acronyms). Vector search dominates for conceptual queries. RRF fusion beats either alone — even with simple 60/40 weighting.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">DEPLOYMENT</span>
+    <span class="arch-val">Streamlit Cloud secrets are NOT exposed as OS environment variables — must use st.secrets directly. Cloud SQL requires service account credentials on cloud deployments, not ADC.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">USE CASE</span>
+    <span class="arch-val">RAG adds genuine value over Claude + web search only when the corpus is proprietary, specialized, or not well-indexed. Public blog posts are a weak corpus. The leaderboard and ZT audit trail are the most differentiated features.</span>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="https://usmanc.com">usmanc.com</a> &nbsp;·&nbsp;
+  <a href="https://github.com/usmanaminch/ai-mastery-2026">GitHub</a> &nbsp;·&nbsp;
+  Part of a 7-month AI mastery journey
+</div>
+
+</body>
+</html>
