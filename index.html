@@ -222,7 +222,17 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <p style="color:#aaa;line-height:1.7;margin-bottom:1.25rem;max-width:680px">Public sector CISOs are sitting on decades-old infrastructure — and AI expects to run on top of it. A roadmap from securing executive alignment to continuous defense and AI governance. Written in collaboration with Anton Chuvakin, Google Cloud Office of the CISO.</p>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
       <span style="color:#888;font-size:.85rem">in collaboration with <strong style="color:#d4a853">Anton Chuvakin</strong> · Google Cloud Office of the CISO</span>
-      <a href="https://cloud.google.com/blog/products/identity-security/cloud-ciso-perspectives-how-to-build-an-ai-ready-security-program-for-the-public-sector" target="_blank" style="color:#d4a853;text-decoration:none;font-weight:600;font-size:.9rem;border:1px solid #d4a853;padding:.4rem 1rem;border-radius:4px">Read on Google Cloud ↗</a>
+      <a href="https://cloud.google.com/executive-insights/10-questions-ceos-should-ask-about-cloud-security" target="_blank" class="wr-row" style="border-bottom:2px solid #d4a853;padding-bottom:1.5rem;margin-bottom:.25rem">
+      <span class="wr-date">2024</span>
+      <span class="wr-title">10 Questions CEOs Should Ask About Cloud Security&ensp;<span style="background:#d4a853;color:#111;font-size:.6rem;font-weight:800;padding:.15rem .45rem;border-radius:2px;letter-spacing:.08em;vertical-align:middle">GOOGLE</span></span>
+      <span class="wr-tag">Executive Guidance</span>
+    </a>
+    <a href="https://www.govexec.com/assets/mxdr-reinventing-managed-security-federal-agencies/portal/" target="_blank" class="wr-row" style="border-bottom:2px solid #4a9eff;padding-bottom:1.5rem;margin-bottom:.25rem">
+      <span class="wr-date">2025</span>
+      <span class="wr-title">Reinventing Managed Security for Federal Agencies (MxDR)&ensp;<span style="background:#4a9eff;color:#111;font-size:.6rem;font-weight:800;padding:.15rem .45rem;border-radius:2px;letter-spacing:.08em;vertical-align:middle">WHITE PAPER</span></span>
+      <span class="wr-tag">Accenture Federal · Google</span>
+    </a>
+    <a href="https://cloud.google.com/blog/products/identity-security/cloud-ciso-perspectives-how-to-build-an-ai-ready-security-program-for-the-public-sector" target="_blank" style="color:#d4a853;text-decoration:none;font-weight:600;font-size:.9rem;border:1px solid #d4a853;padding:.4rem 1rem;border-radius:4px">Read on Google Cloud ↗</a>
     </div>
   </div>
   <div style="display:flex;flex-direction:column;gap:0">
@@ -373,6 +383,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <li><a onclick="showPage('about');closeMenu()" id="nav-about" class="active">About</a></li>
       <li><a onclick="showPage('projects');closeMenu()" id="nav-projects">AI Projects</a></li>
       <li><a onclick="showPage('writing');closeMenu()" id="nav-writing">Writing</a></li>
+      <li><a onclick="showPage('speaking');closeMenu()" id="nav-speaking">Speaking</a></li>
       <li><a onclick="showPage('perspectives');closeMenu()" id="nav-perspectives">Perspectives</a></li>
       <li><a onclick="showPage('connect');closeMenu()" id="nav-connect">Connect</a></li>
     </ul>
@@ -393,7 +404,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <div class="about-bio">
         <p>I'm a <strong>Field CISO and AI Security Executive at Google Cloud</strong>, advising Fortune 500 enterprises and federal agencies on AI governance, SecOps transformation, and sovereign AI strategy. Previously at <strong>Palo Alto Networks</strong> as Business Value Director, and <strong>Accenture</strong> and <strong>KPMG</strong> as a strategy consultant.</p>
         <p>My background spans deep engineering, management consulting, and enterprise security GTM: <strong>MS Electrical Engineering, University of Michigan</strong> (research in secure vehicular communications) · <strong>MBA, University of Chicago Booth</strong> (Dean's Honor List) · 9 years at Ericsson architecting hybrid cloud and IoT security infrastructure.</p>
-        <p>I speak at Billington CyberSecurity, GovExec, and enterprise security forums. I write on AI-era threats and what it means to build genuinely AI-native security programs. In 2026, I started building AI agents — exploring AI applications across every field of life.</p>
+        <p>I speak at Billington CyberSecurity, GovExec, ATARC Cyber Futures Summit, and government technology forums. I write on AI-era threats and what it means to build genuinely AI-native security programs. In 2026, I started building AI agents — exploring AI applications across every field of life.</p>
       </div>
       <div class="about-links">
         <a href="https://linkedin.com/in/usmanchaudhary" target="_blank" class="btn btn-gold">LinkedIn ↗</a>
@@ -450,9 +461,9 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
   <div class="page-hero fade">
     <div class="eyebrow">AI Builder</div>
     <h1 class="page-h1">Building AI agents</h1>
-    <p class="page-sub">Exploring AI applications across every field of life — finance, security, family, content, real estate. Projects shipped fast, learning documented. Two completed in May 2026.</p>
+    <p class="page-sub">Exploring AI applications across every field of life — finance, security, family, content, real estate. Projects shipped fast, learning documented. Three completed through June 2026.</p>
     <br>
-    <div class="now-badge"><span class="pulse"></span>P2 — Content Engine — Done ✓</div>
+    <div class="now-badge"><span class="pulse"></span>P3 — Frontier AI Intelligence — Done ✓</div>
   </div>
   <div class="proj-list fade">
     <div class="proj-row">
@@ -483,14 +494,23 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
         </div>
       </div>
     </div>
-    <div class="proj-row dim">
-      <div class="pmon"><span class="pnum">P3</span>JUL<br>2026</div>
-      <div><div class="pname">SecIntel RAG</div><div class="pdesc">A RAG system that synthesizes threat intelligence, CVEs, CISA advisories, SEC AI filings, and vendor earnings into a single queryable knowledge base for security leaders. "What vulnerabilities emerged this month related to agentic AI?"</div><div class="pstack"><span class="stk">RAG</span><span class="stk">Embeddings</span><span class="stk">pgvector</span><span class="stk">Cloud SQL</span><span class="stk">Python</span></div></div>
-      <div class="pstat"><span class="soon">COMING</span></div>
+    <div class="proj-row" style="cursor:pointer" onclick="window.open('https://usman-frontier-rag.streamlit.app','_blank')">
+      <div class="pmon"><span class="pnum">P3</span>JUN<br>2026</div>
+      <div>
+        <div class="pname">Frontier AI Intelligence RAG</div>
+        <div class="pdesc">RAG system querying 30+ documents across frontier AI labs — Anthropic, OpenAI, Google DeepMind, Mistral, DeepSeek, Meta, CISA, UK AISI. Hybrid BM25 + vector retrieval, Field CISO Mode, live model leaderboard, auto-watcher. Built on Cloud SQL + pgvector + Vertex AI.</div>
+        <div class="pstack"><span class="stk">Claude API</span><span class="stk">Cloud SQL</span><span class="stk">pgvector</span><span class="stk">Vertex AI</span><span class="stk">Python</span><span class="stk">Streamlit</span></div>
+        <div style="display:flex;gap:12px;margin-top:10px;align-items:center">
+          <div class="live"><span class="live-dot"></span>LIVE</div>
+          <a href="https://usmanc.com/frontier-rag.html" class="plink" target="_blank" onclick="event.stopPropagation()">Summary ↗</a>
+          <a href="https://usman-frontier-rag.streamlit.app" class="plink" target="_blank" onclick="event.stopPropagation()">Demo ↗</a>
+          <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/frontier-rag" class="plink" target="_blank" onclick="event.stopPropagation()">GitHub ↗</a>
+        </div>
+      </div>
     </div>
     <div class="proj-row dim">
       <div class="pmon"><span class="pnum">P4</span>AUG<br>2026</div>
-      <div><div class="pname">Local Model Lab — Private AI</div><div class="pdesc">Fully private RAG system running on local hardware. No data leaves the machine. Explores SLMs, quantization, and on-device AI for enterprise security use cases.</div><div class="pstack"><span class="stk">Ollama</span><span class="stk">Llama 3</span><span class="stk">Mistral</span><span class="stk">GGUF / QLoRA</span></div></div>
+      <div><div class="pname">Local Model Lab + Build LLM from Scratch</div><div class="pdesc">Run Gemma 4 12B and Llama 4 locally via Ollama. Experiment with quantization (INT4/INT8). Then build a tiny transformer from scratch — attention mechanisms, positional encodings, backprop. Compare what you built to what Google ships.</div><div class="pstack"><span class="stk">Ollama</span><span class="stk">Gemma 4</span><span class="stk">Llama 4</span><span class="stk">PyTorch</span><span class="stk">Transformers</span></div></div>
       <div class="pstat"><span class="soon">COMING</span></div>
     </div>
     <div class="proj-row dim">
@@ -513,8 +533,8 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <div class="tl-grid">
       <div class="tl"><div class="tl-m">May 2026</div><div class="tl-n">Agent Architecture</div><div class="tl-d">APIs, OAuth, Gmail, Calendar</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
       <div class="tl"><div class="tl-m">Jun 2026</div><div class="tl-n">Content Engine</div><div class="tl-d">Claude API, Firestore</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
-      <div class="tl now"><div class="tl-m">Next</div><div class="tl-n">SecIntel RAG</div><div class="tl-d">RAG · embeddings · pgvector</div><span class="tl-now-b">● NEXT</span></div>
-      <div class="tl"><div class="tl-m">Aug</div><div class="tl-n">Local Models</div><div class="tl-d">Ollama, SLMs</div></div>
+      <div class="tl"><div class="tl-m">Jun 2026</div><div class="tl-n">Frontier AI RAG</div><div class="tl-d">pgvector · Vertex AI · hybrid search</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
+      <div class="tl now"><div class="tl-m">Now</div><div class="tl-n">Local Model Lab</div><div class="tl-d">Gemma 4, Llama 4, LLM from scratch</div><span class="tl-now-b">● NOW</span></div>
       <div class="tl"><div class="tl-m">Sep</div><div class="tl-n">Fine-tuning</div><div class="tl-d">LoRA, evals</div></div>
       <div class="tl"><div class="tl-m">Oct</div><div class="tl-n">Physical AI</div><div class="tl-d">Robotics security</div></div>
       <div class="tl"><div class="tl-m">Nov–Dec</div><div class="tl-n">Open Source</div><div class="tl-d">Contributions</div></div>
@@ -533,6 +553,16 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <p class="page-sub">Original analysis on AI-era threats, autonomous attack surfaces, and what it means to build genuinely AI-native security programs.</p>
   </div>
   <div class="wr-list fade">
+    <a href="https://cloud.google.com/executive-insights/10-questions-ceos-should-ask-about-cloud-security" target="_blank" class="wr-row" style="border-bottom:2px solid #d4a853;padding-bottom:1.5rem;margin-bottom:.25rem">
+      <span class="wr-date">2024</span>
+      <span class="wr-title">10 Questions CEOs Should Ask About Cloud Security&ensp;<span style="background:#d4a853;color:#111;font-size:.6rem;font-weight:800;padding:.15rem .45rem;border-radius:2px;letter-spacing:.08em;vertical-align:middle">GOOGLE</span></span>
+      <span class="wr-tag">Executive Guidance</span>
+    </a>
+    <a href="https://www.govexec.com/assets/mxdr-reinventing-managed-security-federal-agencies/portal/" target="_blank" class="wr-row" style="border-bottom:2px solid #4a9eff;padding-bottom:1.5rem;margin-bottom:.25rem">
+      <span class="wr-date">2025</span>
+      <span class="wr-title">Reinventing Managed Security for Federal Agencies (MxDR)&ensp;<span style="background:#4a9eff;color:#111;font-size:.6rem;font-weight:800;padding:.15rem .45rem;border-radius:2px;letter-spacing:.08em;vertical-align:middle">WHITE PAPER</span></span>
+      <span class="wr-tag">Accenture Federal · Google</span>
+    </a>
     <a href="https://cloud.google.com/blog/products/identity-security/cloud-ciso-perspectives-how-to-build-an-ai-ready-security-program-for-the-public-sector" target="_blank" class="wr-row" style="border-bottom:2px solid #d4a853;padding-bottom:1.5rem;margin-bottom:.25rem">
       <span class="wr-date">2026</span>
       <span class="wr-title">How to Build an AI-Ready Security Program for the Public Sector&ensp;<span style="background:#d4a853;color:#111;font-size:.6rem;font-weight:800;padding:.15rem .45rem;border-radius:2px;letter-spacing:.08em;vertical-align:middle">GOOGLE CLOUD</span></span>
@@ -565,6 +595,81 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <span class="wr-title">Automatic Recording Environment Identification Using Acoustic Reverberation — Audio Engineering Society</span>
       <span class="wr-tag">Research</span>
     </a>
+  </div>
+  <div style="height:48px"></div>
+</div>
+</div>
+
+
+
+<!-- ══════════ SPEAKING ══════════ -->
+<div id="page-speaking" class="page-view">
+<div class="page">
+  <div class="page-hero fade">
+    <div class="eyebrow">Speaking</div>
+    <h1 class="page-h1">Keynotes & Panels</h1>
+    <p class="page-sub">Federal cybersecurity forums, AI security summits, and government technology conferences. Speaking at the intersection of AI, Zero Trust, and enterprise security modernization.</p>
+  </div>
+  <div class="fade" style="max-width:780px">
+
+    <div style="display:flex;flex-direction:column;gap:0">
+
+      <div style="padding:1.5rem 0;border-bottom:1px solid #1e1e1e">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="min-width:90px;color:#555;font-size:0.78rem;font-family:var(--mono);padding-top:3px">MAY 2026</div>
+          <div>
+            <div style="font-size:0.92rem;font-weight:600;color:#e5e5e5;margin-bottom:4px">Government Innovation Summit — Pennsylvania</div>
+            <div style="font-size:0.82rem;color:#888;margin-bottom:6px">Public Sector Network &nbsp;·&nbsp; Keynote</div>
+            <div style="font-size:0.85rem;color:#aaa;line-height:1.5">"AI &amp; Cloud Innovation for Mission Impact: Secure, Scalable Solutions for the Public Sector"</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem 0;border-bottom:1px solid #1e1e1e">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="min-width:90px;color:#555;font-size:0.78rem;font-family:var(--mono);padding-top:3px">APR 2026</div>
+          <div>
+            <div style="font-size:0.92rem;font-weight:600;color:#e5e5e5;margin-bottom:4px">Cloud Security Summit — Reston, VA</div>
+            <div style="font-size:0.82rem;color:#888;margin-bottom:6px">GovExec &nbsp;·&nbsp; Fireside Chat</div>
+            <div style="font-size:0.85rem;color:#aaa;line-height:1.5">"Securing your Agency's AI and Data Modernization Journey" — how agencies can deploy AI securely using Google's Secure AI Framework (SAIF)</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem 0;border-bottom:1px solid #1e1e1e">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="min-width:90px;color:#555;font-size:0.78rem;font-family:var(--mono);padding-top:3px">FEB 2026</div>
+          <div>
+            <div style="font-size:0.92rem;font-weight:600;color:#e5e5e5;margin-bottom:4px">Cyber Futures Summit — Reston, VA</div>
+            <div style="font-size:0.82rem;color:#888;margin-bottom:6px">ATARC / Nextgov / FCW &nbsp;·&nbsp; Fireside Chat</div>
+            <div style="font-size:0.85rem;color:#aaa;line-height:1.5">"Building an AI-Powered Zero Trust Defense: Modernizing Government Security Operations and Empowering the Future Workforce"</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem 0;border-bottom:1px solid #1e1e1e">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="min-width:90px;color:#555;font-size:0.78rem;font-family:var(--mono);padding-top:3px">AUG 2025</div>
+          <div>
+            <div style="font-size:0.92rem;font-weight:600;color:#e5e5e5;margin-bottom:4px">GovExec Webinar — Modernizing Security Under Pressure</div>
+            <div style="font-size:0.82rem;color:#888;margin-bottom:6px">GovExec &nbsp;·&nbsp; Webinar</div>
+            <div style="font-size:0.85rem;color:#aaa;line-height:1.5">How federal security teams are modernizing SecOps under resource, talent, and compliance pressure using AI-augmented detection and response.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem 0">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <div style="min-width:90px;color:#555;font-size:0.78rem;font-family:var(--mono);padding-top:3px">2025</div>
+          <div>
+            <div style="font-size:0.92rem;font-weight:600;color:#e5e5e5;margin-bottom:4px">Billington CyberSecurity Summit</div>
+            <div style="font-size:0.82rem;color:#888;margin-bottom:6px">Billington &nbsp;·&nbsp; Panel</div>
+            <div style="font-size:0.85rem;color:#aaa;line-height:1.5">"MXDR Strategies for Federal Defense" — AI-powered managed detection and response for federal cybersecurity programs.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
   <div style="height:48px"></div>
 </div>
