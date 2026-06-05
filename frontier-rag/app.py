@@ -77,7 +77,7 @@ with st.sidebar:
     st.markdown("---")
     entity_filter = st.selectbox(
         "Filter by organization",
-        ["All"] + ([e[0] for e in stats["entities"]] if stats.get("entities") else [])
+        ["All"]
     )
     if entity_filter == "All":
         entity_filter = None
