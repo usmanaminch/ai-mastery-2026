@@ -1,0 +1,13 @@
+anthropic
+streamlit
+sqlalchemy
+cloud-sql-python-connector[pg8000]
+pgvector
+google-cloud-aiplatform
+google-genai
+google-auth
+requests
+beautifulsoup4
+python-dotenv
+pandas
+rank-bm25
