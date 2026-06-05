@@ -1,52 +1,45 @@
 """
 embeddings/generator.py — Vertex AI text-embedding-004
-
-Handles two auth modes:
-- Local: ADC (gcloud auth application-default login)
-- Streamlit Cloud: service account JSON from st.secrets
+Reads credentials from st.secrets (cloud) or ADC (local).
 """
-import os
-import json
-import sys
+import os, json, sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-
 load_dotenv()
 
-GCP_PROJECT  = os.getenv("GCP_PROJECT", "frontier-rag")
-GCP_LOCATION = os.getenv("GCP_LOCATION", "us-east4")
+def _cfg(key, default=None):
+    try:
+        import streamlit as st
+        v = st.secrets.get(key)
+        if v is not None:
+            return v
+    except Exception:
+        pass
+    return os.getenv(key, default)
+
+GCP_PROJECT  = _cfg("GCP_PROJECT",  "frontier-rag")
+GCP_LOCATION = _cfg("GCP_LOCATION", "us-east4")
 EMBEDDING_MODEL = "text-embedding-004"
 EMBEDDING_DIMS  = 768
 
 _client = None
 
-
 def _get_credentials():
-    sa_json = None
-    try:
-        import streamlit as st
-        sa_json = st.secrets.get("GOOGLE_SERVICE_ACCOUNT_JSON")
-    except Exception:
-        pass
-    if not sa_json:
-        sa_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    sa_json = _cfg("GOOGLE_SERVICE_ACCOUNT_JSON")
     if sa_json:
         try:
             from google.oauth2 import service_account
             info = json.loads(sa_json) if isinstance(sa_json, str) else sa_json
             return service_account.Credentials.from_service_account_info(
-                info,
-                scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                info, scopes=["https://www.googleapis.com/auth/cloud-platform"]
             )
         except Exception as e:
-            print(f"[generator] SA load failed: {e}")
+            print(f"[generator] SA creds failed: {e}")
     return None
 
-
-def get_client() -> genai.Client:
+def get_client():
     global _client
     if _client is None:
         creds = _get_credentials()
@@ -55,7 +48,6 @@ def get_client() -> genai.Client:
             kwargs["credentials"] = creds
         _client = genai.Client(**kwargs)
     return _client
-
 
 def embed_texts(texts: list, task_type: str = "RETRIEVAL_DOCUMENT", batch_size: int = 20) -> list:
     client = get_client()
@@ -73,10 +65,8 @@ def embed_texts(texts: list, task_type: str = "RETRIEVAL_DOCUMENT", batch_size: 
         all_vectors.extend([e.values for e in result.embeddings])
     return all_vectors
 
-
 def embed_query(query: str) -> list:
     return embed_texts([query], task_type="RETRIEVAL_QUERY")[0]
-
 
 def embed_document(text: str) -> list:
     return embed_texts([text], task_type="RETRIEVAL_DOCUMENT")[0]
