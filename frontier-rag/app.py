@@ -88,7 +88,7 @@ st.markdown("# Frontier AI Intelligence")
 st.markdown("*Query across 30+ documents from Anthropic, Google DeepMind, Meta, Mistral, DeepSeek, CISA, UK AISI, and more.*")
 
 # Query mode tabs
-mode_tab, compare_tab, disagree_tab, watch_tab, history_tab = st.tabs(["💬 Query", "📊 Model Comparison", "⚡ Find Disagreements", "🔄 Auto-Watcher", "📋 Query History"])
+mode_tab, compare_tab, disagree_tab, watch_tab, add_tab, history_tab = st.tabs(["💬 Query", "📊 Model Comparison", "⚡ Find Disagreements", "🔄 Auto-Watcher", "➕ Add Content", "📋 Query History"])
 
 
 # ── QUERY TAB ────────────────────────────────────────────────────
@@ -374,6 +374,96 @@ with watch_tab:
                 st.code(output.getvalue())
 
     st.caption("💡 Schedule with GitHub Actions cron to run daily automatically.")
+
+
+# ── ADD CONTENT TAB ──────────────────────────────────────────────
+with add_tab:
+    st.markdown("**Add a URL to the corpus** — ingests immediately and optionally adds to the watch list.")
+
+    url_input = st.text_input(
+        "URL",
+        placeholder="https://airisk.mit.edu/priorities",
+        help="Any publicly accessible HTML page"
+    )
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        source_type = st.selectbox("Source type", [
+            "safety_eval", "model_card", "blog",
+            "regulatory", "benchmark", "zt_framework"
+        ])
+        entity_name = st.text_input("Organization", placeholder="MIT, CISA, Anthropic...")
+    with col_b:
+        entity_type = st.selectbox("Entity type", [
+            "evaluation", "company", "regulation", "research"
+        ])
+        add_to_watch = st.toggle("Also add to Auto-Watcher", value=False,
+                                 help="Re-check this URL daily/weekly for new content")
+
+    ingest_btn = st.button("⚡ Ingest Now", type="primary", disabled=not url_input.strip())
+
+    if ingest_btn and url_input.strip():
+        if not entity_name.strip():
+            st.warning("Enter an organization name.")
+        else:
+            import io, contextlib
+            output = io.StringIO()
+            with st.spinner(f"Ingesting {url_input[:60]}..."):
+                try:
+                    import sys, os
+                    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                    from ingest.pipeline import ingest_url
+                    with contextlib.redirect_stdout(output):
+                        result = ingest_url(
+                            url=url_input.strip(),
+                            source_type=source_type,
+                            entity_name=entity_name.strip(),
+                            entity_type=entity_type,
+                        )
+
+                    if result["status"] == "success":
+                        st.success(f"✅ Ingested: **{result.get('title', url_input)[:60]}** — {result.get('chunks', 0)} chunks")
+                    elif result["status"] == "skipped":
+                        st.info("Already in corpus. Use force re-ingest if content changed.")
+                    else:
+                        st.error(f"Failed: {result.get('error', 'unknown error')}")
+
+                    if add_to_watch and result["status"] in ("success", "skipped"):
+                        try:
+                            from db.connection import get_engine
+                            from sqlalchemy import text
+                            engine = get_engine()
+                            freq = st.radio("Check frequency", ["daily", "weekly"], horizontal=True, key="freq_radio")
+                            with engine.connect() as conn:
+                                conn.execute(text("""
+                                    INSERT INTO watch_sources
+                                        (url, entity_name, source_type, entity_type, check_frequency)
+                                    VALUES (:url, :entity, :stype, :etype, :freq)
+                                    ON CONFLICT (url) DO NOTHING
+                                """), {
+                                    "url": url_input.strip(),
+                                    "entity": entity_name.strip(),
+                                    "stype": source_type,
+                                    "etype": entity_type,
+                                    "freq": freq,
+                                })
+                                conn.commit()
+                            st.success("✅ Added to Auto-Watcher")
+                        except Exception as e:
+                            st.warning(f"Ingested OK but watch list failed: {e}")
+
+                    with st.expander("Ingestion log"):
+                        st.code(output.getvalue())
+
+                except Exception as e:
+                    st.error(f"Error: {e}")
+                    st.code(output.getvalue())
+
+    st.markdown("---")
+    st.markdown("**Quick add — paste these to ingest the MIT AI Risk Repository:**")
+    st.code("https://airisk.mit.edu/priorities")
+    st.code("https://arxiv.org/abs/2408.12622")
+    st.caption("Entity: MIT · Type: safety_eval")
 
 
 # ── HISTORY TAB ──────────────────────────────────────────────────
