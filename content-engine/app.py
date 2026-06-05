@@ -971,7 +971,7 @@ with tabs[2]:
 
     input_method = st.radio(
         "Input method",
-        ["🔗 URL", "📋 Paste text", "💭 Topic idea"],
+        ["🔗 URL", "📋 Paste text", "📎 PDF Upload", "💭 Topic idea"],
         horizontal=True
     )
 
