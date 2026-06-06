@@ -801,20 +801,18 @@ Tier: 1=landmark primary source, 2=substantive research, 3=news/blog."""
                             title = p_title or pdf_uploaded.name.replace(".pdf", "").replace("-", " ").title()
                             author = p_author or "Unknown"
                             source = url.split("/")[2].replace("www.", "") if "//" in url else "Unknown"
-                            record = {
-                                "id": None,
-                                "title": title,
-                                "source_name": source,
-                                "source_url": url,
-                                "author": author,
-                                "synthesis": raw,
-                                "tier": result.get("tier", 2),
-                                "themes": result.get("themes", []),
-                                "status": "done",
-                                "date_found": _time.strftime("%Y-%m-%dT%H:%M:%S"),
-                                "input_type": "pdf",
-                            }
-                            add_record(record)
+                            add_record(
+                                source_url=url,
+                                source_name=source,
+                                author=author,
+                                title=title,
+                                synthesis=raw,
+                                key_quotes=[],
+                                content_angle=result.get("content_angle", ""),
+                                tier=result.get("tier", 2),
+                                themes=result.get("themes", []),
+                                raw_content="",
+                            )
                             remove_pending_paste(url)
                             mark_as_synthesized(item["row"])
                             st.success(f"✅ PDF synthesized — Tier {result.get('tier')} · {title[:50]}")
