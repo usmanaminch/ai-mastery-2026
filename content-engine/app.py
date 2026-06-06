@@ -1104,6 +1104,56 @@ with tabs[2]:
             else:
                 st.error("Please paste some content first.")
 
+    elif input_method == "📎 PDF Upload":
+        st.caption("Claude reads the PDF natively — tables, charts, and visuals preserved.")
+        uploaded_pdf = st.file_uploader("Choose a PDF file", type=["pdf"], key="ac_pdf")
+        c1, c2 = st.columns(2)
+        with c1:
+            pdf_title = st.text_input("Title", placeholder="MIT AI Risk Report 2026", key="ac_pdf_title")
+        with c2:
+            pdf_org = st.text_input("Organization", placeholder="MIT, CISA, Verizon...", key="ac_pdf_org")
+        depth_pdf = st.radio("Depth", ["Quick (Haiku)", "Deep (Sonnet)"], horizontal=True, key="ac_pdf_depth")
+
+        if st.button("📎 Synthesize PDF", type="primary", key="ac_pdf_btn"):
+            if not pdf_title.strip():
+                st.warning("Add a title first.")
+            elif not uploaded_pdf:
+                st.warning("Upload a PDF first.")
+            else:
+                import base64 as _b64, json as _json2, time as _time2
+                with st.spinner("Claude is reading the PDF..."):
+                    try:
+                        _b = _b64.standard_b64encode(uploaded_pdf.read()).decode("utf-8")
+                        _m = "claude-haiku-4-5" if "Quick" in depth_pdf else "claude-sonnet-4-5"
+                        _r = client.messages.create(model=_m, max_tokens=1500,
+                            messages=[{"role":"user","content":[
+                                {"type":"document","source":{"type":"base64","media_type":"application/pdf","data":_b}},
+                                {"type":"text","text":'''Return ONLY valid JSON:
+{"tldr":"2-3 sentence summary","key_points":["p1","p2","p3","p4","p5"],
+"why_timely":"why this matters now","themes":["t1","t2","t3"],
+"tier":2,"content_angle":"CISO angle","key_quotes":[]}
+Tier: 1=landmark primary source, 2=substantive research, 3=news/blog'''}
+                            ]}])
+                        _raw = _r.content[0].text.strip()
+                        if _raw.startswith("```"):
+                            _raw = "\n".join(_raw.split("\n")[1:-1])
+                        _res = _json2.loads(_raw)
+                        add_record(
+                            source_url=f"pdf://{pdf_title.strip().lower().replace(' ','-')}",
+                            source_name=pdf_org.strip() or "PDF Upload",
+                            author="", title=pdf_title.strip(),
+                            synthesis=_raw, key_quotes=_res.get("key_quotes", []),
+                            content_angle=_res.get("content_angle", ""),
+                            tier=_res.get("tier", 2), themes=_res.get("themes", []),
+                        )
+                        st.success(f"✅ Tier {_res.get('tier')} — {pdf_title[:50]}")
+                        st.markdown(f"**TLDR:** {_res.get('tldr','')}")
+                        with st.expander("Key points"):
+                            for _p in _res.get("key_points", []):
+                                st.markdown(f"• {_p}")
+                    except Exception as _e:
+                        st.error(f"PDF failed: {_e}")
+
     else:
         topic = st.text_input("Topic or idea")
         context = st.text_area("Your angle or context (optional)", height=100)
