@@ -110,12 +110,12 @@ def add_record(
     # Duplicate check — match against exact OR normalized URL
     if not allow_duplicate:
         # Exact match
-        existing = col.where("source_url", "==", source_url).limit(1).get()
+        existing = col.where(filter=FieldFilter("source_url", "==", source_url)).limit(1).get()
         if list(existing):
             doc = list(existing)[0]
             return {"id": doc.id, **doc.to_dict()}
         # Normalized match (catches URLs that differ only by tracking params)
-        existing = col.where("normalized_url", "==", normalized).limit(1).get()
+        existing = col.where(filter=FieldFilter("normalized_url", "==", normalized)).limit(1).get()
         if list(existing):
             doc = list(existing)[0]
             return {"id": doc.id, **doc.to_dict()}
@@ -157,18 +157,18 @@ def url_exists(url: str) -> bool:
     db = _get_db()
 
     # Exact match
-    existing = db.collection(COLLECTION).where(
+    existing = db.collection(COLLECTION).where(filter=FieldFilter(
         "source_url", "==", url
-    ).limit(1).get()
+    )).limit(1).get()
     if list(existing):
         return True
 
     # Normalized match (only catches records with normalized_url stored)
     normalized = normalize_url(url)
     if normalized != url:
-        existing = db.collection(COLLECTION).where(
+        existing = db.collection(COLLECTION).where(filter=FieldFilter(
             "normalized_url", "==", normalized
-        ).limit(1).get()
+        )).limit(1).get()
         if list(existing):
             return True
 
@@ -213,16 +213,16 @@ def load_library() -> dict:
 def get_records_by_status(status: str) -> list:
     """Get all records with a given status"""
     db = _get_db()
-    docs = db.collection(COLLECTION).where("status", "==", status).get()
+    docs = db.collection(COLLECTION).where(filter=FieldFilter("status", "==", status)).get()
     return [doc.to_dict() for doc in docs]
 
 
 def get_records_by_theme(theme: str) -> list:
     """Get records matching a theme"""
     db = _get_db()
-    docs = db.collection(COLLECTION).where(
+    docs = db.collection(COLLECTION).where(filter=FieldFilter(
         "themes", "array_contains", theme
-    ).get()
+    )).get()
     return [doc.to_dict() for doc in docs]
 
 
