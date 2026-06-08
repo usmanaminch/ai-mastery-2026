@@ -13,6 +13,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from pathlib import Path
+import os
+import os
+import arabic_reshaper
+from bidi.algorithm import get_display
+from matplotlib import font_manager
+
+# Use Geeza Pro — macOS built-in Arabic/Urdu font
+_ARABIC_FONTS = [
+    '/System/Library/Fonts/GeezaPro.ttc',
+    '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
+    '/Library/Fonts/Arial Unicode.ttf',
+]
+_urdu_font = None
+for _fp in _ARABIC_FONTS:
+    if os.path.exists(_fp):
+        _urdu_font = font_manager.FontProperties(fname=_fp)
+        plt.rcParams['font.family'] = 'sans-serif'
+        break
+
+def u(text: str) -> str:
+    """Reshape Urdu text for correct matplotlib rendering."""
+    try:
+        reshaped = arabic_reshaper.reshape(str(text))
+        return get_display(reshaped)
+    except Exception:
+        return str(text)
 
 INPUT  = Path("attention_maps/attention_analysis.json")
 OUTPUT = Path("attention_maps")
@@ -92,8 +118,8 @@ def plot_attention_heatmap(matrix: np.ndarray, chars: list,
 
     ax.set_xticks(range(len(chars)))
     ax.set_yticks(range(len(chars)))
-    ax.set_xticklabels(chars, color="#e5e5e5", fontsize=11)
-    ax.set_yticklabels(chars, color="#e5e5e5", fontsize=11)
+    ax.set_xticklabels([u(c) for c in chars], color="#e5e5e5", fontsize=11)
+    ax.set_yticklabels([u(c) for c in chars], color="#e5e5e5", fontsize=11)
     ax.set_xlabel("Attends to →", color="#999", fontsize=10)
     ax.set_ylabel("← Token", color="#999", fontsize=10)
     ax.set_title(title, color="#e5e5e5", fontsize=11, pad=10)
@@ -134,7 +160,7 @@ def main():
         # Show the behavior profile as a radar-style bar chart instead
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
         fig.patch.set_facecolor("#0a0a0a")
-        fig.suptitle(f"Phrase: {phrase}", color="#e5e5e5", fontsize=13, y=1.02)
+        fig.suptitle(u(f"Phrase: {phrase}"), color="#e5e5e5", fontsize=13, y=1.02)
 
         for ax_idx, (ax, head_list, label) in enumerate(
             [(axes[0], prev_heads[:6], "PREV heads (L0 — character sequences)"),
