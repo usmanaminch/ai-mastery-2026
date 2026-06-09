@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UrduGPT — Usman Chaudhary</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a; --surface: #111; --border: #1e1e1e;
+    --gold: #c9a84c; --gold-dim: rgba(201,168,76,0.12);
+    --teal: #1D9E75; --purple: #7F77DD; --coral: #D85A30;
+    --text: #e5e5e5; --muted: #666;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  html { background: var(--bg); color: var(--text); font-family: var(--sans); }
+  body { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0; border-bottom: 1px solid var(--border); margin-bottom: 64px;
+  }
+  .back-link { font-size: 0.78rem; color: var(--muted); text-decoration: none;
+    font-family: var(--mono); letter-spacing: 0.05em; transition: color 0.2s; }
+  .back-link:hover { color: var(--gold); }
+  .top-badge { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
+
+  .eyebrow { font-family: var(--mono); font-size: 0.7rem; color: var(--gold);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 24px; }
+  h1 span { color: var(--gold); }
+  .hero-desc { font-size: 1.05rem; color: #999; line-height: 1.7; max-width: 640px; margin-bottom: 36px; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .chip { font-family: var(--mono); font-size: 0.72rem; padding: 5px 12px;
+    border: 1px solid var(--border); border-radius: 4px; color: var(--muted); background: var(--surface); }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 72px; }
+  .btn-primary { display: inline-block; padding: 12px 28px; background: var(--gold);
+    color: #111; font-weight: 700; font-size: 0.85rem; border-radius: 5px; text-decoration: none; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { display: inline-block; padding: 12px 28px; border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.85rem; border-radius: 5px; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .section-label { font-family: var(--mono); font-size: 0.65rem; color: var(--gold);
+    letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 32px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-bottom: 56px; }
+  .pipe-step { text-align: center; position: relative; }
+  .pipe-step:not(:last-child)::after { content: '→'; position: absolute; right: -10px; top: 22px; color: var(--muted); font-size: 1.1rem; }
+  .pipe-icon { width: 48px; height: 48px; border-radius: 10px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    background: var(--surface); border: 1px solid var(--border); }
+  .pipe-name { font-weight: 600; font-size: 0.82rem; color: var(--text); margin-bottom: 4px; }
+  .pipe-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+
+  .finding-box { border: 1px solid var(--border); background: var(--surface);
+    border-radius: 8px; padding: 28px; margin-bottom: 24px; }
+  .finding-box.purple { border-color: var(--purple); background: rgba(127,119,221,0.08); }
+  .finding-box.teal { border-color: var(--teal); background: rgba(29,158,117,0.08); }
+  .finding-box.coral { border-color: var(--coral); background: rgba(216,90,48,0.08); }
+  .finding-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 12px; }
+  .finding-box.purple .finding-label { color: var(--purple); }
+  .finding-box.teal .finding-label { color: var(--teal); }
+  .finding-box.coral .finding-label { color: var(--coral); }
+  .finding-title { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+  .finding-desc { font-size: 0.85rem; color: #aaa; line-height: 1.7; }
+
+  .comparison-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin-bottom: 16px; }
+  .comparison-cell { background: var(--bg); padding: 20px; }
+  .comparison-cell .label { font-family: var(--mono); font-size: 0.65rem;
+    color: var(--muted); letter-spacing: 0.1em; margin-bottom: 8px; }
+  .comparison-cell .quote { font-size: 0.88rem; color: #bbb; line-height: 1.6;
+    font-family: var(--mono); direction: rtl; text-align: right; }
+  .comparison-cell .quote.bad { color: #888; font-style: italic; }
+  .comparison-cell .quote.good { color: var(--teal); }
+
+  .arch-row { display: flex; gap: 16px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .arch-row:last-child { border-bottom: none; }
+  .arch-label { font-family: var(--mono); font-size: 0.68rem; color: var(--gold);
+    min-width: 110px; padding-top: 2px; letter-spacing: 0.06em; }
+  .arch-val { font-size: 0.85rem; color: #aaa; line-height: 1.6; }
+  .arch-val strong { color: var(--text); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 56px; }
+  .stat-cell { background: var(--bg); padding: 24px; text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--gold); font-family: var(--mono); }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
+
+  .footer { text-align: center; padding-top: 48px;
+    font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  .footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .pipeline { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .pipe-step::after { display: none; }
+    .comparison-row { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="https://usmanc.com" class="back-link">← usmanc.com</a>
+  <span class="top-badge">AI PROJECT 4 &nbsp;·&nbsp; JUN 2026 &nbsp;·&nbsp; 3 WEEKS</span>
+</div>
+
+<div class="eyebrow">AI Project 4 — LLM from Scratch</div>
+<h1>Urdu<span>GPT</span></h1>
+<p class="hero-desc">
+  A character-level transformer built from scratch on 290 million Urdu characters — with attention
+  visualization, interpretability analysis, and a direct comparison against Gemma 4 12B.
+  The first interpretability study on a Urdu language model.
+</p>
+
+<div class="stack">
+  <span class="chip">PyTorch</span>
+  <span class="chip">11M params</span>
+  <span class="chip">MPS (Apple Silicon)</span>
+  <span class="chip">290M chars</span>
+  <span class="chip">Karpathy nanoGPT</span>
+  <span class="chip">Urdu Wikipedia</span>
+  <span class="chip">Ollama</span>
+  <span class="chip">Matplotlib</span>
+</div>
+
+<div class="actions">
+  <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/p4-local-model-lab" target="_blank" class="btn-primary">GitHub ↗</a>
+  <a href="https://usmanc.com" class="btn-secondary">← Back to site</a>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">By the numbers</div>
+<div class="stat-row">
+  <div class="stat-cell"><div class="stat-num">11M</div><div class="stat-label">Parameters</div></div>
+  <div class="stat-cell"><div class="stat-num">290M</div><div class="stat-label">Training characters</div></div>
+  <div class="stat-cell"><div class="stat-num">41</div><div class="stat-label">Minutes to train</div></div>
+  <div class="stat-cell"><div class="stat-num">0.49</div><div class="stat-label">Validation loss</div></div>
+</div>
+
+<div class="section-label">How it was built</div>
+<div class="pipeline">
+  <div class="pipe-step">
+    <div class="pipe-icon">📚</div>
+    <div class="pipe-name">Corpus</div>
+    <div class="pipe-desc">Urdu Wikipedia dump — 264K articles, 290M chars, 327 unique characters</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🔤</div>
+    <div class="pipe-name">Tokenizer</div>
+    <div class="pipe-desc">Character-level — every Urdu glyph maps to a unique integer ID</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🧠</div>
+    <div class="pipe-name">Model</div>
+    <div class="pipe-desc">6 layers × 6 heads × 384 dims — full transformer from scratch</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">⚡</div>
+    <div class="pipe-name">Train</div>
+    <div class="pipe-desc">5,000 steps on Apple Silicon MPS — AdamW, gradient clipping</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🔍</div>
+    <div class="pipe-name">Interpret</div>
+    <div class="pipe-desc">Attention weight extraction across all 36 heads — 4 Urdu phrases</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">What the model learned</div>
+
+<div class="finding-box purple">
+  <div class="finding-label">Finding 1 — Layer 0 specialization</div>
+  <div class="finding-title">All of Layer 0 spontaneously became "previous token" heads</div>
+  <div class="finding-desc">
+    Without any instruction, 5 of 6 heads in Layer 0 learned to attend strongly to the immediately
+    preceding character. This makes sense for Urdu — the language has highly predictable character
+    sequences due to its morphological structure. The model discovered that tracking "what came before
+    me" is the most useful signal for predicting the next character. One head (L0H5) specialized
+    differently — behaving as a positional anchor across all phrases tested.
+  </div>
+</div>
+
+<div class="finding-box teal">
+  <div class="finding-label">Finding 2 — Hierarchical learning</div>
+  <div class="finding-title">Layer 0 learns character sequences. Layers 1–5 learn word patterns.</div>
+  <div class="finding-desc">
+    A dramatic behavioral shift occurs between Layer 0 and Layer 1. By Layer 1, LOCAL attention
+    (attending to a window of nearby tokens) dominates — the model is now building word-level context
+    rather than character-level sequences. This mirrors findings from interpretability research on
+    much larger models like GPT-2, reproduced here at 11M parameters on a low-resource language
+    nobody has studied this way before.
+  </div>
+</div>
+
+<div class="finding-box coral">
+  <div class="finding-label">Finding 3 — Dataset bias</div>
+  <div class="finding-title">UrduGPT learned that "Pakistan" means cricket</div>
+  <div class="finding-desc">
+    Regardless of the seed word, UrduGPT frequently generates cricket-related content. Urdu Wikipedia
+    has a disproportionate amount of cricket articles, so the model over-indexed on this pattern.
+    This is a real problem in low-resource language modeling: when one topic dominates the available
+    corpus, the model's world model becomes distorted. A genuine finding about dataset composition
+    in Urdu NLP.
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">UrduGPT vs Gemma 4 12B — side by side</div>
+<p style="color:#999; font-size:0.88rem; margin-bottom:24px; line-height:1.7">
+  The same seeds run through both models. The gap illustrates exactly what scale, training data,
+  and RLHF buy you — and what 41 minutes on a MacBook cannot.
+</p>
+
+<div style="font-family:var(--mono); font-size:0.68rem; color:var(--muted); margin-bottom:12px; display:grid; grid-template-columns:1fr 1fr; gap:1px;">
+  <span style="padding:8px 20px;">UrduGPT (11M params)</span>
+  <span style="padding:8px 20px;">Gemma 4 12B (1,000× larger)</span>
+</div>
+
+<div class="comparison-row">
+  <div class="comparison-cell">
+    <div class="label">SEED: علم (knowledge)</div>
+    <div class="quote bad">علم ایوارڈ اسکول میں بین الاقوامی بین الاقوامی بین الاقوامی بین الاقوامی...</div>
+  </div>
+  <div class="comparison-cell">
+    <div class="label">SEED: علم (knowledge)</div>
+    <div class="quote good">علم نور ہے، جہالت اندھیرا۔</div>
+  </div>
+</div>
+
+<div class="comparison-row">
+  <div class="comparison-cell">
+    <div class="label">SEED: محبت (love)</div>
+    <div class="quote bad">محبت کرنے والے حوالے کے صحن کھالے میں پیدا ہوئے اور انھیں میں سے نایاب درگاہ ہو گیا۔</div>
+  </div>
+  <div class="comparison-cell">
+    <div class="label">SEED: محبت (love)</div>
+    <div class="quote good">محبت ایک شفقت ہے، ایک چاہت ہے۔ یہ دلوں کو جوڑتی ہے۔</div>
+  </div>
+</div>
+
+<div class="comparison-row">
+  <div class="comparison-cell">
+    <div class="label">SEED: آج کا موسم (today's weather)</div>
+    <div class="quote bad">آج کا موسم ہو گئے۔ کیفیت کے بعد انھوں نے اسٹیڈیم کے خلاف رنز بنائے...</div>
+  </div>
+  <div class="comparison-cell">
+    <div class="label">SEED: آج کا موسم (today's weather)</div>
+    <div class="quote good">آج کا موسم بہت ٹھنڈا اور خوشگوار ہے۔</div>
+  </div>
+</div>
+
+<p style="color:#666; font-size:0.78rem; margin-top:16px; font-family:var(--mono);">
+  UrduGPT learned form. Gemma 4 learned meaning. The difference is 1,000× parameters,
+  hundreds of billions of training tokens, and RLHF fine-tuning.
+</p>
+
+<hr class="divider">
+
+<div class="section-label">Architecture</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">MODEL</span>
+    <span class="arch-val"><strong>Decoder-only transformer</strong> following Karpathy's nanoGPT architecture. 6 layers, 6 attention heads per layer, 384 embedding dimensions, 256-token context window. 10,990,407 total parameters.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">TOKENIZER</span>
+    <span class="arch-val"><strong>Character-level</strong> — 327 unique Urdu/Arabic script characters. Every possible Urdu text is representable. The model learns morphology from scratch rather than relying on subword segmentation.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">TRAINING</span>
+    <span class="arch-val"><strong>AdamW optimizer</strong>, lr=3e-4, batch size 32, block size 256. Gradient clipping at 1.0. Dropout 0.1. 5,000 steps on Apple Silicon MPS GPU. Val loss 0.49 at convergence.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">CORPUS</span>
+    <span class="arch-val"><strong>Urdu Wikipedia</strong> — 264,959 articles, 290M characters. Custom XML parser strips markup, keeps only Urdu Unicode range (U+0600–U+06FF). 90/10 train/val split.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">INTERPRETABILITY</span>
+    <span class="arch-val"><strong>Attention weight extraction</strong> across all 36 heads (6 layers × 6 heads). Heads classified as PREV, LOCAL, SELF, or MIXED. Behavior visualized across 4 Urdu phrases spanning proper nouns, verb phrases, and predicates.</span>
+  </div>
+</div>
+
+<div class="section-label">What comes next</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">P5</span>
+    <span class="arch-val"><strong>Urdu Fine-tuned Assistant</strong> — LoRA fine-tune Llama 3.2 on Urdu corpus. What UrduGPT cannot do (answer questions with meaning), a fine-tuned 3B parameter model can. Runs locally, private.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">P6</span>
+    <span class="arch-val"><strong>Mechanistic Interpretability</strong> — deeper circuit analysis on the P5 model. What attention heads specialize in at 3B scale vs 11M? Apply TransformerLens to find specific Urdu morphology circuits.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">P7</span>
+    <span class="arch-val"><strong>Multilingual extension</strong> — extend the Urdu model to Farsi and Arabic. All three share Arabic script. The OSS contribution: a multilingual Abrahamic language model covering ~500M speakers in an underserved script family.</span>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="https://usmanc.com">usmanc.com</a> &nbsp;·&nbsp;
+  <a href="https://github.com/usmanaminch/ai-mastery-2026">GitHub</a> &nbsp;·&nbsp;
+  Part of a 7-month AI mastery journey · Started May 19, 2026
+</div>
+
+</body>
+</html>
