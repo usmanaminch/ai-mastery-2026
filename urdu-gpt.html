@@ -220,6 +220,36 @@
   </div>
 </div>
 
+
+<hr class="divider">
+
+<div class="section-label">Interpretability charts</div>
+
+<div style="margin-bottom:40px;">
+  <img src="p4-local-model-lab/attention_maps/head_behavior_by_layer.png"
+       alt="Attention head specialization by layer"
+       style="width:100%;border-radius:8px;border:1px solid #1e1e1e;">
+  <p style="font-size:0.78rem;color:#666;font-family:monospace;margin-top:10px;line-height:1.5;">
+    36 heads across 6 layers measured on 4 Urdu phrases. Layer 0: dominated by PREV heads (purple) —
+    the model learned to track the previous character. Layers 1–5: LOCAL attention (teal) takes over,
+    building word-level context. Same hierarchical shift seen in GPT-2 and larger models, reproduced
+    here at 11M parameters on Urdu.
+  </p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px;">
+  <div>
+    <img src="p4-local-model-lab/attention_maps/behavior_پاکستان.png"
+         style="width:100%;border-radius:8px;border:1px solid #1e1e1e;">
+    <p style="font-size:0.75rem;color:#666;font-family:monospace;margin-top:8px;">پاکستان — PREV heads in L0, LOCAL in deeper layers</p>
+  </div>
+  <div>
+    <img src="p4-local-model-lab/attention_maps/behavior_بہت_اچھا_ہے.png"
+         style="width:100%;border-radius:8px;border:1px solid #1e1e1e;">
+    <p style="font-size:0.75rem;color:#666;font-family:monospace;margin-top:8px;">بہت اچھا ہے — same pattern, different phrase type</p>
+  </div>
+</div>
+
 <hr class="divider">
 
 <div class="section-label">UrduGPT vs Gemma 4 12B — side by side</div>
