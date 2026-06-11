@@ -2,7 +2,7 @@
 
 ### Air-Gapped, Exploit-Validated C/C++ Vulnerability Repair for the Edge
 
-**Project P6 — AI Mastery Portfolio**
+**Project P6**
 **Author:** Usman Chaudhary
 **Status:** Design specification (v0.1)
 **Last updated:** June 10, 2026
@@ -35,11 +35,10 @@ sanitizers verify it. **The model does less because the system does more.**
 
 ## 2. Problem statement
 
-AI-native vulnerability scanning has matured rapidly, but every production system in
-the category — including Anthropic's Claude Security — is cloud-native. It scans
-repositories using hosted frontier models, runs validation in cloud sandboxes, and
-returns results over the network. This architecture is sound for connected enterprises
-and structurally impossible for disconnected ones.
+AI-native vulnerability scanning has matured rapidly, but the production systems in the
+category are cloud-native. They scan repositories using hosted frontier models, run
+validation in cloud sandboxes, and return results over the network. This architecture is
+sound for connected enterprises and structurally impossible for disconnected ones.
 
 The environments that most need automated remediation are precisely the ones that
 cannot use these tools:
@@ -53,12 +52,11 @@ These systems are written predominantly in memory-unsafe C/C++, carry large volu
 of legacy code, and are isolated from exactly the cloud services that could help them.
 No AI-native scanner operates inside the air gap.
 
-> **Scope note on positioning.** This project is framed deliberately around commercial
-> and civilian air-gapped environments. It is **not** positioned as a defense or
-> classified-network (SIPR/JWICS/SCIF) deployment tool. That framing is both
-> unnecessary to the engineering and adjacent to active, contested public controversy.
-> The technical architecture is identical; the business case is critical infrastructure
-> and regulated commercial enclaves.
+> **Scope note on positioning.** This project is framed around commercial and civilian
+> air-gapped environments — critical infrastructure, ICS/SCADA, and regulated commercial
+> enclaves. It is not positioned as a defense or classified-network deployment tool. The
+> technical architecture is identical across those settings; the chosen focus is
+> commercial critical infrastructure.
 
 ---
 
