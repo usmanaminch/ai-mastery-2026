@@ -265,7 +265,58 @@ crash retention are capped and deduplicated by stack hash.
 
 ---
 
-## 7. Safety and dual-use posture
+## 7. Threat intelligence updates: the offline bundle channel
+
+A disconnected defender that cannot benefit from the outside world's vulnerability
+discoveries is fighting blind — especially now, as AI-driven discovery accelerates the
+rate at which new vulnerabilities are published. EdgePatch stays current without ever
+breaking the air gap, using the same controlled-transfer pattern that already governs
+antivirus definitions and OS patches in classified and OT environments: **knowledge
+flows in through signed offline bundles; nothing flows out.**
+
+The architecture is deliberately two-sided, and only one side ever touches the network.
+
+**Connected side (outside the enclave).** A pipeline with full network access watches CVE
+feeds and public disclosures, and distills new intelligence into *detection artifacts*
+rather than raw data: new static-analysis rules (Semgrep/CodeQL patterns for newly
+disclosed bug classes), new or refined fuzzing harness templates, updated patch templates
+for emerging patterns, and — when improved — a refreshed local model. Because this side is
+not in the enclave, it can use any tooling, including frontier models, to produce these
+artifacts.
+
+**The boundary.** Artifacts are packaged into a **signed, versioned bundle**. The bundle is
+the only thing that crosses, and it crosses through the same audited channel a regulated
+environment already trusts — controlled media or a one-way data diode. Inside the enclave,
+the bundle's signature is verified before anything is loaded. There is no live connection,
+no callback, no telemetry. The data flow is strictly one-directional and asynchronous:
+knowledge in, nothing out. The zero-egress property is fully preserved.
+
+**The critical invariant: enrichment, not dependency.** The intelligence makes EdgePatch
+*better at recognizing and fixing known patterns*, but the core find → prove → patch →
+verify loop runs entirely self-contained and offline regardless. A freshly introduced
+`strcpy` overflow is caught by structural analysis whether or not it appears in any feed.
+The system functions fully disconnected with whatever bundle it last received; bundles
+keep it current but are never required for it to operate. This is the line that keeps the
+air-gap thesis intact — the system is offline-complete, and updates are batched
+enrichments that arrive on the enclave's schedule, not a connectivity requirement.
+
+What a bundle contains:
+
+- Updated detection rules (new patterns for newly disclosed bug classes)
+- New or refined fuzzing harness templates
+- Updated patch templates for emerging patterns
+- A refreshed local model, when improved
+- Optionally, a curated CVE reference set — as benchmarking/pattern reference data, not a
+  live feed
+
+This connected-intel-to-disconnected-execution split is itself a piece of security
+engineering that mirrors how regulated and classified environments actually stay current,
+and it answers the obvious reviewer question — "how does an air-gapped tool avoid going
+stale?" — with the real-world operational answer rather than a hand-wave.
+
+---
+
+## 8. Safety and dual-use posture
 
 A system that autonomously finds memory-safety bugs and proves them exploitable is
 dual-use: viewed from the other side, it is an autonomous vulnerability-discovery engine.
@@ -286,7 +337,7 @@ This posture is not incidental to the project; it is part of the deliverable.
 
 ---
 
-## 8. Interpretability probe
+## 9. Interpretability probe
 
 P6 folds in a mechanistic-interpretability component rather than running it as a separate
 project. The concrete question: **what distinguishes the patch model's internal state
@@ -302,7 +353,7 @@ to the author's knowledge, unexplored.
 
 ---
 
-## 9. Scope (MVP)
+## 10. Scope (MVP)
 
 | Dimension | MVP scope |
 |---|---|
@@ -319,7 +370,7 @@ them early makes the project look unfocused.
 
 ---
 
-## 10. Evaluation
+## 11. Evaluation
 
 A three-layer benchmark, because synthetic data alone reads as academic:
 
@@ -350,7 +401,7 @@ The headline results table:
 
 ---
 
-## 11. Novelty
+## 12. Novelty
 
 Autonomous find-patch-verify is not itself new — DARPA's Cyber Grand Challenge
 demonstrated machine-speed flaw reasoning and patching in 2016, and CodeQL and Semgrep
@@ -373,7 +424,7 @@ cooperate to produce auditable security evidence in places cloud AI cannot go.
 
 ---
 
-## 12. Proposed repository layout
+## 13. Proposed repository layout
 
 ```
 edgepatch/
@@ -387,13 +438,18 @@ edgepatch/
   scheduler/        priority queue, compute budget, thermal monitor, phase orchestrator
   interp/           activation capture, verification-outcome probe
   safety/           threat model, artifact sealing, audit signer
+  intel/            (connected side) cve feed watcher, rule distiller, bundle builder+signer
+  updater/          (enclave side) bundle signature verify, rule/model loader
   reports/          evidence bundle, html report, sarif export
   bench/            juliet harness, cve suite, microbenchmarks, results
 ```
 
+Note the `intel/` (connected) and `updater/` (enclave) split — these are the two sides of
+the offline bundle channel and never share a process or a network path.
+
 ---
 
-## 13. Open questions
+## 14. Open questions
 
 - How far does CodeQL's local data-flow analysis scale before memory pressure on a
   single VM forces a fallback to clang-only typed AST?
