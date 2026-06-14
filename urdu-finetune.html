@@ -137,7 +137,7 @@
 </div>
 
 <div class="actions">
-  <a href="https://github.com/usmanaminch/ai-mastery-2026" target="_blank" class="btn-primary">GitHub ↗</a>
+  <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/p5-urdu-finetune" target="_blank" class="btn-primary">GitHub ↗</a>
   <a href="https://usmanc.com" class="btn-secondary">← Back to site</a>
 </div>
 
@@ -276,6 +276,50 @@
   At a matched budget, the deeper adapter on the larger model reached a lower evaluation loss.
   But per Finding 1, loss is a proxy — the honest claim is "lower loss," not automatically
   "better Urdu," until the generations are read side by side.
+</p>
+
+<hr class="divider">
+
+<div class="section-label">The cloud run, step by step</div>
+<p style="color:#999; font-size:0.88rem; margin-bottom:28px; line-height:1.7">
+  Real training telemetry from the cloud run's <code style="color:var(--gold);font-family:var(--mono);">trainer_state.json</code>
+  — 1,000 steps on Mistral 7B. Training loss is logged every 50 steps; evaluation loss is measured
+  on the full held-out set every 250. This curve is the evidence behind the 1.02 — a clean descent,
+  no divergence, no spikes.
+</p>
+
+<svg viewBox="0 0 820 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:var(--mono),monospace;">
+<line x1="64" y1="336.0" x2="792" y2="336.0" stroke="#1e1e1e" stroke-width="1"/>
+<text x="54" y="340.0" fill="#666" font-size="12" text-anchor="end">1.00</text>
+<line x1="64" y1="236.0" x2="792" y2="236.0" stroke="#1e1e1e" stroke-width="1"/>
+<text x="54" y="240.0" fill="#666" font-size="12" text-anchor="end">1.10</text>
+<line x1="64" y1="136.0" x2="792" y2="136.0" stroke="#1e1e1e" stroke-width="1"/>
+<text x="54" y="140.0" fill="#666" font-size="12" text-anchor="end">1.20</text>
+<line x1="64" y1="36.0" x2="792" y2="36.0" stroke="#1e1e1e" stroke-width="1"/>
+<text x="54" y="40.0" fill="#666" font-size="12" text-anchor="end">1.30</text>
+<text x="64.0" y="360" fill="#666" font-size="12" text-anchor="middle">0</text>
+<text x="246.0" y="360" fill="#666" font-size="12" text-anchor="middle">250</text>
+<text x="428.0" y="360" fill="#666" font-size="12" text-anchor="middle">500</text>
+<text x="610.0" y="360" fill="#666" font-size="12" text-anchor="middle">750</text>
+<text x="792.0" y="360" fill="#666" font-size="12" text-anchor="middle">1000</text>
+<text x="428" y="380" fill="#888" font-size="12" text-anchor="middle">training step</text>
+<polyline points="100.4,44.7 136.8,98.2 173.2,198.7 209.6,206.6 246.0,238.1 282.4,250.0 318.8,242.5 355.2,255.0 391.6,289.7 428.0,269.0 464.4,289.7 500.8,290.1 537.2,282.0 573.6,306.9 610.0,302.8 646.4,306.8 682.8,315.7 719.2,304.4 755.6,318.9 792.0,301.3" fill="none" stroke="#c9a84c" stroke-width="2"/>
+<polyline points="246.0,228.1 428.0,277.2 610.0,303.3 792.0,313.8" fill="none" stroke="#1D9E75" stroke-width="2" stroke-dasharray="4 3"/>
+<circle cx="246.0" cy="228.1" r="4.5" fill="#1D9E75" stroke="#0a0a0a" stroke-width="1.5"/>
+<circle cx="428.0" cy="277.2" r="4.5" fill="#1D9E75" stroke="#0a0a0a" stroke-width="1.5"/>
+<circle cx="610.0" cy="303.3" r="4.5" fill="#1D9E75" stroke="#0a0a0a" stroke-width="1.5"/>
+<circle cx="792.0" cy="313.8" r="4.5" fill="#1D9E75" stroke="#0a0a0a" stroke-width="1.5"/>
+<text x="784.0" y="301.8" fill="#1D9E75" font-size="12" text-anchor="end" font-weight="bold">eval 1.02</text>
+<line x1="642" y1="44" x2="664" y2="44" stroke="#c9a84c" stroke-width="2"/>
+<text x="670" y="48" fill="#999" font-size="12">training loss</text>
+<line x1="642" y1="64" x2="664" y2="64" stroke="#1D9E75" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="670" y="68" fill="#999" font-size="12">eval loss</text>
+</svg>
+
+<p style="color:#666; font-size:0.78rem; margin-top:18px; font-family:var(--mono); line-height:1.6;">
+  Training loss 1.29 → 1.03 over 1,000 steps; eval loss 1.11 → 1.02 across four checkpoints.
+  Eval loss falling in step with training loss — rather than rising — is the signal that the
+  adapter generalized rather than overfit at this budget.
 </p>
 
 <hr class="divider">
