@@ -2,3 +2,4 @@ models/
 venv/
 models/
 data/
+adapters/

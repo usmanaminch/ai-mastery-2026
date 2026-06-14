@@ -1,0 +1,24 @@
+workerPoolSpecs:
+  - machineSpec:
+      machineType: n1-standard-8
+      acceleratorType: NVIDIA_TESLA_T4
+      acceleratorCount: 1
+    replicaCount: 1
+    containerSpec:
+      imageUri: us-east4-docker.pkg.dev/frontier-rag/urdu-finetune/trainer:v1
+      env:
+        - name: MODEL_ID
+          value: mistralai/Mistral-7B-Instruct-v0.3
+        - name: GCS_BUCKET
+          value: frontier-rag-p5-training
+        - name: MAX_STEPS
+          value: "3000"
+        - name: LORA_LAYERS
+          value: "16"
+        - name: BATCH_SIZE
+          value: "2"
+        - name: LEARNING_RATE
+          value: "1e-4"
+scheduling:
+  strategy: FLEX_START
+  maxWaitDuration: 43200s
