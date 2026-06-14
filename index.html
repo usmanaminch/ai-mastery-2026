@@ -333,7 +333,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <h1 class="page-h1">Working systems, real constraints</h1>
     <p class="page-sub">Every system here starts with a problem enterprises actually have — and a constraint they actually face: enterprise OAuth boundaries, regulated-data retrieval, sovereign deployment, zero network egress. Designed, built, and shipped end-to-end.</p>
     <br>
-    <div class="now-badge"><span class="pulse"></span>P5 — Fine-tuning infrastructure — closing · P6 — EdgePatch — next</div>
+    <div class="now-badge"><span class="pulse"></span>P5 — Fine-tuning infrastructure — complete · P6 — EdgePatch — building</div>
   </div>
   <div class="proj-list fade">
     <div class="proj-row">
@@ -401,10 +401,11 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <div>
         <div class="pname">Urdu Fine-tuning Pipeline</div>
         <div class="pcase">End-to-end fine-tuning infrastructure: local prototype → cloud production pipeline</div>
-        <div class="pdesc">The same customer fine-tuning workflow on two stacks: LoRA on Apple Silicon with MLX for fast local iteration, then a production path on GCP — Docker, Artifact Registry, Vertex AI custom training jobs on GPU — with honest before/after evaluation of what fine-tuning a small model actually buys you.</div>
+        <div class="pdesc">The same customer fine-tuning workflow on two stacks: LoRA on Apple Silicon with MLX for fast local iteration, then a containerized GCP training pipeline — Docker, Artifact Registry, GPU training on Vertex AI — taken end-to-end on real cloud infrastructure. At a matched training budget, the cloud run's deeper 16-layer adapter on Mistral 7B reached a notably lower evaluation loss than the leaner local prototype — an honest before/after on what fine-tuning a small model actually buys.</div>
         <div class="pstack"><span class="stk">MLX-LM</span><span class="stk">HuggingFace + PEFT</span><span class="stk">LoRA</span><span class="stk">Vertex AI</span><span class="stk">Docker</span><span class="stk">Evals</span></div>
         <div class="plinks">
-          <div class="live" style="color:var(--blue)"><span class="live-dot" style="background:var(--blue)"></span>IN PROGRESS</div>
+          <div class="live"><span class="live-dot"></span>DONE</div>
+          <a href="urdu-finetune.html" class="plink" target="_blank">Summary ↗</a>
           <a href="https://github.com/usmanaminch/ai-mastery-2026" class="plink" target="_blank">GitHub ↗</a>
         </div>
       </div>
@@ -441,8 +442,8 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
       <div class="tl"><div class="tl-m">May 2026</div><div class="tl-n">Content Engine</div><div class="tl-d">Claude API, Firestore</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
       <div class="tl"><div class="tl-m">Jun 2026</div><div class="tl-n">Frontier AI RAG</div><div class="tl-d">pgvector · Vertex AI · hybrid search</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
       <div class="tl"><div class="tl-m">Jun 2026</div><div class="tl-n">LLM from Scratch</div><div class="tl-d">11M-param transformer · interpretability</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
-      <div class="tl now"><div class="tl-m">Now</div><div class="tl-n">Fine-tuning Pipeline</div><div class="tl-d">MLX LoRA local · Vertex AI cloud</div><span class="tl-now-b">● NOW</span></div>
-      <div class="tl"><div class="tl-m">Jul–Aug</div><div class="tl-n">EdgePatch</div><div class="tl-d">Air-gapped vuln remediation</div></div>
+      <div class="tl"><div class="tl-m">Jun 2026</div><div class="tl-n">Fine-tuning Pipeline</div><div class="tl-d">MLX LoRA local · GCP GPU cloud</div><span class="tl-now-b" style="color:#4ade80">✓ DONE</span></div>
+      <div class="tl now"><div class="tl-m">Now</div><div class="tl-n">EdgePatch</div><div class="tl-d">Air-gapped vuln remediation</div><span class="tl-now-b">● NOW</span></div>
       <div class="tl"><div class="tl-m">Sep+</div><div class="tl-n">Open Source</div><div class="tl-d">OSS release · publication</div></div>
     </div>
   </div>

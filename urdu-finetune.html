@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urdu Fine-tuning Pipeline — Usman Chaudhary</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a; --surface: #111; --border: #1e1e1e;
+    --gold: #c9a84c; --gold-dim: rgba(201,168,76,0.12);
+    --teal: #1D9E75; --purple: #7F77DD; --coral: #D85A30;
+    --text: #e5e5e5; --muted: #666;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  html { background: var(--bg); color: var(--text); font-family: var(--sans); }
+  body { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0; border-bottom: 1px solid var(--border); margin-bottom: 64px;
+  }
+  .back-link { font-size: 0.78rem; color: var(--muted); text-decoration: none;
+    font-family: var(--mono); letter-spacing: 0.05em; transition: color 0.2s; }
+  .back-link:hover { color: var(--gold); }
+  .top-badge { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
+
+  .eyebrow { font-family: var(--mono); font-size: 0.7rem; color: var(--gold);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 24px; }
+  h1 span { color: var(--gold); }
+  .hero-desc { font-size: 1.05rem; color: #999; line-height: 1.7; max-width: 640px; margin-bottom: 36px; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .chip { font-family: var(--mono); font-size: 0.72rem; padding: 5px 12px;
+    border: 1px solid var(--border); border-radius: 4px; color: var(--muted); background: var(--surface); }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 72px; }
+  .btn-primary { display: inline-block; padding: 12px 28px; background: var(--gold);
+    color: #111; font-weight: 700; font-size: 0.85rem; border-radius: 5px; text-decoration: none; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { display: inline-block; padding: 12px 28px; border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.85rem; border-radius: 5px; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .section-label { font-family: var(--mono); font-size: 0.65rem; color: var(--gold);
+    letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 32px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-bottom: 56px; }
+  .pipe-step { text-align: center; position: relative; }
+  .pipe-step:not(:last-child)::after { content: '→'; position: absolute; right: -10px; top: 22px; color: var(--muted); font-size: 1.1rem; }
+  .pipe-icon { width: 48px; height: 48px; border-radius: 10px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    background: var(--surface); border: 1px solid var(--border); }
+  .pipe-name { font-weight: 600; font-size: 0.82rem; color: var(--text); margin-bottom: 4px; }
+  .pipe-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+
+  .finding-box { border: 1px solid var(--border); background: var(--surface);
+    border-radius: 8px; padding: 28px; margin-bottom: 24px; }
+  .finding-box.purple { border-color: var(--purple); background: rgba(127,119,221,0.08); }
+  .finding-box.teal { border-color: var(--teal); background: rgba(29,158,117,0.08); }
+  .finding-box.coral { border-color: var(--coral); background: rgba(216,90,48,0.08); }
+  .finding-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 12px; }
+  .finding-box.purple .finding-label { color: var(--purple); }
+  .finding-box.teal .finding-label { color: var(--teal); }
+  .finding-box.coral .finding-label { color: var(--coral); }
+  .finding-title { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+  .finding-desc { font-size: 0.85rem; color: #aaa; line-height: 1.7; }
+
+  .comparison-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin-bottom: 16px; }
+  .comparison-cell { background: var(--bg); padding: 20px; }
+  .comparison-cell .label { font-family: var(--mono); font-size: 0.65rem;
+    color: var(--muted); letter-spacing: 0.1em; margin-bottom: 8px; }
+  .comparison-cell .quote { font-size: 0.88rem; color: #bbb; line-height: 1.6;
+    font-family: var(--mono); direction: rtl; text-align: right; }
+  .comparison-cell .quote.bad { color: #888; font-style: italic; }
+  .comparison-cell .quote.good { color: var(--teal); }
+
+  .arch-row { display: flex; gap: 16px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .arch-row:last-child { border-bottom: none; }
+  .arch-label { font-family: var(--mono); font-size: 0.68rem; color: var(--gold);
+    min-width: 110px; padding-top: 2px; letter-spacing: 0.06em; }
+  .arch-val { font-size: 0.85rem; color: #aaa; line-height: 1.6; }
+  .arch-val strong { color: var(--text); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 56px; }
+  .stat-cell { background: var(--bg); padding: 24px; text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--gold); font-family: var(--mono); }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
+
+  .footer { text-align: center; padding-top: 48px;
+    font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  .footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .pipeline { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .pipe-step::after { display: none; }
+    .comparison-row { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="https://usmanc.com" class="back-link">← usmanc.com</a>
+  <span class="top-badge">AI PROJECT 5 &nbsp;·&nbsp; JUN 2026 &nbsp;·&nbsp; LOCAL + CLOUD</span>
+</div>
+
+<div class="eyebrow">AI Project 5 — Fine-tuning Infrastructure</div>
+<h1>Fine-tuning <span>Pipeline</span></h1>
+<p class="hero-desc">
+  The same customer fine-tuning workflow taken end-to-end on two stacks — fast local
+  iteration on Apple Silicon, then a containerized cloud training pipeline on GCP — with
+  an honest before/after on what fine-tuning a small model actually buys, and what it costs.
+</p>
+
+<div class="stack">
+  <span class="chip">MLX-LM</span>
+  <span class="chip">HuggingFace + PEFT</span>
+  <span class="chip">LoRA</span>
+  <span class="chip">Mistral 7B</span>
+  <span class="chip">bitsandbytes</span>
+  <span class="chip">Docker</span>
+  <span class="chip">Artifact Registry</span>
+  <span class="chip">GCP GPU</span>
+</div>
+
+<div class="actions">
+  <a href="https://github.com/usmanaminch/ai-mastery-2026" target="_blank" class="btn-primary">GitHub ↗</a>
+  <a href="https://usmanc.com" class="btn-secondary">← Back to site</a>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">By the numbers</div>
+<div class="stat-row">
+  <div class="stat-cell"><div class="stat-num">2</div><div class="stat-label">Training stacks (local + cloud)</div></div>
+  <div class="stat-cell"><div class="stat-num">7B</div><div class="stat-label">Params fine-tuned (cloud)</div></div>
+  <div class="stat-cell"><div class="stat-num">16</div><div class="stat-label">LoRA layers (cloud)</div></div>
+  <div class="stat-cell"><div class="stat-num">1.02</div><div class="stat-label">Cloud eval loss</div></div>
+</div>
+
+<div class="section-label">Why this project</div>
+<p style="color:#999; font-size:0.95rem; line-height:1.8; margin-bottom:56px; max-width:680px;">
+  A frontier model already speaks better Urdu than anything I could fine-tune — so the goal was
+  never to win at Urdu. The goal was the <strong style="color:#e5e5e5;">infrastructure</strong>:
+  can I stand up a customer's fine-tuning workflow end-to-end, on two different stacks, and then
+  evaluate the result honestly instead of declaring victory on a single number? The deliverable is
+  the pipeline and the judgment around it — not the model.
+</p>
+
+<div class="section-label">How it was built</div>
+<div class="pipeline">
+  <div class="pipe-step">
+    <div class="pipe-icon">📦</div>
+    <div class="pipe-name">Data</div>
+    <div class="pipe-desc">26K Urdu instruction pairs (chat format), 90/10 split, staged to GCS</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">💻</div>
+    <div class="pipe-name">Local</div>
+    <div class="pipe-desc">MLX LoRA on Llama 3.2 3B, Apple Silicon — fast, private iteration</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">🐳</div>
+    <div class="pipe-name">Containerize</div>
+    <div class="pipe-desc">Docker → Cloud Build → Artifact Registry — a reproducible image</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">☁️</div>
+    <div class="pipe-name">Cloud train</div>
+    <div class="pipe-desc">Mistral 7B, 16 LoRA layers, GCP GPU VM — 1,000 steps</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-icon">📊</div>
+    <div class="pipe-name">Evaluate</div>
+    <div class="pipe-desc">Base vs fine-tuned, local vs cloud — honest before/after</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">What I actually learned</div>
+
+<div class="finding-box purple">
+  <div class="finding-label">Finding 1 — Validation loss is a proxy, not the truth</div>
+  <div class="finding-title">The lower-loss checkpoint generated worse text</div>
+  <div class="finding-desc">
+    On the local run, the iteration-1000 checkpoint produced visibly better Urdu than the
+    iteration-800 checkpoint — even though 800 had the lower validation loss. Validation loss
+    measures average per-token probability on held-out text; it is not the same thing as
+    generation quality, and the two can diverge. The discipline that follows: read the actual
+    outputs before picking a checkpoint. Never ship the number you didn't sanity-check.
+  </div>
+</div>
+
+<div class="finding-box teal">
+  <div class="finding-label">Finding 2 — Fine-tuning moves the whole distribution</div>
+  <div class="finding-title">It gained conversational fluency and lost some crisp recall</div>
+  <div class="finding-desc">
+    The adapter pulled the model toward the shape of the training data — explanatory, conversational
+    Urdu — and that helped cross-lingual instruction-following noticeably. But it slightly
+    <em>regressed</em> terse factual recall: the base model answered cleanly where the fine-tune got
+    vaguer. The base knowledge is still in the frozen weights; the adapter just biased the output
+    behavior toward verbose explanation over direct retrieval. A known LoRA tradeoff — worth
+    measuring and stating, not hiding.
+  </div>
+</div>
+
+<div class="finding-box coral">
+  <div class="finding-label">Finding 3 — Quota is not capacity</div>
+  <div class="finding-title">The real cloud-ML lesson came from the infrastructure, not the model</div>
+  <div class="finding-desc">
+    A new GCP project starts with every GPU quota at zero. Even after the quota approvals landed,
+    in-region capacity for managed L4 training jobs simply wasn't available across multiple regions —
+    request after request failed on "resources insufficient." <strong style="color:#e5e5e5;">Quota is
+    authorization; capacity is availability</strong>, and they are not the same lever. The run only
+    completed after pivoting off managed training jobs to a Compute Engine GPU VM, which draws from a
+    deeper, less-contended pool. Navigating that is the actual work of cloud ML — and a stronger
+    signal than a first-try success would have been.
+  </div>
+</div>
+
+<div class="finding-box purple">
+  <div class="finding-label">Finding 4 — Match the tool to the bottleneck</div>
+  <div class="finding-title">A commodity cloud GPU is not a speed-up over Apple Silicon</div>
+  <div class="finding-desc">
+    The cloud run on a T4 was not faster than local iteration on a Mac — a T4 is an older, modest
+    card, and gradient checkpointing plus full-set evaluation passes slowed it further. Cloud beats
+    local on <em>speed</em> only with dedicated high-end GPUs (A100/H100), which are exactly the
+    contended, hard-to-get ones. The cloud pipeline's real value is reproducibility and scale
+    headroom for models too big to fit locally — not raw throughput on whatever card you can actually
+    schedule.
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Local vs cloud — the two stacks</div>
+<p style="color:#999; font-size:0.88rem; margin-bottom:24px; line-height:1.7">
+  Same task, same 1,000-step budget, two deliberately different stacks. The cloud run adapts a
+  larger model across four times as many layers; the local run optimizes for speed and privacy.
+</p>
+
+<div class="comparison-row">
+  <div class="comparison-cell">
+    <div class="label">LOCAL — APPLE SILICON (MLX)</div>
+    <div class="finding-desc" style="margin:0;">
+      Llama 3.2 3B Instruct (4-bit) · LoRA on 4 layers, ~1.7M trainable ·
+      1,000 iterations · best validation loss <strong style="color:#e5e5e5;">1.392</strong> ·
+      role: fast, private, on-device iteration.
+    </div>
+  </div>
+  <div class="comparison-cell">
+    <div class="label">CLOUD — GCP GPU</div>
+    <div class="finding-desc" style="margin:0;">
+      Mistral 7B Instruct v0.3 (4-bit NF4) · LoRA on 16 layers, ~3.4M trainable ·
+      1,000 steps · evaluation loss <strong style="color:var(--teal);">1.022</strong> ·
+      role: reproducible, scalable production pipeline.
+    </div>
+  </div>
+</div>
+
+<p style="color:#666; font-size:0.78rem; margin-top:16px; font-family:var(--mono); line-height:1.6;">
+  At a matched budget, the deeper adapter on the larger model reached a lower evaluation loss.
+  But per Finding 1, loss is a proxy — the honest claim is "lower loss," not automatically
+  "better Urdu," until the generations are read side by side.
+</p>
+
+<hr class="divider">
+
+<div class="section-label">Architecture</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">LOCAL STACK</span>
+    <span class="arch-val"><strong>MLX-LM LoRA</strong> on Apple Silicon (MPS). Llama 3.2 3B Instruct, 4-bit. 4 LoRA layers, ~1.7M trainable parameters (0.05%). 1,000 iterations. Chosen for fast iteration loops and fully on-device, private experimentation.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">CLOUD STACK</span>
+    <span class="arch-val"><strong>HuggingFace + PEFT + bitsandbytes</strong>. Mistral 7B Instruct v0.3, 4-bit NF4 quantization, bfloat16 compute. 16 LoRA layers, ~3.4M trainable parameters (0.047%). 1,000 steps, gradient checkpointing to fit in 15&nbsp;GB. Eval loss 1.022.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">PIPELINE</span>
+    <span class="arch-val"><strong>Docker → Cloud Build → Artifact Registry</strong> for a reproducible training image. Data and trained adapters in Google Cloud Storage. Training executed on a Compute Engine GPU VM after managed-job capacity proved unavailable in-region — the honest path, documented as part of the artifact.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">DATA</span>
+    <span class="arch-val"><strong>26,019 Urdu instruction pairs</strong> in chat/messages format (user + assistant turns), 2,891 held out for evaluation. Formatted into a consistent instruction/response template shared across both stacks so the comparison stays clean.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">EVALUATION</span>
+    <span class="arch-val"><strong>Base vs fine-tuned</strong> across Urdu generation quality, cross-lingual instruction-following, and factual recall — plus local-vs-cloud at a matched step budget. Findings reported honestly, including the regressions.</span>
+  </div>
+</div>
+
+<div class="section-label">What comes next</div>
+<div style="margin-bottom:56px">
+  <div class="arch-row">
+    <span class="arch-label">P6</span>
+    <span class="arch-val"><strong>EdgePatch — air-gapped vulnerability remediation</strong>. An offline agent that finds, proves, patches, and verifies memory-safety vulnerabilities in C with zero network egress. Deterministic tooling carries the proof burden; a small local model proposes patches.</span>
+  </div>
+  <div class="arch-row">
+    <span class="arch-label">P7</span>
+    <span class="arch-val"><strong>Open benchmark + publication</strong>. Open-source the work and benchmark autonomous patch quality against real CVEs with ground-truth human patches — a cited artifact, not just a demo.</span>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="https://usmanc.com">usmanc.com</a> &nbsp;·&nbsp;
+  <a href="https://github.com/usmanaminch/ai-mastery-2026">GitHub</a> &nbsp;·&nbsp;
+  Part of a 7-month AI mastery journey · Started May 19, 2026
+</div>
+
+</body>
+</html>
