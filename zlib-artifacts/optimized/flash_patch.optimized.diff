@@ -1,0 +1,19 @@
+--- inflate.c
++++ inflate.c
+@@ -761,9 +761,12 @@
+                 if (state->head != Z_NULL &&
+                     state->head->extra != Z_NULL) {
+                     len = state->head->extra_len - state->length;
+-                    zmemcpy(state->head->extra + len, next,
+-                            len + copy > state->head->extra_max ?
+-                            state->head->extra_max - len : copy);
++                    if (len < state->head->extra_max) {
++                        unsigned copy_len = state->head->extra_max - len;
++                        if (copy_len > copy) {
++                            copy_len = copy;
++                        }
++                        zmemcpy(state->head->extra + len, next, copy_len);
++                    }
+                 }
+                 if ((state->flags & 0x0200) && (state->wrap & 4))
+                     state->check = crc32(state->check, next, copy);
