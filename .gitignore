@@ -19,3 +19,16 @@ zlib-artifacts/optimized/docker_zlib_make_test.log
 # local/dev noise
 gemini-venv/
 .DS_Store
+
+# EdgePatch generated Docker helper
+zlib-artifacts/optimized/Dockerfile.validate
+
+# old local validation script superseded by Docker validator
+scripts/validate_zlib_patch.sh
+
+# unrelated local scratch files
+ask_gemini.py
+audit_vertex.py
+index-backup-20260611.html
+p5-trainer-state.json
+content-engine/intelligence_library.json
