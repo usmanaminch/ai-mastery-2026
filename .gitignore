@@ -6,3 +6,16 @@ __pycache__/
 *firebase-key*.json
 ai-mastery-handoff.md
 CLAUDE.md
+
+# EdgePatch generated validation outputs
+targets/
+zlib-artifacts/optimized/repro_optimized
+zlib-artifacts/optimized/*.log
+zlib-artifacts/optimized/build.log
+zlib-artifacts/optimized/docker_build.log
+zlib-artifacts/optimized/docker_post_patch_validation.log
+zlib-artifacts/optimized/docker_zlib_make_test.log
+
+# local/dev noise
+gemini-venv/
+.DS_Store

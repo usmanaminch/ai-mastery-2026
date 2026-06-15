@@ -1,0 +1,23 @@
+=================================================================
+==10047==ERROR: AddressSanitizer: memcpy-param-overlap: memory ranges [0x51900000008b,0x51910000008a) and [0x519000000580, 0x51910000057f) overlap
+    #0 0x7c42fd83a1ed in __interceptor_memcpy ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:827
+    #1 0x601b8318e9b4 in inflate /home/usman/edgepatch/targets/zlib/inflate.c:764
+    #2 0x601b83186b07 in main proofs/repro_cve_2022_37434.c:53
+    #3 0x7c42fcc29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+    #4 0x7c42fcc29e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f)
+    #5 0x601b831864c4 in _start (/home/usman/edgepatch/proofs/repro+0x3a4c4)
+
+0x519000000480 is located 0 bytes to the right of 1024-byte region [0x519000000080,0x519000000480)
+allocated by thread T0 here:
+    #0 0x7c42fd8b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
+    #1 0x601b83186679 in main proofs/repro_cve_2022_37434.c:11
+    #2 0x7c42fcc29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+
+0x519000000980 is located 0 bytes to the right of 1024-byte region [0x519000000580,0x519000000980)
+allocated by thread T0 here:
+    #0 0x7c42fd8b4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
+    #1 0x601b8318668a in main proofs/repro_cve_2022_37434.c:12
+    #2 0x7c42fcc29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+
+SUMMARY: AddressSanitizer: memcpy-param-overlap ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:827 in __interceptor_memcpy
+==10047==ABORTING
