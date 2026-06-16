@@ -45,3 +45,6 @@ __pycache__/
 
 # Gemini raw generation outputs
 phase2_reporter_raw_gemini_output.txt
+
+# Libpng candidate raw model output
+eval_cases/libpng-cve-2025-64505/candidate_gemini_pro_patch.raw.txt
