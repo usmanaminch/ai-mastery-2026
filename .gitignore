@@ -37,3 +37,11 @@ phase2_patch_score_fix_zlib_raw.txt
 phase2_patch_score_fix_zlib_raw.txt
 phase2_patch_score_adversarial_raw.txt
 phase2_patch_score_adversarial_raw.txt
+phase2_reporter_raw_gemini_output.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Gemini raw generation outputs
+phase2_reporter_raw_gemini_output.txt

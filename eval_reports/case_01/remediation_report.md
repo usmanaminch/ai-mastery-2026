@@ -1,0 +1,44 @@
+# Remediation Report: case_01
+
+## Summary Verdict
+**Verdict:** READY_HIGH_CONFIDENCE
+**Confidence:** 0.98
+**Explanation:** Structural and behavioral evidence strongly support the patch.
+
+## Combined Recommendation
+Reasons:
+- Crash resolved, regression passed, strong structural match.
+
+## Structural Assessment
+**Verdict Label:** strong_match
+**Confidence:** 0.98
+
+## Behavioral Evidence Assessment
+**Crash Resolved:** True
+**Detail:** Targeted post-patch check exited cleanly.
+**Source:** pre-captured docker validation log
+
+## Regression Test Assessment
+**Passed:** True
+**Total / Failed / Warnings:** 100 / 0 / 0
+**Detail:** Standard test suite passed.
+**Source:** pre-captured test-suite output
+
+## Evidence Consumed
+Inputs loaded successfully:
+- patch_score
+- post_patch_result
+- test_suite_result
+- proof
+
+## Limitations
+- Structural scoring cannot prove semantic correctness.
+- This reporter does not run code, execute tests, reproduce vulnerabilities, or verify behavior itself.
+- It only judges pre-captured evidence supplied as input.
+
+## Human Reviewer Checklist
+- [ ] Review patch diff manually.
+- [ ] Confirm behavioral validation was produced in a trusted environment.
+- [ ] Confirm standard test-suite result source.
+- [ ] Review any warnings or sanitizer notes.
+- [ ] Confirm rollback or remediation plan before deployment.

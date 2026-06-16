@@ -1,0 +1,5 @@
+{
+  "crash_resolved": true,
+  "detail": "Targeted post-patch check exited cleanly.",
+  "source": "pre-captured docker validation log"
+}
