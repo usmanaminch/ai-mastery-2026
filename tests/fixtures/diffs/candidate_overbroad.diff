@@ -1,0 +1,22 @@
+diff --git a/sample.c b/sample.c
+index 1111111..2222222 100644
+--- a/sample.c
++++ b/sample.c
+@@ -9,8 +9,18 @@ int vulnerable_function(int value) {
+     int result = value;
+     if (result < 0) {
+         result = 0;
+-    return result;
++        result = result + 1;
++        result = result - 1;
++        result = result * 1;
++        result = result / 1;
++        result = result + 0;
++        result = result - 0;
++        result = result | 0;
++        result = result & result;
++        result = result ^ 0;
++        result = result;
++    }
++    return result;
+ }
