@@ -1,0 +1,100 @@
+{
+  "results": [
+    {
+      "actual_class": "reject",
+      "candidate": "bad_wrong_function.diff",
+      "case_id": "libpng-cve-2025-64505",
+      "confidence": 0.3,
+      "cve": "CVE-2025-64505",
+      "cwe": "CWE-122",
+      "expected_class": "reject",
+      "expected_reason": "wrong_function",
+      "library": "libpng",
+      "line_overlap_ratio": 0.0,
+      "match": true,
+      "minimality_label": "tight",
+      "minimality_ratio": 1.25,
+      "same_file": true,
+      "same_function": false,
+      "score_output": "benchmark/results/libpng-cve-2025-64505/bad_wrong_function.patch_score.json",
+      "verdict": "wrong_function"
+    },
+    {
+      "actual_class": "accept",
+      "candidate": "good_derived.diff",
+      "case_id": "libpng-cve-2025-64505",
+      "confidence": 0.95,
+      "cve": "CVE-2025-64505",
+      "cwe": "CWE-122",
+      "expected_class": "accept",
+      "expected_reason": "known_good",
+      "library": "libpng",
+      "line_overlap_ratio": 0.75,
+      "match": true,
+      "minimality_label": "tight",
+      "minimality_ratio": 1.125,
+      "same_file": true,
+      "same_function": true,
+      "score_output": "benchmark/results/libpng-cve-2025-64505/good_derived.patch_score.json",
+      "verdict": "strong_match"
+    },
+    {
+      "actual_class": "accept",
+      "candidate": "good_drift.diff",
+      "case_id": "libpng-cve-2025-64505",
+      "confidence": 0.9,
+      "cve": "CVE-2025-64505",
+      "cwe": "CWE-122",
+      "expected_class": "accept",
+      "expected_reason": "known_good_drift",
+      "library": "libpng",
+      "line_overlap_ratio": 0.5,
+      "match": true,
+      "minimality_label": "acceptable",
+      "minimality_ratio": 1.375,
+      "same_file": true,
+      "same_function": true,
+      "score_output": "benchmark/results/libpng-cve-2025-64505/good_drift.patch_score.json",
+      "verdict": "strong_match"
+    },
+    {
+      "actual_class": "accept",
+      "candidate": "good_validated_ai.diff",
+      "case_id": "zlib-cve-2022-37434",
+      "confidence": 1.0,
+      "cve": "CVE-2022-37434",
+      "cwe": "CWE-787",
+      "expected_class": "accept",
+      "expected_reason": "validated_good_candidate",
+      "library": "zlib",
+      "line_overlap_ratio": 1.0,
+      "match": true,
+      "minimality_label": "acceptable",
+      "minimality_ratio": 2.0,
+      "same_file": true,
+      "same_function": true,
+      "score_output": "benchmark/results/zlib-cve-2022-37434/good_validated_ai.patch_score.json",
+      "verdict": "strong_match"
+    }
+  ],
+  "summary": {
+    "accept_recall": 1.0,
+    "by_library": {
+      "libpng": {
+        "match_rate": 1.0,
+        "matched": 3,
+        "total": 3
+      },
+      "zlib": {
+        "match_rate": 1.0,
+        "matched": 1,
+        "total": 1
+      }
+    },
+    "matched": 4,
+    "misclassifications": [],
+    "overall_match_rate": 1.0,
+    "reject_recall": 1.0,
+    "total_candidates": 4
+  }
+}
