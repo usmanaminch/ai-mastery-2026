@@ -1,0 +1,7 @@
+--- a/unmapped.c
++++ b/unmapped.c
+@@ -2,3 +2,3 @@
+ {
+-    // unmapped scope
++    // unmapped scope patched
+     int x = 1;

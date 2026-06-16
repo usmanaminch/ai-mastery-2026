@@ -1,0 +1,8 @@
+--- a/sample.c
++++ b/sample.c
+@@ -1,4 +1,4 @@
+ void func_a() {
+-    int a = 1;
++    int a = 2;
+     // do something a
+ }

@@ -35,3 +35,4 @@ content-engine/intelligence_library.json
 phase2_patch_score_raw_gemini_output.txt
 phase2_patch_score_fix_zlib_raw.txt
 phase2_patch_score_fix_zlib_raw.txt
+phase2_patch_score_adversarial_raw.txt
