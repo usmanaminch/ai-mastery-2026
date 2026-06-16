@@ -88,9 +88,12 @@ def extract_functions(source: str) -> List[FunctionRange]:
         if c == '{':
             if brace_depth == 0:
                 back_str = source[:idx].rstrip()
-                if back_str.endswith(')'):
+                last_paren_idx = back_str.rfind(')')
+                last_brace_idx = max(back_str.rfind('{'), back_str.rfind('}'))
+                
+                if last_paren_idx > last_brace_idx:
                     paren_depth = 0
-                    b_idx = len(back_str) - 1
+                    b_idx = last_paren_idx
                     while b_idx >= 0:
                         if back_str[b_idx] == ')': paren_depth += 1
                         elif back_str[b_idx] == '(': paren_depth -= 1
@@ -99,25 +102,32 @@ def extract_functions(source: str) -> List[FunctionRange]:
                         b_idx -= 1
                     
                     if b_idx >= 0:
-                        pre_paren = back_str[:b_idx].strip()
-                        m = re.search(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*$', pre_paren)
-                        if m:
-                            current_func_name = m.group(1)
-                            start_search_idx = pre_paren.rfind(';')
-                            start_search_idx2 = pre_paren.rfind('}')
-                            start_idx = max(start_search_idx, start_search_idx2)
-                            if start_idx == -1: 
-                                start_idx = 0
-                            else: 
-                                start_idx += 1
-                            
-                            start_line_calc = source[:start_idx].count('\n') + 1
-                            while start_idx < len(source) and source[start_idx].isspace():
-                                if source[start_idx] == '\n':
-                                    start_line_calc += 1
-                                start_idx += 1
-                            
-                            current_func_start_line = start_line_calc
+                        before_brace = back_str[last_paren_idx+1:].strip()
+                        is_struct = bool(re.search(r'\b(struct|class|enum|union)\s+[a-zA-Z0-9_]+\s*$', before_brace) or \
+                                         re.search(r'\b(struct|class|enum|union)\s*$', before_brace))
+                        
+                        if not is_struct and '=' not in before_brace:
+                            pre_paren = back_str[:b_idx].strip()
+                            m = re.search(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*$', pre_paren)
+                            if m:
+                                func_name = m.group(1)
+                                if func_name not in ["if", "for", "while", "switch", "catch", "else", "do"]:
+                                    current_func_name = func_name
+                                    start_search_idx = pre_paren.rfind(';')
+                                    start_search_idx2 = pre_paren.rfind('}')
+                                    start_idx = max(start_search_idx, start_search_idx2)
+                                    if start_idx == -1: 
+                                        start_idx = 0
+                                    else: 
+                                        start_idx += 1
+                                    
+                                    start_line_calc = source[:start_idx].count('\n') + 1
+                                    while start_idx < len(source) and source[start_idx].isspace():
+                                        if source[start_idx] == '\n':
+                                            start_line_calc += 1
+                                        start_idx += 1
+                                    
+                                    current_func_start_line = start_line_calc
 
             brace_depth += 1
             idx += 1

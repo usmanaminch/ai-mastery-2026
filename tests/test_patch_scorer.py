@@ -75,6 +75,7 @@ def test_score_strong_match(workspace):
     assert score.verdict.label == "strong_match"
     assert score.overlap["same_file"] is True
     assert score.overlap["same_function"] is True
+    assert score.locality["function_mapping_status"] == "mapped"
     assert score.minimality["minimality_label"] == "tight"
     
     # Test JSON output deterministic sort
@@ -99,3 +100,54 @@ def test_parse_error(workspace):
     bad_diff = st_dir / "bad.diff" # Doesn't exist
     score = score_patches(bad_diff, ref_diff, st_dir)
     assert score.verdict.label == "parse_error"
+
+def test_fallback_unmapped_strong_match(workspace):
+    st_dir, ref_diff, _, _, _ = workspace
+    unmapped_c = st_dir / "unmapped.c"
+    unmapped_c.write_text("""
+int unmapped_trick = (1);
+{
+    int a = 1;
+    // do something
+    return a;
+}
+""")
+    
+    ref_diff = st_dir.parent / "diffs" / "ref_unmapped.diff"
+    ref_diff.write_text("""--- a/unmapped.c
++++ b/unmapped.c
+@@ -4,2 +4,2 @@
+-    // do something
++    // perfectly patched
+""")
+
+    cand_same = st_dir.parent / "diffs" / "cand_unmapped.diff"
+    cand_same.write_text("""--- a/unmapped.c
++++ b/unmapped.c
+@@ -4,2 +4,2 @@
+-    // do something
++    // perfectly patched
+""")
+
+    score = score_patches(cand_same, ref_diff, st_dir)
+    assert score.verdict.label == "strong_match"
+    assert score.locality["function_mapping_status"] == "unmapped_both"
+    assert "wrong_function" not in score.verdict.failure_taxonomy
+
+def test_wrong_function_same_file(workspace):
+    st_dir, ref_diff, _, _, _ = workspace
+    
+    cand_wrong_func = st_dir.parent / "diffs" / "cand_wrong_func.diff"
+    cand_wrong_func.write_text("""--- a/sample.c
++++ b/sample.c
+@@ -2,2 +2,2 @@
+ void foo() {
+-    int a = 1;
++    int a = 2;
+ }
+""")
+    
+    score = score_patches(cand_wrong_func, ref_diff, st_dir)
+    assert score.verdict.label == "wrong_function"
+    assert "wrong_function" in score.verdict.failure_taxonomy
+    assert score.locality["function_mapping_status"] == "mapped"

@@ -66,6 +66,15 @@ def score_patches(candidate_diff: Path, reference_diff: Path, source_tree: Path)
     cand_funcs_set = set(cand_fp.functions)
     ref_funcs_set = set(ref_fp.functions)
     same_function = bool(cand_funcs_set.intersection(ref_funcs_set))
+    
+    if cand_funcs_set and ref_funcs_set:
+        mapping_status = "mapped"
+    elif not cand_funcs_set and ref_funcs_set:
+        mapping_status = "unmapped_candidate"
+    elif cand_funcs_set and not ref_funcs_set:
+        mapping_status = "unmapped_reference"
+    else:
+        mapping_status = "unmapped_both"
 
     ref_lines_len = max(len(ref_lines), 1)
     line_overlap_ratio = len(cand_lines.intersection(ref_lines)) / ref_lines_len
@@ -86,11 +95,13 @@ def score_patches(candidate_diff: Path, reference_diff: Path, source_tree: Path)
     else:
         min_label = "sprawling"
 
-    if same_file and same_function and line_overlap_ratio > 0:
+    is_effectively_same_func = same_function or (mapping_status == "unmapped_both" and same_file and line_overlap_ratio >= 0.3)
+
+    if is_effectively_same_func and line_overlap_ratio > 0:
         locality_score = 1.0
-    elif same_file and same_function and line_overlap_ratio == 0:
+    elif is_effectively_same_func and line_overlap_ratio == 0:
         locality_score = 0.8
-    elif same_file and not same_function:
+    elif same_file and not is_effectively_same_func:
         locality_score = 0.5
     else:
         locality_score = 0.0
@@ -104,6 +115,24 @@ def score_patches(candidate_diff: Path, reference_diff: Path, source_tree: Path)
     if not same_file:
         verdict_label = "wrong_file"
         taxonomy.append("wrong_file")
+    elif mapping_status == "unmapped_both" and same_file:
+        if line_overlap_ratio >= 0.3:
+            if min_label in ["tight", "acceptable"]:
+                verdict_label = "strong_match"
+            elif min_label == "broad":
+                verdict_label = "acceptable_broader"
+            else:
+                verdict_label = "over_broad"
+                taxonomy.append("over_broad")
+        else:
+            if minimality_ratio < 0.5:
+                verdict_label = "under_broad"
+                taxonomy.append("under_broad")
+            elif cand_changed < ref_changed:
+                verdict_label = "under_broad"
+                taxonomy.append("under_broad")
+            else:
+                verdict_label = "acceptable_broader"
     elif not same_function:
         verdict_label = "wrong_function"
         taxonomy.append("wrong_function")
@@ -133,9 +162,10 @@ def score_patches(candidate_diff: Path, reference_diff: Path, source_tree: Path)
             "files_touched_by_reference": ref_fp.files,
             "functions_touched_by_candidate": cand_fp.functions,
             "functions_touched_by_reference": ref_fp.functions,
+            "function_mapping_status": mapping_status,
             "line_ranges_touched_by_candidate": cand_fp.line_ranges,
             "line_ranges_touched_by_reference": ref_fp.line_ranges,
-            "stayed_in_region": same_file and same_function
+            "stayed_in_region": same_file and (same_function or mapping_status == "unmapped_both")
         },
         minimality={
             "candidate_lines_added": cand_fp.added_lines,

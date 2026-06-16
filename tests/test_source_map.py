@@ -26,6 +26,21 @@ complex_function(int a,
     assert funcs[0].name == "complex_function"
     assert funcs[0].start_line == 2
 
+def test_extract_knr_function():
+    code = """
+int ZEXPORT inflate(strm, flush)
+z_streamp strm;
+int flush;
+{
+    return 0;
+}
+"""
+    funcs = extract_functions(code)
+    assert len(funcs) == 1
+    assert funcs[0].name == "inflate"
+    assert funcs[0].start_line == 2
+    assert funcs[0].end_line == 7
+
 def test_map_changed_lines():
     code = """
 void foo() {
