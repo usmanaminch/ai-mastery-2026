@@ -1,206 +1,268 @@
 {
-  "results": [
-    {
-      "actual_class": "reject",
-      "candidate": "candidate_gemini_pro_malformed.diff",
-      "case_id": "expat-cve-2022-25315",
-      "confidence": 1.0,
-      "cve": "CVE-2022-25315",
-      "cwe": "CWE-190",
-      "expected_class": "reject",
-      "expected_reason": "malformed_or_non_applicable_diff",
-      "library": "expat",
-      "line_overlap_ratio": null,
-      "match": true,
-      "minimality_label": null,
-      "minimality_ratio": null,
-      "same_file": null,
-      "same_function": null,
-      "score_output": "benchmark/results/expat-cve-2022-25315/candidate_gemini_pro_malformed.patch_score.json",
-      "verdict": "parse_error"
-    },
-    {
-      "actual_class": "accept",
-      "candidate": "good_derived.diff",
-      "case_id": "expat-cve-2022-25315",
-      "confidence": 1.0,
-      "cve": "CVE-2022-25315",
-      "cwe": "CWE-190",
-      "expected_class": "accept",
-      "expected_reason": "known_good",
-      "library": "expat",
-      "line_overlap_ratio": 1.0,
-      "match": true,
-      "minimality_label": "tight",
-      "minimality_ratio": 1.0,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/expat-cve-2022-25315/good_derived.patch_score.json",
-      "verdict": "strong_match"
-    },
-    {
-      "actual_class": "reject",
-      "candidate": "bad_wrong_function.diff",
-      "case_id": "libpng-cve-2025-64505",
-      "confidence": 0.3,
-      "cve": "CVE-2025-64505",
-      "cwe": "CWE-122",
-      "expected_class": "reject",
-      "expected_reason": "wrong_function",
-      "library": "libpng",
-      "line_overlap_ratio": 0.0,
-      "match": true,
-      "minimality_label": "tight",
-      "minimality_ratio": 1.25,
-      "same_file": true,
-      "same_function": false,
-      "score_output": "benchmark/results/libpng-cve-2025-64505/bad_wrong_function.patch_score.json",
-      "verdict": "wrong_function"
-    },
-    {
-      "actual_class": "accept",
-      "candidate": "good_derived.diff",
-      "case_id": "libpng-cve-2025-64505",
-      "confidence": 0.95,
-      "cve": "CVE-2025-64505",
-      "cwe": "CWE-122",
-      "expected_class": "accept",
-      "expected_reason": "known_good",
-      "library": "libpng",
-      "line_overlap_ratio": 0.75,
-      "match": true,
-      "minimality_label": "tight",
-      "minimality_ratio": 1.125,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/libpng-cve-2025-64505/good_derived.patch_score.json",
-      "verdict": "strong_match"
-    },
-    {
-      "actual_class": "accept",
-      "candidate": "good_drift.diff",
-      "case_id": "libpng-cve-2025-64505",
-      "confidence": 0.9,
-      "cve": "CVE-2025-64505",
-      "cwe": "CWE-122",
-      "expected_class": "accept",
-      "expected_reason": "known_good_drift",
-      "library": "libpng",
-      "line_overlap_ratio": 0.5,
-      "match": true,
-      "minimality_label": "acceptable",
-      "minimality_ratio": 1.375,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/libpng-cve-2025-64505/good_drift.patch_score.json",
-      "verdict": "strong_match"
-    },
-    {
-      "actual_class": "reject",
-      "candidate": "candidate_gemini_pro.diff",
-      "case_id": "libxml2-cve-2022-40303",
-      "confidence": 0.616,
-      "cve": "CVE-2022-40303",
-      "cwe": "CWE-190",
-      "expected_class": "accept",
-      "expected_reason": "same_function_alternative_guard",
-      "library": "libxml2",
-      "line_overlap_ratio": 0.022,
-      "match": false,
-      "minimality_label": "tight",
-      "minimality_ratio": 0.06,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/libxml2-cve-2022-40303/candidate_gemini_pro.patch_score.json",
-      "verdict": "under_broad"
-    },
-    {
-      "actual_class": "accept",
-      "candidate": "good_derived.diff",
-      "case_id": "libxml2-cve-2022-40303",
-      "confidence": 1.0,
-      "cve": "CVE-2022-40303",
-      "cwe": "CWE-190",
-      "expected_class": "accept",
-      "expected_reason": "known_good",
-      "library": "libxml2",
-      "line_overlap_ratio": 1.0,
-      "match": true,
-      "minimality_label": "tight",
-      "minimality_ratio": 1.0,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/libxml2-cve-2022-40303/good_derived.patch_score.json",
-      "verdict": "strong_match"
-    },
-    {
-      "actual_class": "accept",
-      "candidate": "good_validated_ai.diff",
-      "case_id": "zlib-cve-2022-37434",
-      "confidence": 1.0,
-      "cve": "CVE-2022-37434",
-      "cwe": "CWE-787",
-      "expected_class": "accept",
-      "expected_reason": "validated_good_candidate",
-      "library": "zlib",
-      "line_overlap_ratio": 1.0,
-      "match": true,
-      "minimality_label": "acceptable",
-      "minimality_ratio": 2.0,
-      "same_file": true,
-      "same_function": true,
-      "score_output": "benchmark/results/zlib-cve-2022-37434/good_validated_ai.patch_score.json",
-      "verdict": "strong_match"
-    }
-  ],
-  "summary": {
-    "accept_recall": 0.833,
-    "by_library": {
-      "expat": {
-        "match_rate": 1.0,
-        "matched": 2,
-        "total": 2
+  "accuracy": {
+    "results": [
+      {
+        "actual_class": "accept",
+        "basis": "Reference upstream fix used as a strict positive control.",
+        "candidate": "good_derived.diff",
+        "case_id": "expat-cve-2022-25315",
+        "confidence": 1.0,
+        "cve": "CVE-2022-25315",
+        "cwe": "CWE-190",
+        "expected": "accept",
+        "library": "expat",
+        "line_overlap_ratio": 1.0,
+        "match": true,
+        "minimality_label": "tight",
+        "minimality_ratio": 1.0,
+        "preflight_status": "applies",
+        "provenance": "derived",
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/expat-cve-2022-25315/good_derived.patch_score.json",
+        "verdict": "strong_match"
       },
-      "libpng": {
-        "match_rate": 1.0,
-        "matched": 3,
-        "total": 3
+      {
+        "actual_class": "accept",
+        "basis": "Cosmetic derivative of upstream fix with logic preserved.",
+        "candidate": "good_derived.diff",
+        "case_id": "libpng-cve-2025-64505",
+        "confidence": 0.95,
+        "cve": "CVE-2025-64505",
+        "cwe": "CWE-122",
+        "expected": "accept",
+        "library": "libpng",
+        "line_overlap_ratio": 0.75,
+        "match": true,
+        "minimality_label": "tight",
+        "minimality_ratio": 1.125,
+        "preflight_status": "applies",
+        "provenance": "derived",
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/libpng-cve-2025-64505/good_derived.patch_score.json",
+        "verdict": "strong_match"
       },
-      "libxml2": {
-        "match_rate": 0.5,
-        "matched": 1,
-        "total": 2
+      {
+        "actual_class": "accept",
+        "basis": "Logic-preserving derivative of upstream fix with moderate positional/comment drift.",
+        "candidate": "good_drift.diff",
+        "case_id": "libpng-cve-2025-64505",
+        "confidence": 0.9,
+        "cve": "CVE-2025-64505",
+        "cwe": "CWE-122",
+        "expected": "accept",
+        "library": "libpng",
+        "line_overlap_ratio": 0.5,
+        "match": true,
+        "minimality_label": "acceptable",
+        "minimality_ratio": 1.375,
+        "preflight_status": "applies",
+        "provenance": "derived",
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/libpng-cve-2025-64505/good_drift.patch_score.json",
+        "verdict": "strong_match"
       },
-      "zlib": {
-        "match_rate": 1.0,
-        "matched": 1,
-        "total": 1
+      {
+        "actual_class": "accept",
+        "basis": "Reference upstream fix used as a strict positive control.",
+        "candidate": "good_derived.diff",
+        "case_id": "libxml2-cve-2022-40303",
+        "confidence": 1.0,
+        "cve": "CVE-2022-40303",
+        "cwe": "CWE-190",
+        "expected": "accept",
+        "library": "libxml2",
+        "line_overlap_ratio": 1.0,
+        "match": true,
+        "minimality_label": "tight",
+        "minimality_ratio": 1.0,
+        "preflight_status": "applies",
+        "provenance": "derived",
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/libxml2-cve-2022-40303/good_derived.patch_score.json",
+        "verdict": "strong_match"
+      },
+      {
+        "actual_class": "accept",
+        "basis": "Gemini Pro optimized candidate from Phase 1; independently validated by Docker build, targeted post-patch reproducer, and zlib regression tests.",
+        "candidate": "good_validated_ai.diff",
+        "case_id": "zlib-cve-2022-37434",
+        "confidence": 1.0,
+        "cve": "CVE-2022-37434",
+        "cwe": "CWE-787",
+        "expected": "accept",
+        "library": "zlib",
+        "line_overlap_ratio": 1.0,
+        "match": true,
+        "minimality_label": "acceptable",
+        "minimality_ratio": 2.0,
+        "preflight_status": "malformed",
+        "provenance": "generated_verified",
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/zlib-cve-2022-37434/good_validated_ai.patch_score.json",
+        "verdict": "strong_match"
       }
-    },
-    "matched": 7,
-    "misclassifications": [
+    ],
+    "summary": {
+      "accept_recall": 1.0,
+      "by_cwe": {
+        "CWE-122": {
+          "match_rate": 1.0,
+          "matched": 2,
+          "total": 2
+        },
+        "CWE-190": {
+          "match_rate": 1.0,
+          "matched": 2,
+          "total": 2
+        },
+        "CWE-787": {
+          "match_rate": 1.0,
+          "matched": 1,
+          "total": 1
+        }
+      },
+      "by_library": {
+        "expat": {
+          "match_rate": 1.0,
+          "matched": 1,
+          "total": 1
+        },
+        "libpng": {
+          "match_rate": 1.0,
+          "matched": 2,
+          "total": 2
+        },
+        "libxml2": {
+          "match_rate": 1.0,
+          "matched": 1,
+          "total": 1
+        },
+        "zlib": {
+          "match_rate": 1.0,
+          "matched": 1,
+          "total": 1
+        }
+      },
+      "matched": 5,
+      "misclassifications": [],
+      "overall_match_rate": 1.0,
+      "reject_recall": null,
+      "total_candidates": 5
+    }
+  },
+  "generator_eval": {
+    "results": [
       {
         "actual_class": "reject",
+        "basis": "Gemini-generated candidate patch failed git apply --check with corrupt patch error. Ground truth not behaviorally verified; routed to generator evaluation only.",
+        "candidate": "candidate_gemini_pro_malformed.diff",
+        "case_id": "expat-cve-2022-25315",
+        "confidence": 1.0,
+        "cve": "CVE-2022-25315",
+        "cwe": "CWE-190",
+        "expected": null,
+        "library": "expat",
+        "line_overlap_ratio": null,
+        "minimality_label": null,
+        "minimality_ratio": null,
+        "preflight_status": "malformed",
+        "provenance": "generated_unverified",
+        "same_file": null,
+        "same_function": null,
+        "score_output": "benchmark/results/expat-cve-2022-25315/candidate_gemini_pro_malformed.patch_score.json",
+        "verdict": "parse_error"
+      },
+      {
+        "actual_class": "reject",
+        "basis": "Gemini-generated candidate. Ground truth not independently verified; routed to generator evaluation only.",
+        "candidate": "bad_wrong_function.diff",
+        "case_id": "libpng-cve-2025-64505",
+        "confidence": 0.3,
+        "cve": "CVE-2025-64505",
+        "cwe": "CWE-122",
+        "expected": null,
+        "library": "libpng",
+        "line_overlap_ratio": 0.0,
+        "minimality_label": "tight",
+        "minimality_ratio": 1.25,
+        "preflight_status": "applies",
+        "provenance": "generated_unverified",
+        "same_file": true,
+        "same_function": false,
+        "score_output": "benchmark/results/libpng-cve-2025-64505/bad_wrong_function.patch_score.json",
+        "verdict": "wrong_function"
+      },
+      {
+        "actual_class": "reject",
+        "basis": "Gemini-generated candidate normalized through git apply/diff. Ground truth not independently verified; scorer verdict is recorded under generator evaluation only.",
         "candidate": "candidate_gemini_pro.diff",
         "case_id": "libxml2-cve-2022-40303",
         "confidence": 0.616,
         "cve": "CVE-2022-40303",
         "cwe": "CWE-190",
-        "expected_class": "accept",
-        "expected_reason": "same_function_alternative_guard",
+        "expected": null,
         "library": "libxml2",
         "line_overlap_ratio": 0.022,
-        "match": false,
         "minimality_label": "tight",
         "minimality_ratio": 0.06,
+        "preflight_status": "applies",
+        "provenance": "generated_unverified",
         "same_file": true,
         "same_function": true,
         "score_output": "benchmark/results/libxml2-cve-2022-40303/candidate_gemini_pro.patch_score.json",
         "verdict": "under_broad"
       }
     ],
-    "overall_match_rate": 0.875,
-    "reject_recall": 1.0,
-    "total_candidates": 8
+    "summary": {
+      "by_cwe": {
+        "CWE-122": {
+          "total": 1,
+          "verdicts": {
+            "wrong_function": 1
+          }
+        },
+        "CWE-190": {
+          "total": 2,
+          "verdicts": {
+            "parse_error": 1,
+            "under_broad": 1
+          }
+        }
+      },
+      "by_library": {
+        "expat": {
+          "total": 1,
+          "verdicts": {
+            "parse_error": 1
+          }
+        },
+        "libpng": {
+          "total": 1,
+          "verdicts": {
+            "wrong_function": 1
+          }
+        },
+        "libxml2": {
+          "total": 1,
+          "verdicts": {
+            "under_broad": 1
+          }
+        }
+      },
+      "class_distribution": {
+        "reject": 3
+      },
+      "total_candidates": 3,
+      "verdict_distribution": {
+        "parse_error": 1,
+        "under_broad": 1,
+        "wrong_function": 1
+      }
+    }
   }
 }

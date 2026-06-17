@@ -1,100 +1,184 @@
-# Benchmark Case Schema
+# EdgePatch Patch-Scoring Benchmark — Case Schema v2
 
-Each benchmark case uses this structure:
+## Grounding Principle
 
-benchmark/cases/<library>-<cve-id>/
-  meta.json
-  reference_upstream_fix.diff
-  candidates/
-    good_derived.diff
-    good_drift.diff
-    bad_wrong_function.diff
-    bad_over_broad.diff
-    bad_incomplete.diff
-    aligned_but_wrong.diff
-  labels.json
+A candidate may contribute to the SCORER ACCURACY metric only if its ground-truth label was established independently of, and prior to, scoring.
 
-Not every case must include every candidate type, but every candidate that exists must have a label before scoring.
+A label is grounded in one of two ways:
 
-## meta.json
+1. By construction
+2. By independent verification
 
-Required fields:
+Model-generated output with an unverified label is never scored for accuracy. It is recorded under GENERATOR EVALUATION only.
+
+## Candidate Provenance
+
+Every candidate in `labels.json` must define one of the following provenance values:
+
+### derived
+
+Built from `reference_upstream_fix.diff` while preserving the same logic.
+
+Examples:
+
+- exact upstream fix copy
+- cosmetic-only change
+- whitespace-only change
+- comment-only drift
+- small positional drift that preserves logic
+
+Rules:
+
+- `expected` must be `accept`
+- included in SCORER ACCURACY
+
+### constructed
+
+Deliberately built to fail in a named way.
+
+Examples:
+
+- wrong file
+- wrong function
+- over-broad patch
+- under-broad patch
+- malformed patch
+
+Rules:
+
+- `expected` must be `reject`
+- `failure_class` is required
+- included in SCORER ACCURACY
+
+### generated_unverified
+
+Produced by a model, but ground truth has not been independently established.
+
+Rules:
+
+- `expected` must be `null`
+- not included in SCORER ACCURACY
+- included in GENERATOR EVALUATION only
+
+### generated_verified
+
+Produced by a model, then independently verified.
+
+Examples:
+
+- targeted reproducer passes after patch
+- regression tests pass
+- Docker/sandbox validation evidence exists
+- human/security review accepted the patch with evidence
+
+Rules:
+
+- `expected` must be `accept` or `reject`
+- `verification` block is required
+- included in SCORER ACCURACY
+
+## Metric Buckets
+
+SCORER ACCURACY:
+
+- derived
+- constructed
+- generated_verified
+
+GENERATOR EVALUATION:
+
+- generated_unverified
+
+## labels.json Format
 
 {
-  "case_id": "libpng-cve-2025-64505",
-  "library": "libpng",
-  "cve": "CVE-2025-64505",
-  "cwe": "CWE-122",
-  "language": "C",
-  "upstream_fix_commit": "6a528eb5fd0dd7f6de1c39d30de0e41473431c37",
-  "upstream_fix_url": "https://github.com/pnggroup/libpng/commit/6a528eb5fd0dd7f6de1c39d30de0e41473431c37",
-  "reference_file": "pngrtran.c",
-  "reference_function": "png_set_quantize",
-  "notes": "Short human-readable case summary."
-}
-
-## labels.json
-
-Labels must be written before scoring.
-
-Example:
-
-{
-  "case_id": "libpng-cve-2025-64505",
+  "case_id": "example-cve-id",
   "labels_written_before_scoring": true,
+  "seed_case": false,
   "candidates": {
-    "good_derived.diff": {
-      "expected_class": "accept",
-      "expected_reason": "known_good",
-      "construction": "Cosmetic derivative of upstream fix."
-    },
-    "good_drift.diff": {
-      "expected_class": "accept",
-      "expected_reason": "known_good_drift",
-      "construction": "Logic-preserving derivative with positional drift."
-    },
-    "bad_wrong_function.diff": {
-      "expected_class": "reject",
-      "expected_reason": "wrong_function",
-      "construction": "Patch relocated to the wrong function."
+    "candidate.diff": {
+      "provenance": "derived",
+      "expected": "accept",
+      "basis": "Reference upstream fix used as known-good control."
     }
   }
 }
 
-## Expected classes
+## Candidate Fields
 
-Allowed expected_class values:
+Each candidate entry supports:
 
-- accept
-- reject
-- known_blind_spot
+{
+  "provenance": "derived | constructed | generated_unverified | generated_verified",
+  "expected": "accept | reject | null",
+  "basis": "One-line explanation of how the label was established.",
+  "failure_class": "wrong_file | wrong_function | over_broad | under_broad | malformed",
+  "generator": "gemini-3.1-pro-preview",
+  "verification": {
+    "method": "behavioral",
+    "post_patch_result": "path/to/post_patch_result.json",
+    "test_suite_result": "path/to/test_suite_result.json",
+    "verified_by": "EdgePatch Phase 1 validation",
+    "date": "2026-06-14"
+  }
+}
 
-## Expected reasons
+## Validation Rules
 
-Suggested expected_reason values:
+The benchmark harness must enforce these rules before scoring:
 
-- known_good
-- known_good_drift
-- wrong_file
-- wrong_function
-- over_broad
-- under_broad
-- parse_error
-- known_semantic_blind_spot
+- `labels.json` must exist.
+- `labels_written_before_scoring` must be `true`.
+- Every candidate file named in `labels.json` must exist.
+- Every candidate must define `provenance`.
+- `derived` requires `expected == "accept"`.
+- `constructed` requires `expected == "reject"` and `failure_class`.
+- `generated_unverified` requires `expected == null`.
+- `generated_verified` requires `expected` in `{"accept", "reject"}` and a `verification` block.
 
-## Scorer output
+Any violation is a hard error.
 
-The benchmark harness writes per-candidate scorer output under:
+## Results Output
 
-benchmark/results/<case_id>/<candidate_name>.patch_score.json
+Benchmark results must contain two separate sections:
 
-Aggregate outputs:
+### SCORER ACCURACY
 
-benchmark/results.json
-benchmark/results.md
+Grounded candidates only.
 
-## Required label timing
+Metrics:
 
-labels.json must be created before running the benchmark harness.
+- total grounded candidates
+- matched
+- overall match rate
+- accept recall
+- reject recall
+- by library
+- by CWE
+- misclassification table
 
-This prevents label leakage from scorer output into expected labels.
+### GENERATOR EVALUATION
+
+Generated-unverified candidates only.
+
+Metrics:
+
+- total generated-unverified candidates
+- verdict distribution
+- by library
+- by CWE
+- per-candidate scorer verdicts
+
+No accuracy claim is made for generator-eval candidates.
+
+## Important Boundary
+
+This benchmark evaluates structural patch scoring.
+
+It does not prove semantic correctness.
+
+It does not reproduce vulnerabilities.
+
+It does not execute patches.
+
+Behavioral validation belongs to full-pipeline case studies.

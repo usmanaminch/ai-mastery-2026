@@ -167,14 +167,15 @@ def write_label_stub(args: argparse.Namespace, case_dir: Path) -> None:
         "seed_case": False,
         "candidates": {
             "good_derived.diff": {
-                "expected_class": "accept",
-                "expected_reason": "known_good",
-                "construction": "Reference upstream fix used as a strict positive control."
+                "provenance": "derived",
+                "expected": "accept",
+                "basis": "Reference upstream fix used as a strict positive control."
             },
             "candidate_gemini_pro.diff": {
-                "expected_class": "TODO_accept_or_reject_before_scoring",
-                "expected_reason": "TODO_manual_pre_score_label",
-                "construction": "Gemini-generated candidate patch. Inspect manually before scoring."
+                "provenance": "generated_unverified",
+                "expected": None,
+                "basis": "Model-generated candidate. Ground truth has not been independently verified; route to generator evaluation only.",
+                "generator": "gemini-3.1-pro-preview"
             }
         }
     }
