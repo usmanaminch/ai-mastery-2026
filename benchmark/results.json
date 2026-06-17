@@ -96,6 +96,44 @@
       "verdict": "strong_match"
     },
     {
+      "actual_class": "reject",
+      "candidate": "candidate_gemini_pro.diff",
+      "case_id": "libxml2-cve-2022-40303",
+      "confidence": 0.616,
+      "cve": "CVE-2022-40303",
+      "cwe": "CWE-190",
+      "expected_class": "accept",
+      "expected_reason": "same_function_alternative_guard",
+      "library": "libxml2",
+      "line_overlap_ratio": 0.022,
+      "match": false,
+      "minimality_label": "tight",
+      "minimality_ratio": 0.06,
+      "same_file": true,
+      "same_function": true,
+      "score_output": "benchmark/results/libxml2-cve-2022-40303/candidate_gemini_pro.patch_score.json",
+      "verdict": "under_broad"
+    },
+    {
+      "actual_class": "accept",
+      "candidate": "good_derived.diff",
+      "case_id": "libxml2-cve-2022-40303",
+      "confidence": 1.0,
+      "cve": "CVE-2022-40303",
+      "cwe": "CWE-190",
+      "expected_class": "accept",
+      "expected_reason": "known_good",
+      "library": "libxml2",
+      "line_overlap_ratio": 1.0,
+      "match": true,
+      "minimality_label": "tight",
+      "minimality_ratio": 1.0,
+      "same_file": true,
+      "same_function": true,
+      "score_output": "benchmark/results/libxml2-cve-2022-40303/good_derived.patch_score.json",
+      "verdict": "strong_match"
+    },
+    {
       "actual_class": "accept",
       "candidate": "good_validated_ai.diff",
       "case_id": "zlib-cve-2022-37434",
@@ -116,7 +154,7 @@
     }
   ],
   "summary": {
-    "accept_recall": 1.0,
+    "accept_recall": 0.833,
     "by_library": {
       "expat": {
         "match_rate": 1.0,
@@ -128,16 +166,41 @@
         "matched": 3,
         "total": 3
       },
+      "libxml2": {
+        "match_rate": 0.5,
+        "matched": 1,
+        "total": 2
+      },
       "zlib": {
         "match_rate": 1.0,
         "matched": 1,
         "total": 1
       }
     },
-    "matched": 6,
-    "misclassifications": [],
-    "overall_match_rate": 1.0,
+    "matched": 7,
+    "misclassifications": [
+      {
+        "actual_class": "reject",
+        "candidate": "candidate_gemini_pro.diff",
+        "case_id": "libxml2-cve-2022-40303",
+        "confidence": 0.616,
+        "cve": "CVE-2022-40303",
+        "cwe": "CWE-190",
+        "expected_class": "accept",
+        "expected_reason": "same_function_alternative_guard",
+        "library": "libxml2",
+        "line_overlap_ratio": 0.022,
+        "match": false,
+        "minimality_label": "tight",
+        "minimality_ratio": 0.06,
+        "same_file": true,
+        "same_function": true,
+        "score_output": "benchmark/results/libxml2-cve-2022-40303/candidate_gemini_pro.patch_score.json",
+        "verdict": "under_broad"
+      }
+    ],
+    "overall_match_rate": 0.875,
     "reject_recall": 1.0,
-    "total_candidates": 6
+    "total_candidates": 8
   }
 }
