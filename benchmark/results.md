@@ -4,37 +4,41 @@
 
 This section includes only candidates with labels grounded by construction or independent verification.
 
-- Total grounded candidates: 5
-- Matched: 5
+- Total grounded candidates: 9
+- Matched: 9
 - Overall match rate: 1.0
 - Accept recall: 1.0
-- Reject recall: None
+- Reject recall: 1.0
 
 ### Accuracy by Library
 
 | Library | Matched | Total | Match Rate |
 |---|---:|---:|---:|
-| expat | 1 | 1 | 1.0 |
-| libpng | 2 | 2 | 1.0 |
-| libxml2 | 1 | 1 | 1.0 |
-| zlib | 1 | 1 | 1.0 |
+| expat | 2 | 2 | 1.0 |
+| libpng | 3 | 3 | 1.0 |
+| libxml2 | 2 | 2 | 1.0 |
+| zlib | 2 | 2 | 1.0 |
 
 ### Accuracy by CWE
 
 | CWE | Matched | Total | Match Rate |
 |---|---:|---:|---:|
-| CWE-122 | 2 | 2 | 1.0 |
-| CWE-190 | 2 | 2 | 1.0 |
-| CWE-787 | 1 | 1 | 1.0 |
+| CWE-122 | 3 | 3 | 1.0 |
+| CWE-190 | 4 | 4 | 1.0 |
+| CWE-787 | 2 | 2 | 1.0 |
 
 ### Grounded Per-Candidate Results
 
 | Case | Candidate | Provenance | Expected | Actual | Verdict | Match | Confidence |
 |---|---|---|---|---|---|---:|---:|
+| expat-cve-2022-25315 | constructed_malformed.diff | constructed | reject | reject | parse_error | True | 1.0 |
 | expat-cve-2022-25315 | good_derived.diff | derived | accept | accept | strong_match | True | 1.0 |
+| libpng-cve-2025-64505 | constructed_wrong_function.diff | constructed | reject | reject | wrong_function | True | 0.3 |
 | libpng-cve-2025-64505 | good_derived.diff | derived | accept | accept | strong_match | True | 0.95 |
 | libpng-cve-2025-64505 | good_drift.diff | derived | accept | accept | strong_match | True | 0.9 |
+| libxml2-cve-2022-40303 | constructed_under_broad.diff | constructed | reject | reject | under_broad | True | 0.492 |
 | libxml2-cve-2022-40303 | good_derived.diff | derived | accept | accept | strong_match | True | 1.0 |
+| zlib-cve-2022-37434 | constructed_wrong_file.diff | constructed | reject | reject | wrong_file | True | 0.0 |
 | zlib-cve-2022-37434 | good_validated_ai.diff | generated_verified | accept | accept | strong_match | True | 1.0 |
 
 ### Grounded Misclassifications
