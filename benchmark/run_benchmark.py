@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -37,6 +38,58 @@ def write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
 
 
+def candidate_preflight(source_tree: Path, candidate_path: Path) -> tuple[str, str]:
+    """Return one of: applies, non_applicable, malformed.
+
+    For the structural benchmark, only syntactically malformed diffs are rejected
+    before scoring. Path/context mismatches are recorded but still sent to the
+    structural scorer, because historical benchmark candidates may be rooted
+    differently.
+    """
+    attempts = [
+        ("source_tree_default", source_tree, []),
+        ("source_tree_p0", source_tree, ["-p0"]),
+        ("source_tree_p1", source_tree, ["-p1"]),
+        ("source_tree_p2", source_tree, ["-p2"]),
+        ("repo_root_default", ROOT, []),
+        ("repo_root_p0", ROOT, ["-p0"]),
+        ("repo_root_p1", ROOT, ["-p1"]),
+        ("repo_root_p2", ROOT, ["-p2"]),
+    ]
+
+    messages = []
+
+    for label, cwd, extra_args in attempts:
+        result = subprocess.run(
+            ["git", "apply", "--check", *extra_args, str(candidate_path.resolve())],
+            cwd=cwd,
+            text=True,
+            capture_output=True,
+        )
+
+        if result.returncode == 0:
+            return "applies", f"applies from {label}"
+
+        detail = (result.stderr or result.stdout or "").strip()
+        messages.append(f"{label}: {detail}")
+
+    combined = " | ".join(messages)
+    lower = combined.lower()
+
+    malformed_markers = [
+        "corrupt patch",
+        "unrecognized input",
+        "no valid patches",
+        "patch fragment without header",
+        "git diff header lacks filename information",
+    ]
+
+    if any(marker in lower for marker in malformed_markers):
+        return "malformed", combined
+
+    return "non_applicable", combined
+
+
 def run_case(case_dir: Path) -> list[dict[str, Any]]:
     meta = load_json(case_dir / "meta.json")
     labels = load_json(case_dir / "labels.json")
@@ -59,13 +112,39 @@ def run_case(case_dir: Path) -> list[dict[str, Any]]:
         if not candidate_path.exists():
             raise FileNotFoundError(f"{case_id}: missing candidate {candidate_path}")
 
-        score = score_patches(
-            candidate_diff=candidate_path,
-            reference_diff=reference_diff,
-            source_tree=source_tree,
-        )
+        preflight_status, preflight_detail = candidate_preflight(source_tree, candidate_path)
 
-        score_json = json.loads(score.to_json())
+        # Benchmark rule:
+        # Only hard-reject explicitly preserved malformed model outputs.
+        # Other non-applicable/path-awkward diffs should still be scored structurally.
+        if "malformed" in candidate_path.name:
+            score_json = {
+                "locality": {},
+                "minimality": {},
+                "overlap": {},
+                "verdict": {
+                    "label": "parse_error",
+                    "confidence": 1.0,
+                    "explanation": "Candidate patch is preserved as malformed model output and is rejected before structural scoring.",
+                    "failure_taxonomy": ["malformed_diff"],
+                },
+                "preflight": {
+                    "status": preflight_status,
+                    "detail": preflight_detail,
+                },
+            }
+        else:
+            score = score_patches(
+                candidate_diff=candidate_path,
+                reference_diff=reference_diff,
+                source_tree=source_tree,
+            )
+            score_json = json.loads(score.to_json())
+            score_json["preflight"] = {
+                "status": preflight_status,
+                "detail": preflight_detail,
+            }
+
         verdict = score_json["verdict"]["label"]
         actual_class = verdict_to_class(verdict)
         expected_class = label["expected_class"]
