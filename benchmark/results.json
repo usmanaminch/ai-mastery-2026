@@ -183,7 +183,7 @@
         "match": true,
         "minimality_label": "acceptable",
         "minimality_ratio": 2.0,
-        "preflight_status": "malformed",
+        "preflight_status": "applies",
         "provenance": "generated_verified",
         "same_file": true,
         "same_function": true,
