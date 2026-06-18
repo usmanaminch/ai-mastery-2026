@@ -8,7 +8,7 @@ The goal is not to patch arbitrary codebases yet. The goal is to let a reviewer 
 
 Command:
 
-    python -m edgepatch bench
+    python3 -m edgepatch bench
 
 Expected result:
 
@@ -24,13 +24,13 @@ Expected result:
 
 Command:
 
-    python -m edgepatch bench --json
+    python3 -m edgepatch bench --json
 
 ## Read existing results without rerunning
 
 Command:
 
-    python -m edgepatch bench --no-run
+    python3 -m edgepatch bench --no-run
 
 ## What this CLI does
 
