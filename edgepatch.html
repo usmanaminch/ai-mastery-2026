@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Patching C vulnerabilities in disconnected environments — EdgePatch v1</title>
+<meta name="description" content="EdgePatch is an offline, deterministic system that evaluates LLM-generated C vulnerability patches and packages the evidence for human approval before they go into production — for critical infrastructure, industrial control, and other disconnected environments. The patch is generative; the verification is deterministic." />
+<meta property="og:title" content="Patching C vulnerabilities in disconnected environments" />
+<meta property="og:description" content="An offline, deterministic gate for security patches in environments that can't call a cloud model. Whatever proposes the fix, deterministic tools inspect and a human approves." />
+<meta property="og:type" content="article" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F2F3F1;
+    --paper:#FFFFFF;
+    --ink:#171A1F;
+    --ink-soft:#474C54;
+    --ink-faint:#878C94;
+    --line:#DCDED9;
+    --line-strong:#C6C9C2;
+
+    --accept:#0F7B6C;      --accept-bg:#E3F0EC;
+    --reject:#B23A3A;      --reject-bg:#F5E6E4;
+    --caution:#A9741A;     --caution-bg:#F4EBD9;
+    --proposed:#534CC2;    --proposed-bg:#EAE9F7;
+
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'IBM Plex Sans',system-ui,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+
+    --maxw:760px;
+    --wide:1060px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:18px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-wrap:break-word;
+  }
+  ::selection{background:var(--proposed);color:#fff}
+
+  a{color:var(--accept);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accept) 35%,transparent)}
+  a:hover{border-bottom-color:var(--accept)}
+  a:focus-visible{outline:2px solid var(--proposed);outline-offset:2px;border-radius:2px}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .wide{max-width:var(--wide);margin:0 auto;padding:0 24px}
+
+  /* ---------- top bar ---------- */
+  .topbar{border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+  .topbar .wide{display:flex;align-items:center;justify-content:space-between;height:54px}
+  .topbar a{border:none;color:var(--ink-soft);font-family:var(--font-mono);font-size:12.5px;letter-spacing:.02em}
+  .topbar a:hover{color:var(--ink)}
+  .topbar .brand{font-weight:600;color:var(--ink);letter-spacing:.16em;text-transform:uppercase;font-size:12px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:78px 0 30px}
+  .eyebrow{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--proposed);margin:0 0 22px}
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(34px,6.2vw,58px);
+    line-height:1.04;
+    letter-spacing:-.02em;
+    margin:0 0 20px;
+    overflow-wrap:break-word;
+  }
+  h1.title .sub{display:block;color:var(--ink-soft);font-weight:500;font-size:clamp(18px,2.8vw,25px);line-height:1.25;letter-spacing:-.01em;margin-top:16px}
+  .standfirst{font-size:20px;color:var(--ink-soft);max-width:640px;margin:0 0 30px}
+  .byline{display:flex;align-items:center;gap:13px;border-top:1px solid var(--line);padding-top:20px}
+  .avatar{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:14px;letter-spacing:.02em}
+  .byline .who{font-size:15px;line-height:1.35}
+  .byline .who b{font-weight:600}
+  .byline .who span{color:var(--ink-faint);font-family:var(--font-mono);font-size:12px}
+
+  /* ---------- the gate / thesis ---------- */
+  .gate{margin:40px 0 8px}
+  .gate-rail{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--paper)}
+  .gate-step{padding:18px 16px;border-right:1px solid var(--line);position:relative}
+  .gate-step:last-child{border-right:none}
+  .gate-step .n{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em}
+  .gate-step .v{font-family:var(--font-display);font-weight:600;font-size:15px;margin-top:7px;line-height:1.2}
+  .gate-step .d{font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.4}
+  .gate-step.gen{background:var(--proposed-bg)}
+  .gate-step.gen .n{color:var(--proposed)}
+  .gate-step.det{background:#fff}
+  .gate-step.human{background:var(--accept-bg)}
+  .gate-step.human .n{color:var(--accept)}
+  .gate-caption{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint);margin-top:12px;text-align:center}
+  @media(max-width:720px){
+    .gate-rail{grid-template-columns:1fr}
+    .gate-step{border-right:none;border-bottom:1px solid var(--line)}
+    .gate-step:last-child{border-bottom:none}
+  }
+
+  /* ---------- at a glance panel ---------- */
+  .panel{background:var(--ink);color:#EDEEEC;border-radius:14px;padding:34px 30px;margin:42px 0}
+  .panel h2{font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#9aa0a6;margin:0 0 22px}
+  .panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 36px}
+  @media(max-width:680px){.panel-grid{grid-template-columns:1fr}}
+  .panel-grid h3{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7f858c;margin:0 0 8px}
+  .panel-grid p{margin:0;font-size:15.5px;line-height:1.55;color:#D9DBD8}
+  .panel .big{font-family:var(--font-display);font-weight:700;font-size:40px;line-height:1;letter-spacing:-.02em;color:#fff}
+  .panel .big small{display:block;font-family:var(--font-mono);font-weight:400;font-size:12px;letter-spacing:.04em;color:#9aa0a6;margin-top:8px;text-transform:none}
+  .panel-figures{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px;padding-top:26px;border-top:1px solid #2c3138}
+  @media(max-width:680px){.panel-figures{grid-template-columns:1fr;gap:22px}}
+
+  /* ---------- sections / prose ---------- */
+  section{padding:6px 0}
+  .part-head{margin:64px 0 8px}
+  .part-kicker{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  .part-kicker b{color:var(--proposed);font-weight:600}
+  h2.part{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,4vw,36px);letter-spacing:-.015em;line-height:1.1;margin:10px 0 0}
+  .part-intro{font-size:19px;color:var(--ink-soft);margin:16px 0 6px;max-width:660px}
+
+  h3.sub{font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:-.01em;margin:38px 0 4px}
+  p{margin:18px 0}
+  strong{font-weight:600}
+  em{font-style:italic}
+  .lead{font-size:20px;color:var(--ink-soft)}
+
+  .rule{height:1px;background:var(--line);border:none;margin:46px 0}
+  .dots{text-align:center;color:var(--line-strong);letter-spacing:.6em;margin:46px 0;font-size:14px}
+
+  code{font-family:var(--font-mono);font-size:.86em;background:#E9EAE6;padding:.12em .38em;border-radius:4px;word-break:break-word;overflow-wrap:anywhere}
+  .term{font-family:var(--font-mono);font-size:12.5px;line-height:1.7;background:#16181c;color:#d7dae0;border-radius:9px;padding:15px 17px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:18px 0;white-space:pre;border:1px solid #2a2d33}
+  .term .c{color:#828892}
+  .term b{color:#eef0f3;font-weight:600}
+  @media(max-width:560px){
+    .term{font-size:11px;padding:13px 14px}
+    .topbar a{font-size:11.5px}
+    .wrap{padding:0 18px}
+  }
+
+  /* ---------- verdict chips (signature) ---------- */
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.01em;padding:3px 9px;border-radius:5px;border:1px solid;white-space:nowrap;vertical-align:baseline}
+  .chip::before{content:"";width:6px;height:6px;border-radius:50%;flex:none}
+  .chip.accept{color:var(--accept);background:var(--accept-bg);border-color:color-mix(in srgb,var(--accept) 30%,transparent)}
+  .chip.accept::before{background:var(--accept)}
+  .chip.reject{color:var(--reject);background:var(--reject-bg);border-color:color-mix(in srgb,var(--reject) 30%,transparent)}
+  .chip.reject::before{background:var(--reject)}
+  .chip.caution{color:var(--caution);background:var(--caution-bg);border-color:color-mix(in srgb,var(--caution) 30%,transparent)}
+  .chip.caution::before{background:var(--caution)}
+  .chip.neutral{color:var(--ink-soft);background:#EAEBE7;border-color:var(--line-strong)}
+  .chip.neutral::before{background:var(--ink-faint)}
+
+  /* ---------- figures ---------- */
+  figure{margin:42px 0;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .fig-head{padding:16px 22px 14px;border-bottom:1px solid var(--line)}
+  .fig-num{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--proposed)}
+  .fig-title{font-family:var(--font-display);font-weight:600;font-size:16.5px;margin-top:5px;line-height:1.25}
+  .fig-body{padding:24px 22px}
+  figcaption{padding:14px 22px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-faint);line-height:1.5;background:#FAFBF9}
+  figcaption b{color:var(--ink-soft);font-weight:600}
+
+  /* pipeline figure */
+  .pipe{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .pipe-node{flex:1 1 0;min-width:120px;border:1px solid var(--line);border-radius:8px;padding:13px 12px;background:#fff;position:relative;margin:5px}
+  .pipe-node .pn-tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .pipe-node .pn-name{font-family:var(--font-display);font-weight:600;font-size:14px;margin-top:5px;line-height:1.2}
+  .pipe-node.gen{background:var(--proposed-bg);border-color:color-mix(in srgb,var(--proposed) 25%,transparent)}
+  .pipe-node.gen .pn-tag{color:var(--proposed)}
+  .pipe-node.human{background:var(--accept-bg);border-color:color-mix(in srgb,var(--accept) 25%,transparent)}
+  .pipe-node.human .pn-tag{color:var(--accept)}
+  .pipe-flow{display:flex;align-items:center;justify-content:center;color:var(--line-strong);font-size:18px;padding:0 2px}
+  @media(max-width:680px){.pipe-flow{transform:rotate(90deg);width:100%}}
+
+  /* snake pipeline (Figure 1) */
+  .snake{display:grid;grid-template-columns:1fr 30px 1fr 30px 1fr;grid-template-areas:"a a1 b b1 c" ". . . . dn" "f f1 e e1 d";gap:12px 4px;align-items:stretch}
+  .snake .pipe-node{margin:0}
+  .snake .ar{display:flex;align-items:center;justify-content:center;color:var(--line-strong);font-size:19px;font-family:var(--font-mono)}
+  .snake .ar.r::before{content:"\2192"}
+  .snake .ar.l::before{content:"\2190"}
+  .snake .ar.d::before{content:"\2193"}
+  @media(max-width:680px){
+    .snake{grid-template-columns:1fr;grid-template-areas:"a" "a1" "b" "b1" "c" "dn" "d" "e1" "e" "f1" "f"}
+    .snake .ar.r::before,.snake .ar.l::before{content:"\2193"}
+  }
+  /* audience list */
+  .alist{list-style:none;margin:18px 0 22px;padding:0}
+  .alist li{position:relative;padding:11px 0 11px 28px;border-bottom:1px solid var(--line);font-size:16px;line-height:1.55}
+  .alist li:last-child{border-bottom:none}
+  .alist li::before{content:"\25B8";position:absolute;left:2px;top:11px;color:var(--proposed)}
+  .alist b{font-weight:600;color:var(--ink)}
+
+  .airgap{margin-top:16px;border:1px dashed var(--line-strong);border-radius:8px;padding:11px 14px;font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:9px}
+  .airgap b{color:var(--ink);font-weight:600}
+
+  /* decision tree */
+  .tree{font-family:var(--font-mono);font-size:13px}
+  .tree-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .tree-row:last-child{border-bottom:none}
+  .tree-row .ord{width:20px;color:var(--ink-faint);flex:none}
+  .tree-row .cond{flex:1;color:var(--ink-soft)}
+  .tree-row .arrow{color:var(--line-strong)}
+  @media(max-width:560px){.tree-row{flex-wrap:wrap;gap:6px}.tree-row .cond{flex-basis:100%}}
+
+  /* provenance routing */
+  .prov{display:grid;grid-template-columns:1fr;gap:10px}
+  .prov-card{display:flex;align-items:flex-start;gap:14px;border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:#fff}
+  .prov-card .pc-name{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink);min-width:172px}
+  .prov-card .pc-how{font-size:13.5px;color:var(--ink-soft);flex:1;line-height:1.45}
+  .prov-card .pc-route{flex:none}
+  .prov-card.excluded{background:#FAFAF8;border-style:dashed}
+  @media(max-width:600px){.prov-card{flex-direction:column;gap:8px}.prov-card .pc-name{min-width:0}}
+
+  /* results bars */
+  .res-grid{display:grid;grid-template-columns:1fr;gap:14px}
+  .res-row{display:grid;grid-template-columns:96px 1fr 54px;align-items:center;gap:14px}
+  .res-row .rl{font-family:var(--font-mono);font-size:13px;color:var(--ink)}
+  .res-row .rt{font-family:var(--font-mono);font-size:13px;color:var(--accept);text-align:right;font-weight:600}
+  .bar{height:12px;background:#EBECE8;border-radius:6px;overflow:hidden}
+  .bar > span{display:block;height:100%;background:var(--accept);border-radius:6px}
+  .res-split{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:6px}
+  @media(max-width:600px){.res-split{grid-template-columns:1fr;gap:8px}.res-row{grid-template-columns:80px 1fr 48px}}
+  .res-sub{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px}
+
+  /* generator eval cards */
+  .gen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:640px){.gen-grid{grid-template-columns:1fr}}
+  .gen-card{border:1px solid var(--line);border-radius:9px;padding:16px;background:#fff;text-align:left}
+  .gen-card .gl{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint)}
+  .gen-card .gv{margin:10px 0}
+  .gen-card .gd{font-size:13px;color:var(--ink-soft);line-height:1.45}
+
+  /* blind spot */
+  .blind{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  @media(max-width:600px){.blind{grid-template-columns:1fr}}
+  .blind-cell{padding:18px 18px}
+  .blind-cell.s{background:var(--proposed-bg);border-right:1px solid var(--line)}
+  .blind-cell.b{background:var(--accept-bg)}
+  @media(max-width:600px){.blind-cell.s{border-right:none;border-bottom:1px solid var(--line)}}
+  .blind-cell .bl{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+  .blind-cell .bsays{font-size:14.5px;color:var(--ink-soft);line-height:1.45;margin-bottom:11px}
+
+  /* callouts */
+  .callout{border-left:3px solid var(--proposed);background:var(--proposed-bg);border-radius:0 8px 8px 0;padding:18px 22px;margin:34px 0;font-size:17px;color:var(--ink)}
+  .callout .ct{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--proposed);margin-bottom:8px}
+
+  .nongoals{list-style:none;padding:0;margin:24px 0}
+  .nongoals li{display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px}
+  .nongoals li:last-child{border-bottom:none}
+  .nongoals .x{color:var(--reject);font-family:var(--font-mono);font-weight:600;flex:none}
+
+  /* takeaways */
+  .tldr{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 28px;margin:44px 0}
+  .tldr h2{font-family:var(--font-display);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 18px}
+  .tldr ul{margin:0;padding:0;list-style:none}
+  .tldr li{position:relative;padding:11px 0 11px 26px;border-bottom:1px solid var(--line);font-size:16px}
+  .tldr li:last-child{border-bottom:none}
+  .tldr li::before{content:"→";position:absolute;left:0;color:var(--accept);font-family:var(--font-mono)}
+
+  /* sources */
+  .sources{margin:40px 0 10px}
+  .sources h2{font-family:var(--font-display);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 16px}
+  .sources ol{margin:0;padding-left:22px;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
+  .sources li{margin:9px 0}
+
+  footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 70px}
+  footer .wrap{font-size:13.5px;color:var(--ink-faint);font-family:var(--font-mono);line-height:1.7}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    *{scroll-behavior:auto !important}
+  }
+</style>
+<noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wide">
+    <a class="brand" href="https://usmanc.com/index.html">← Usman Chaudhary</a>
+    <a href="#sources">Project write-up · 2026</a>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Security · AI · Critical infrastructure</p>
+    <h1 class="title">Patching C vulnerabilities in disconnected environments
+      <span class="sub">Most AI patching workflows assume a connected model. Many of the systems where patch trust matters most — critical infrastructure, industrial control, air-gapped networks — can't rely on that at the point of application.</span>
+    </h1>
+    <p class="standfirst">EdgePatch evaluates LLM-generated C patches offline and packages the evidence for human approval, before they go into production. The patch is generative; the verification is deterministic — structural scoring plus behavioral evidence. It works the same whatever produced the patch: a local model, a fix carried in from a secure enclave, or a signed upstream fix.</p>
+    <div class="byline">
+      <div class="avatar">UC</div>
+      <div class="who">
+        <b>Usman Chaudhary</b><br/>
+        <span>Field CISO · builds things · June 2026 · 12 min read</span>
+      </div>
+    </div>
+
+    <div class="gate">
+      <div class="gate-rail">
+        <div class="gate-step gen"><div class="n">01 · proposed</div><div class="v">A patch arrives</div><div class="d">From a local model offline, or carried in from a secure enclave. The source stops mattering here.</div></div>
+        <div class="gate-step det"><div class="n">02 · deterministic</div><div class="v">Tools inspect</div><div class="d">Diff-quality gate and structural scoring, fully reproducible.</div></div>
+        <div class="gate-step det"><div class="n">03 · deterministic</div><div class="v">Sandbox validates</div><div class="d">Behavioral evidence is captured — does the fix actually hold?</div></div>
+        <div class="gate-step det"><div class="n">04 · deterministic</div><div class="v">Reporter judges</div><div class="d">Structural and behavioral evidence are fused into one honest verdict.</div></div>
+        <div class="gate-step human"><div class="n">05 · human</div><div class="v">Human approves</div><div class="d">A person makes the call, with the evidence laid out in front of them.</div></div>
+      </div>
+      <p class="gate-caption">The thesis, in five moves. Whatever proposes the patch, everything that decides whether to trust it is deterministic — or a human.</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="tldr reveal">
+    <h2>TL;DR</h2>
+    <ul>
+      <li>An AI-generated security patch can't be approved on faith — especially where you can't re-run it against a live model or a cloud service. EdgePatch separates <em>proposing</em> a patch (a model's job) from <em>deciding whether to trust it</em> (a deterministic system's job, then a human's).</li>
+      <li>The structural scorer asks: did the patch land in the right place, and is it about the right size? It returns a reproducible verdict with supporting metrics — not a model's self-assessment.</li>
+      <li>Structural alignment is not correctness. A patch can sit in the exact right function and still be wrong. The reporter never green-lights on structure alone; it requires behavioral evidence, which is how it catches the patch that <em>looks</em> right.</li>
+      <li>The benchmark only counts patches whose correct answer was established independently — by construction or by validation. Raw model output, whose ground truth is unknown, is analyzed separately and never inflates the accuracy number.</li>
+      <li>Deliberately narrow: offline patch <em>evaluation</em> for C memory safety (C++ is on the roadmap, not in v1). It does not reproduce vulnerabilities, rewrite C into Rust, or patch anything autonomously. The narrowness is the point.</li>
+    </ul>
+  </div>
+
+  <div class="panel reveal">
+    <h2>At a glance</h2>
+    <div class="panel-grid">
+      <div>
+        <h3>The problem</h3>
+        <p>Some of the hardest codebases to patch — critical infrastructure, industrial control, regulated and allied systems — can't call a cloud model, and can't tolerate a wrong fix applied with confidence. Cloud-native AI security workflows don't map cleanly to them.</p>
+      </div>
+      <div>
+        <h3>What was built</h3>
+        <p>A deterministic, offline evaluation core: a structural patch scorer, an evidence-fusing verification reporter, and a provenance-gated benchmark across four real C libraries.</p>
+      </div>
+      <div>
+        <h3>The grounded result</h3>
+        <p>Across controlled, grounded cases on four real codebases, the scorer classifies good and misplaced patches correctly in both directions — validating its logic and that it generalizes beyond the codebase it was tuned on.</p>
+      </div>
+      <div>
+        <h3>The result with teeth</h3>
+        <p>Pointed at three <em>real, unverified</em> model patches, the evaluator surfaced three <em>different</em> failure modes — a malformed diff, a wrong-function fix, and an incomplete one. Discrimination on messy output is the part that earns trust.</p>
+      </div>
+    </div>
+    <div class="panel-figures">
+      <div><div class="big">4<small>real C libraries · zlib, libpng, expat, libxml2</small></div></div>
+      <div><div class="big">3<small>vulnerability families · CWE-122 / 190 / 787</small></div></div>
+      <div><div class="big">1<small>command to reproduce · python3 -m edgepatch bench · clean clone, no deps</small></div></div>
+    </div>
+  </div>
+
+  <!-- WHO IT'S FOR -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Who it's for</b></div>
+      <h2 class="part">Mission-critical environments that must verify a patch before it ships</h2>
+      <p class="part-intro">For disconnected, high-assurance environments where a wrong patch is unacceptable and a cloud model isn't available.</p>
+    </div>
+    <ul class="alist reveal">
+      <li><b>Operators of disconnected, high-assurance systems</b> — critical infrastructure, industrial control and OT, utilities, regulated finance and healthcare, allied and coalition environments — running long-lived C that can't be replaced and can't stay continuously connected.</li>
+      <li><b>Security and platform teams evaluating AI-assisted patching</b> who want a deterministic quality-control layer over whatever model produced the fix, instead of trusting one model's say-so.</li>
+      <li><b>The approver in the loop</b> — the engineer who signs off on a machine-proposed change where a wrong patch is a certification event, and who needs auditable evidence, not a confidence score.</li>
+      <li><b>Teams comparing models</b> — local, open, vendor, or secure-cloud — who want one gate that scores patch quality the same way regardless of where the patch came from.</li>
+    </ul>
+    <p>Who it's <em>not</em> for: a fully connected team with rich CI and frontier-model access has easier options. EdgePatch is aimed at the places where those assumptions fail.</p>
+  </section>
+
+  <!-- PART I -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part I</b> — The trust gap</div>
+      <h2 class="part">A generated patch can't be trusted on its own</h2>
+      <p class="part-intro">A model can write a plausible fix. Whether it's correct is a separate question.</p>
+    </div>
+
+    <p>A generated patch is not evidence. It's a hypothesis — a plausible, well-formatted change to security-critical C that happens to have come from a model instead of a person. Treating it as proof because it compiles, or because it came from a capable model, is the failure mode this whole project exists to prevent.</p>
+
+    <p>The project started where most demos end: with a real one. I took a known, already-patched memory-safety vulnerability in zlib — <code>CVE-2022-37434</code> — had a model propose a candidate fix, and put it through a chain of evidence. The patch held — but not because the model was confident or the diff looked clean. It held because it <em>survived</em>: it built, a behavioral check confirmed the issue was resolved, a sandboxed validation run confirmed it again, and zlib's own regression suite passed. Strip that chain away and you're left with the hypothesis and no reason to believe it.</p>
+
+    <p>That gap is survivable in a connected environment — you paper over it with more model calls and more eyes. It is not survivable in the places this is aimed at: a water-treatment controller, a substation, a factory line, a regulated enclave where a wrong patch is a certification event. You get one shot, offline, against the real system, and you need a reason to trust the fix that doesn't depend on the thing that wrote it.</p>
+
+    <p>So the real artifact was never the patch. It's the apparatus that decides whether to believe one — and, crucially, that apparatus doesn't care where the patch came from. The rest of this is that apparatus.</p>
+  </section>
+
+  <!-- PART II -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part II</b> — The architecture</div>
+      <h2 class="part">Proposing is generative. Deciding is not.</h2>
+      <p class="part-intro">The model may be uncertain. Everything downstream of it is deterministic.</p>
+    </div>
+
+    <p>EdgePatch is not a monolith and not a swarm of autonomous agents. It's a modular, deterministic pipeline with a single, swappable <em>proposal</em> stage at the front — and everything that decides trust behind it is plain, reproducible code. That separation is the whole reason the thing works offline: an evaluator whose verdict changes between runs can't anchor a human approval in a high-assurance environment. Same inputs, same verdict, every time.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 1</div><div class="fig-title">The deterministic gate — one proposal step, then evidence all the way down</div></div>
+      <div class="fig-body">
+        <div class="snake">
+          <div class="pipe-node gen" style="grid-area:a"><div class="pn-tag">any source</div><div class="pn-name">Patch proposal</div></div>
+          <div class="ar r" style="grid-area:a1"></div>
+          <div class="pipe-node" style="grid-area:b"><div class="pn-tag">deterministic</div><div class="pn-name">Diff-quality gate</div></div>
+          <div class="ar r" style="grid-area:b1"></div>
+          <div class="pipe-node" style="grid-area:c"><div class="pn-tag">deterministic</div><div class="pn-name">Structural scorer</div></div>
+          <div class="ar d" style="grid-area:dn"></div>
+          <div class="pipe-node" style="grid-area:d"><div class="pn-tag">deterministic</div><div class="pn-name">Behavioral validation</div></div>
+          <div class="ar l" style="grid-area:e1"></div>
+          <div class="pipe-node" style="grid-area:e"><div class="pn-tag">deterministic</div><div class="pn-name">Verification reporter</div></div>
+          <div class="ar l" style="grid-area:f1"></div>
+          <div class="pipe-node human" style="grid-area:f"><div class="pn-tag">human</div><div class="pn-name">Approval</div></div>
+        </div>
+        <div class="airgap"><span>⌁</span><span><b>Air-gapped means zero egress, not low compute.</b>&nbsp; The proposal can come from a local model on-site, a fix carried in from a secure enclave, or a vetted upstream fix from a signed pack. The gate behind it never needs the network.</span></div>
+      </div>
+      <figcaption><b>Why the split matters:</b> the weaker or less re-checkable the proposal — a small offline model, or a patch that can't be re-validated against the real target — the more the deterministic gate has to carry. The gate's value rises exactly as the proposer's trustworthiness falls.</figcaption>
+    </figure>
+
+    <h3 class="sub">Deferred to later versions</h3>
+    <p>The evaluation core — proposer interface, scorer, reporter, benchmark — is built. Two pieces are designed but deferred: a <strong>swappable local-model backend</strong> so the proposer runs fully offline, and a <strong>signed library of official upstream fixes</strong>, so that for a known CVE the tool reaches for the vetted upstream fix first and generates only for the gaps. Both go through the same gate. Neither is a cache of old AI patches to blindly reapply — patches are version-specific, and reapplying one without re-evaluation is exactly the failure this project exists to prevent. The full forward plan is in the roadmap below.</p>
+  </section>
+
+  <!-- PART III -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part III</b> — The evaluator</div>
+      <h2 class="part">Two signals: structure and behavior</h2>
+      <p class="part-intro">Structure tells you where a patch is; behavior tells you whether it works. Neither substitutes for the other.</p>
+    </div>
+
+    <p>The <strong>structural scorer</strong> compares a candidate diff against a grounded reference fix and answers two questions deterministically: did it land in the right place (same file, same function, overlapping the fix region — <em>locality</em>), and is it about the right size (<em>minimality</em>, the candidate's changed lines against the reference's)? From those it emits one verdict from a fixed vocabulary — the same labels the tool actually prints:</p>
+
+    <p style="line-height:2.4">
+      <span class="chip accept">strong_match</span>
+      <span class="chip accept">acceptable_broader</span>
+      <span class="chip reject">wrong_file</span>
+      <span class="chip reject">wrong_function</span>
+      <span class="chip reject">under_broad</span>
+      <span class="chip reject">over_broad</span>
+      <span class="chip caution">parse_error</span>
+    </p>
+
+    <p>Getting this right on real code was less tidy than on synthetic fixtures. zlib's older K&amp;R-style function definitions broke the first function mapper — it returned <span class="chip reject">wrong_function</span> on a patch that was clearly in the right place. That false negative was the most useful thing the early benchmark produced: it forced a more robust mapper (brace-depth tracking) and a fallback path, and it's the difference between a scorer that works on a paper example and one that works on a thirty-year-old codebase.</p>
+
+    <h3 class="sub">Where structure alone fails</h3>
+    <p>Here's the limitation, stated plainly because hiding it would be the dishonest move: <strong>structural alignment is not semantic correctness.</strong> A patch can land in the exact right function, at the right size, overlapping the reference perfectly — and still be wrong, because it guards the wrong condition or flips a comparison. The scorer will call it <span class="chip accept">strong_match</span>. It has to. It can only see shape.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 2</div><div class="fig-title">The blind spot — and the only thing that closes it</div></div>
+      <div class="fig-body">
+        <div class="blind">
+          <div class="blind-cell s">
+            <div class="bl">Structural signal</div>
+            <div class="bsays">Right file, right function, right size, high overlap with the reference fix.</div>
+            <span class="chip accept">strong_match</span>
+          </div>
+          <div class="blind-cell b">
+            <div class="bl">Behavioral signal</div>
+            <div class="bsays">The patched build was exercised — and the issue was <em>not</em> resolved. The logic is wrong.</div>
+            <span class="chip reject">crash unresolved</span>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>Reporter verdict:</b> <span class="chip caution">NEEDS_BEHAVIORAL_VERIFICATION</span> — never <span class="chip accept">READY</span>. Structure said yes; behavior said no; the reporter refuses to pass it. Two independent signals catch what neither could alone.</figcaption>
+    </figure>
+
+    <p>That's the job of the <strong>verification reporter</strong>. It consumes the structural score plus behavioral evidence captured elsewhere — did the post-patch check hold, did the regression suite pass — and fuses them with one inviolable rule: <strong>structure alone never green-lights a patch.</strong> Behavioral evidence is required to reach a "ready" verdict. The reporter judges evidence; it never claims to have produced it, and it says so in its own output.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 3</div><div class="fig-title">The reporter's verdict tree — ordered, first match wins, conservative by design</div></div>
+      <div class="fig-body">
+        <div class="tree">
+          <div class="tree-row"><span class="ord">1</span><span class="cond">an input is missing or unparseable</span><span class="arrow">→</span><span class="chip caution">INCONCLUSIVE</span></div>
+          <div class="tree-row"><span class="ord">2</span><span class="cond">structural verdict is wrong_file / wrong_function</span><span class="arrow">→</span><span class="chip reject">REJECT_WRONG_LOCATION</span></div>
+          <div class="tree-row"><span class="ord">3</span><span class="cond">crash-resolved evidence is not true</span><span class="arrow">→</span><span class="chip caution">NEEDS_BEHAVIORAL_VERIFICATION</span></div>
+          <div class="tree-row"><span class="ord">4</span><span class="cond">the regression suite failed</span><span class="arrow">→</span><span class="chip reject">REJECT_REGRESSION</span></div>
+          <div class="tree-row"><span class="ord">5</span><span class="cond">structural verdict is under_broad</span><span class="arrow">→</span><span class="chip reject">REJECT_INCOMPLETE</span></div>
+          <div class="tree-row"><span class="ord">6</span><span class="cond">behavior holds + regression passes + structure strong</span><span class="arrow">→</span><span class="chip accept">READY_HIGH_CONFIDENCE</span></div>
+          <div class="tree-row"><span class="ord">7</span><span class="cond">as above, but the fix is broader than ideal</span><span class="arrow">→</span><span class="chip accept">READY_WITH_CAVEATS</span></div>
+          <div class="tree-row"><span class="ord">8</span><span class="cond">anything else</span><span class="arrow">→</span><span class="chip neutral">NEEDS_REVIEW</span></div>
+        </div>
+      </div>
+      <figcaption>Step 3 is the load-bearing one — it's where a structurally perfect but behaviorally unproven patch is stopped cold. The tree is conservative on purpose: it would rather send a good patch back for review than wave a bad one through.</figcaption>
+    </figure>
+  </section>
+
+  <!-- PART IV -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part IV</b> — The benchmark</div>
+      <h2 class="part">The benchmark, and how it's graded</h2>
+      <p class="part-intro">The benchmark only grades against answers established independently — by construction or by validation — never assumed.</p>
+    </div>
+
+    <p>An evaluator's accuracy claim is worthless if the labels it's graded against were guesses. The trap is seductive: a model produces a patch, it looks plausible, you mark it "correct," you score the evaluator against that — and you've just measured your evaluator's agreement with an assumption. EdgePatch closes that hole with a rule about <strong>provenance</strong>: a candidate only counts toward accuracy if its correct answer was established <em>before and independently of</em> scoring.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 4</div><div class="fig-title">Provenance decides which metric a candidate is allowed to touch</div></div>
+      <div class="fig-body">
+        <div class="prov">
+          <div class="prov-card"><div class="pc-name">derived</div><div class="pc-how">Built from the upstream fix; logic preserved. Known-good <em>by construction</em>.</div><div class="pc-route"><span class="chip accept">accuracy</span></div></div>
+          <div class="prov-card"><div class="pc-name">constructed</div><div class="pc-how">Deliberately broken in a named way — wrong file, wrong function, incomplete. Known-bad <em>by construction</em>.</div><div class="pc-route"><span class="chip accept">accuracy</span></div></div>
+          <div class="prov-card"><div class="pc-name">generated_verified</div><div class="pc-how">Model output that was then independently validated. Ground truth established.</div><div class="pc-route"><span class="chip accept">accuracy</span></div></div>
+          <div class="prov-card excluded"><div class="pc-name">generated_unverified</div><div class="pc-how">Raw model output. Ground truth <em>unknown</em>. Cannot be labelled on plausibility.</div><div class="pc-route"><span class="chip caution">generator-eval only</span></div></div>
+        </div>
+      </div>
+      <figcaption>This caught a real mistake mid-build: a model patch had been labelled "accept" on appearance and was dragging the accuracy number around. Under the rule it moved to generator-eval where it belongs, and the accuracy metric became defensible.</figcaption>
+    </figure>
+
+    <p>On the grounded set — every label established by construction or validation — the scorer classifies all four libraries correctly, in both directions, across three vulnerability families. That result is worth stating precisely: it shows the scorer's logic is sound and that it <em>generalizes</em> across real codebases with different conventions. It is structural-classification accuracy on controlled cases, not a claim of semantic correctness, and not a real-world error rate on ambiguous patches near the decision boundary — those live in full-pipeline case studies with behavioral evidence.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 5</div><div class="fig-title">Grounded scorer accuracy — both directions, four real codebases</div></div>
+      <div class="fig-body">
+        <div class="res-grid">
+          <div class="res-row"><span class="rl">zlib</span><span class="bar"><span style="width:100%"></span></span><span class="rt">2/2</span></div>
+          <div class="res-row"><span class="rl">libpng</span><span class="bar"><span style="width:100%"></span></span><span class="rt">3/3</span></div>
+          <div class="res-row"><span class="rl">expat</span><span class="bar"><span style="width:100%"></span></span><span class="rt">2/2</span></div>
+          <div class="res-row"><span class="rl">libxml2</span><span class="bar"><span style="width:100%"></span></span><span class="rt">2/2</span></div>
+        </div>
+        <div class="res-split">
+          <div>
+            <p class="res-sub">By direction</p>
+            <div class="res-grid">
+              <div class="res-row"><span class="rl">accept</span><span class="bar"><span style="width:100%"></span></span><span class="rt">✓</span></div>
+              <div class="res-row"><span class="rl">reject</span><span class="bar"><span style="width:100%"></span></span><span class="rt">✓</span></div>
+            </div>
+          </div>
+          <div>
+            <p class="res-sub">By vulnerability family</p>
+            <div class="res-grid">
+              <div class="res-row"><span class="rl">CWE-122</span><span class="bar"><span style="width:100%"></span></span><span class="rt">3/3</span></div>
+              <div class="res-row"><span class="rl">CWE-190</span><span class="bar"><span style="width:100%"></span></span><span class="rt">4/4</span></div>
+              <div class="res-row"><span class="rl">CWE-787</span><span class="bar"><span style="width:100%"></span></span><span class="rt">2/2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>What this is:</b> the scorer correctly classifies grounded, clear-cut cases — known-good and deliberately-broken — across four codebases. <b>What it isn't:</b> a claim that the scorer never errs on hard cases. Constructed cases are clear by design; the wild is messier, which is what Figure&nbsp;6 is for.</figcaption>
+    </figure>
+
+    <h3 class="sub">Tested on real model output</h3>
+    <p>The grounded accuracy proves the machine works. The <strong>generator evaluation</strong> shows what it does when pointed at output it wasn't built around — three real, unverified model patches, one per library, none of them counted toward accuracy. The evaluator flagged each, and flagged each <em>differently</em>:</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 6</div><div class="fig-title">Generator-eval — three real model patches, three distinct failure modes</div></div>
+      <div class="fig-body">
+        <div class="gen-grid">
+          <div class="gen-card"><div class="gl">expat</div><div class="gv"><span class="chip caution">parse_error</span></div><div class="gd">The model's diff didn't cleanly apply — caught before it ever reached structural scoring.</div></div>
+          <div class="gen-card"><div class="gl">libpng</div><div class="gv"><span class="chip reject">wrong_function</span></div><div class="gd">A plausible-looking patch in the right file, but the wrong function entirely. Rejected.</div></div>
+          <div class="gen-card"><div class="gl">libxml2</div><div class="gv"><span class="chip reject">under_broad</span></div><div class="gd">Right function, but a sliver of the work the real fix did. Flagged as incomplete.</div></div>
+        </div>
+      </div>
+      <figcaption>Three libraries, three different ways a real model patch went wrong, three different catches. That an evaluator separates messy live output along several distinct failure modes — without ever pretending it knows the ground truth — is the discrimination that matters.</figcaption>
+    </figure>
+
+    <div class="callout reveal">
+      <div class="ct">The honest headline</div>
+      The number to trust isn't a perfect score on cases I built. It's that the evaluator caught three different real failures three different ways, and that every accuracy claim is graded against an answer key I didn't get to invent after the fact.
+    </div>
+
+    <h3 class="sub">One loop, nine scorings — keep them separate</h3>
+    <p>The easiest thing to overstate here, so I'll state it precisely. EdgePatch v1 is <strong>one</strong> end-to-end remediation demonstration plus a <strong>separate</strong> structural benchmark — and the strong-sounding number belongs only to the narrower of the two.</p>
+    <div class="callout reveal">
+      <div class="ct">What the numbers actually cover</div>
+      <b>1</b> full remediation loop — zlib, with build, behavioral check, regression suite, and sanitizer evidence (Phase 1).<br>
+      <b>9</b> grounded structural scorings — the four-library benchmark, structure only, no behavioral run.<br>
+      <b>3</b> generated-unverified model outputs — analyzed for failure mode, never counted toward accuracy.<br>
+      The 9/9 is structural-classification accuracy. It does <em>not</em> mean nine full remediations were validated.
+    </div>
+
+    <h3 class="sub">Run it yourself</h3>
+    <p>The benchmark is meant to be reproduced, not taken on trust. It runs from a clean clone with no model, no Docker, no internet, no pip install, and no upstream source checkout — committed source snapshots make every case self-contained. On a fresh machine:</p>
+    <div class="term"><span class="c"># fresh clone, fresh venv — nothing else required</span>
+git clone https://github.com/usmanaminch/ai-mastery-2026.git
+cd ai-mastery-2026
+git checkout p6-edgepatch-phase2-eval
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m edgepatch bench</div>
+    <p>prints the grounded result and the generator-eval split — including the boundary caveat the tool emits in its own output:</p>
+    <div class="term">Total grounded candidates : <b>9</b>
+Matched                   : <b>9</b>
+Overall match rate        : <b>1.0</b>
+Accept recall             : <b>1.0</b>
+Reject recall             : <b>1.0</b>
+Misclassifications        : <b>0</b>
+
+expat   -> parse_error
+libpng  -> wrong_function
+libxml2 -> under_broad
+
+<span class="c">This benchmark evaluates structural patch scoring only.
+Behavioral validation belongs to full-pipeline case studies.</span></div>
+    <p>The four committed snapshots — <code>zlib/inflate.c</code>, <code>libpng/pngrtran.c</code>, <code>expat/lib/xmlparse.c</code>, and <code>libxml2/parser.c</code> — are small excerpts of permissively-licensed upstream source (zlib, libpng, the MIT-style Expat licence, and libxml2's MIT licence), included only so the benchmark is self-contained and version-pinned. Original licence headers are preserved, and provenance, licences, and the pinned upstream fix commits are recorded in <code>benchmark/THIRD_PARTY_NOTICES.md</code>.</p>
+  </section>
+
+  <!-- PART V (new) — where this fits -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part V</b> — Where this fits</div>
+      <h2 class="part">Where this fits: gov cloud and cross-domain transfer</h2>
+      <p class="part-intro">Even where a secure-cloud model exists, the patch still has to be verified and approved on the disconnected side.</p>
+    </div>
+
+    <p>The objection is real and worth meeting head-on: the frontier labs already operate inside government and secure-cloud environments, and a common pattern is to generate and validate a fix in a connected-but-secure enclave, then move it across a controlled boundary — a cross-domain solution, a data diode, signed media — into the disconnected side. If the model can run upstream, why a gate on the offline end at all?</p>
+
+    <p>Because a patch validated against a replica is not proven against the <em>real</em> system. The disconnected target is almost never a faithful twin of the enclave it was tested in — a different version, vendored modifications, drift, decades of local change. The fix that passed upstream still has to apply correctly <em>here</em>, and the person who signs off <em>here</em> needs evidence they can audit, produced <em>here</em>. That is the gate's job — which is exactly why it's built to be indifferent to where the patch came from.</p>
+
+    <figure class="reveal">
+      <div class="fig-head"><div class="fig-num">Figure 7</div><div class="fig-title">Source-agnostic — the gate sits at the disconnected boundary, whatever produced the patch</div></div>
+      <div class="fig-body">
+        <div class="pipe">
+          <div class="pipe-node gen"><div class="pn-tag">connected · secure enclave</div><div class="pn-name">Frontier model generates &amp; validates upstream</div></div>
+          <div class="pipe-flow">→</div>
+          <div class="pipe-node"><div class="pn-tag">controlled boundary</div><div class="pn-name">Cross-domain · data diode · signed pack</div></div>
+          <div class="pipe-flow">→</div>
+          <div class="pipe-node human"><div class="pn-tag">disconnected · the real system</div><div class="pn-name">Verify against the actual target · evidence · human approves</div></div>
+        </div>
+        <div class="airgap"><span>⌁</span><span>A local model proposing on-site is just a different left-hand box. <b>The gate on the right is the same either way.</b></span></div>
+      </div>
+      <figcaption><b>The position that survives scrutiny:</b> EdgePatch doesn't claim to replace a frontier model in a secure cloud. It's the verification-and-evidence step at the point of application — where a ported-in patch, a locally generated one, and a vetted upstream fix all still have to earn approval against the system they'll actually run on.</figcaption>
+    </figure>
+
+    <p>And the widest part of the gap isn't the top-tier agency with frontier access in a secure cloud — it's <strong>civilian critical infrastructure</strong>: water and power utilities, manufacturing and operational-technology networks, regional operators and allied environments that mostly have no accredited frontier model anywhere in reach. That's where AI-assisted security can't get in at all today, and where a deterministic offline gate has the most to do.</p>
+  </section>
+
+  <!-- PART VI -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Part VI</b> — What it is, and what it isn't</div>
+      <h2 class="part">What it is, and what it isn't</h2>
+      <p class="part-intro">The non-goals are deliberate. They keep the claims honest.</p>
+    </div>
+
+    <p>It's worth being explicit about the neighbourhood. Recent autonomous find-and-patch systems — the kind that emerged from large cyber-reasoning competitions — lean on frontier models and heavy compute to discover and fix bugs at scale. EdgePatch isn't a smaller version of those. It's a different thing pointed at a different constraint: <em>offline, deterministic evaluation</em> of patch quality for environments those systems can't run in. It's complementary — the rigorous evaluation layer, not another generator.</p>
+
+    <p>And it's narrow on purpose. The non-goals aren't gaps; they're the boundary that keeps the claims honest:</p>
+
+    <ul class="nongoals reveal">
+      <li><span class="x">✕</span><span><b>It does not ship exploit material or reproduction recipes.</b> The public benchmark contains no crashing inputs or trigger details; EdgePatch consumes pre-captured behavioral evidence and never requires publishing how a bug is reproduced.</span></li>
+      <li><span class="x">✕</span><span><b>It does not rewrite C into Rust.</b> The target environments run decades-old, certified, vendor-locked code that <em>cannot</em> be replaced — which is the entire reason "secure it in place" is the job. A rewrite assumes the opposite of the customer.</span></li>
+      <li><span class="x">✕</span><span><b>It does not patch autonomously.</b> The output is evidence for a human decision. In a high-assurance environment, a person approves — always.</span></li>
+      <li><span class="x">✕</span><span><b>It does not claim adoption.</b> This is a demonstration of method and rigor, not a product with users. The benchmark is the part most likely to be useful to someone else.</span></li>
+    </ul>
+
+  </section>
+
+  <!-- FUTURE ROADMAP -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Future roadmap</b></div>
+      <h2 class="part">What v1 sets up</h2>
+      <p class="part-intro">v1 proves the verification layer. The roadmap extends it.</p>
+    </div>
+    <ul class="alist reveal">
+      <li><b>Local-model backend</b> — run the proposal stage fully offline.</li>
+      <li><b>Signed library of upstream fixes</b> — prefer the vetted official fix for a known CVE; generate only for the gaps.</li>
+      <li><b>Offline update packs</b> — signed advisory and fix bundles for secure transfer into disconnected systems.</li>
+      <li><b>Multi-model comparison</b> — score patches from local, open, vendor, and secure-cloud models the same way.</li>
+      <li><b>Expanded behavioral validation</b> — more reproducers, fuzzing, sanitizers, and regression coverage.</li>
+      <li><b>Offline vulnerability triage</b> — surface known-pattern risk from imported, signed advisory intel. Detection of known issues, not novel discovery.</li>
+      <li><b>C++ support</b> — the harder legacy target.</li>
+      <li><b>CLI polish</b> — an operator-facing workflow, not just a benchmark runner.</li>
+    </ul>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section>
+    <div class="part-head reveal">
+      <div class="part-kicker"><b>Conclusion</b></div>
+      <h2 class="part">What v1 proves</h2>
+    </div>
+    <p>Generating a plausible C patch is becoming a commodity. Deciding whether to trust one — offline, where a wrong fix is a certification event — is not. EdgePatch v1 is the system that makes that decision: structural scoring where it can be deterministic, behavioral evidence where it must be, and a human approval at the end.</p>
+    <p>v1 is small but complete: one real CVE through the full remediation loop with evidence at every step, a scorer that classifies grounded patches correctly across four C libraries in both directions, a reporter that never green-lights on appearance alone, a benchmark graded only against independent answers, and a CLI anyone can run from a clean clone. None of it needs the network, and none of it needs to trust the model that wrote the patch. It doesn't replace cloud-native AI security — it reaches the environments that can't.</p>
+    <div class="callout reveal" style="border-color:var(--accept);background:var(--accept-bg)">
+      <div class="ct" style="color:var(--accept)">The whole thing, in one line</div>
+      A model is allowed to guess. The system that decides whether to trust the guess is not — and in the rooms where this has to work, neither is the person who signs off.
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <div class="sources" id="sources">
+    <h2>Notes &amp; references</h2>
+    <ol>
+      <li>Repository (branch <code>p6-edgepatch-phase2-eval</code>): <a href="https://github.com/usmanaminch/ai-mastery-2026">github.com/usmanaminch/ai-mastery-2026</a>. Reproduce the benchmark with <code>python3 -m edgepatch bench</code> from a clean clone. Third-party source provenance and licences are recorded in <code>benchmark/THIRD_PARTY_NOTICES.md</code>.</li>
+      <li>Worked case: <b>zlib</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-37434">CVE-2022-37434</a>, a publicly disclosed, long-since upstream-patched memory-safety issue, used only as a known reference fix for evaluation. No reproduction details are provided or required.</li>
+      <li>Benchmark CVEs (public, upstream-patched): <b>libpng</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-64505">CVE-2025-64505</a>, <b>expat</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-25315">CVE-2022-25315</a>, <b>libxml2</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-40303">CVE-2022-40303</a>. The exact upstream fix commit for each case is recorded in that case's <code>meta.json</code>.</li>
+      <li>Vulnerability families by CWE: CWE-122 (heap-based buffer overflow), CWE-190 (integer overflow), CWE-787 (out-of-bounds write).</li>
+      <li>Positioning context: public write-ups from open cyber-reasoning / autonomous-patching competitions, and public CWE/advisory data. EdgePatch is sourced entirely from public references.</li>
+      <li>All figures reflect the locked v1 benchmark state. The accuracy metric covers grounded candidates (provenance: derived, constructed, generated_verified). Unverified model output is reported separately and never counted toward accuracy.</li>
+    </ol>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    EdgePatch · offline-first patch-quality evaluation · v1 write-up, June 2026<br/>
+    Structural evaluation is not semantic proof. Verdicts are deterministic; trust is a human decision.
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      els.forEach(function(e){e.classList.add('in')});
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    },{threshold:.12, rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(e){io.observe(e)});
+  })();
+</script>
+
+</body>
+</html>
