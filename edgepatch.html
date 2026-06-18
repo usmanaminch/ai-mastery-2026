@@ -577,8 +577,7 @@
     <p>The benchmark is meant to be reproduced, not taken on trust. It runs from a clean clone with no model, no Docker, no internet, no pip install, and no upstream source checkout — committed source snapshots make every case self-contained. On a fresh machine:</p>
     <div class="term"><span class="c"># fresh clone, fresh venv — nothing else required</span>
 git clone https://github.com/usmanaminch/ai-mastery-2026.git
-cd ai-mastery-2026
-git checkout p6-edgepatch-phase2-eval
+cd ai-mastery-2026/p6-edgepatch
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m edgepatch bench</div>
@@ -688,7 +687,7 @@ Behavioral validation belongs to full-pipeline case studies.</span></div>
   <div class="sources" id="sources">
     <h2>Notes &amp; references</h2>
     <ol>
-      <li>Repository (branch <code>p6-edgepatch-phase2-eval</code>): <a href="https://github.com/usmanaminch/ai-mastery-2026">github.com/usmanaminch/ai-mastery-2026</a>. Reproduce the benchmark with <code>python3 -m edgepatch bench</code> from a clean clone. Third-party source provenance and licences are recorded in <code>benchmark/THIRD_PARTY_NOTICES.md</code>.</li>
+      <li>Repository: <a href="https://github.com/usmanaminch/ai-mastery-2026/tree/main/p6-edgepatch">github.com/usmanaminch/ai-mastery-2026 · p6-edgepatch</a>. Reproduce the benchmark with <code>python3 -m edgepatch bench</code> from a clean clone. Third-party source provenance and licences are recorded in <code>p6-edgepatch/benchmark/THIRD_PARTY_NOTICES.md</code>.</li>
       <li>Worked case: <b>zlib</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-37434">CVE-2022-37434</a>, a publicly disclosed, long-since upstream-patched memory-safety issue, used only as a known reference fix for evaluation. No reproduction details are provided or required.</li>
       <li>Benchmark CVEs (public, upstream-patched): <b>libpng</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-64505">CVE-2025-64505</a>, <b>expat</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-25315">CVE-2022-25315</a>, <b>libxml2</b> <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-40303">CVE-2022-40303</a>. The exact upstream fix commit for each case is recorded in that case's <code>meta.json</code>.</li>
       <li>Vulnerability families by CWE: CWE-122 (heap-based buffer overflow), CWE-190 (integer overflow), CWE-787 (out-of-bounds write).</li>
