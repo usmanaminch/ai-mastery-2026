@@ -1,0 +1,7 @@
+--- a/sample.c
++++ b/sample.c
+@@ -10,3 +10,4 @@
+     // Vulnerable line
++    // adding a comment, no real fix
+     char buf[10];
+     sprintf(buf, "%d", c);

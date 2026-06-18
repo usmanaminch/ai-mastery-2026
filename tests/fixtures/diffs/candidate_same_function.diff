@@ -1,0 +1,8 @@
+--- a/sample.c
++++ b/sample.c
+@@ -10,3 +10,3 @@
+     // Vulnerable line
+     char buf[10];
+-    sprintf(buf, "%d", c);
++    snprintf(buf, 10, "%d", c);
+     return c;

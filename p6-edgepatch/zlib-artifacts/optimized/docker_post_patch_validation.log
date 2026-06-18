@@ -1,0 +1,2 @@
+Validation complete. No ASan crash. Vulnerability successfully mitigated.
+Final head.extra_len state: 65535

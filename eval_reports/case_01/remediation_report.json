@@ -1,0 +1,69 @@
+{
+  "behavioral": {
+    "crash_resolved": true,
+    "detail": "Targeted post-patch check exited cleanly.",
+    "source": "pre-captured docker validation log"
+  },
+  "case_id": "case_01",
+  "combined_verdict": {
+    "confidence": 0.98,
+    "explanation": "Structural and behavioral evidence strongly support the patch.",
+    "label": "READY_HIGH_CONFIDENCE",
+    "reasons": [
+      "Crash resolved, regression passed, strong structural match."
+    ],
+    "required_human_actions": [
+      "Review patch diff manually.",
+      "Confirm behavioral validation was produced in a trusted environment.",
+      "Confirm standard test-suite result source.",
+      "Review any warnings or sanitizer notes.",
+      "Confirm rollback or remediation plan before deployment."
+    ]
+  },
+  "evidence_inputs": {
+    "patch_score": {
+      "locality": {},
+      "minimality": {},
+      "overlap": {},
+      "verdict": {
+        "confidence": 0.98,
+        "label": "strong_match"
+      }
+    },
+    "post_patch_result": {
+      "crash_resolved": true,
+      "detail": "Targeted post-patch check exited cleanly.",
+      "source": "pre-captured docker validation log"
+    },
+    "proof": "# ASAN LOG EXCERPT\n=================================================================\nSummary: All validations passed without memory violations.\n",
+    "test_suite_result": {
+      "detail": "Standard test suite passed.",
+      "failed": 0,
+      "passed": true,
+      "source": "pre-captured test-suite output",
+      "total": 100,
+      "warnings": 0
+    }
+  },
+  "limitations": [
+    "Structural scoring cannot prove semantic correctness.",
+    "This reporter does not run code, execute tests, reproduce vulnerabilities, or verify behavior itself.",
+    "It only judges pre-captured evidence supplied as input."
+  ],
+  "proof_excerpt": "# ASAN LOG EXCERPT\n=================================================================\nSummary: All validations passed without memory violations.\n",
+  "structural": {
+    "confidence": 0.98,
+    "locality": {},
+    "minimality": {},
+    "overlap": {},
+    "verdict_label": "strong_match"
+  },
+  "test_suite": {
+    "detail": "Standard test suite passed.",
+    "failed": 0,
+    "passed": true,
+    "source": "pre-captured test-suite output",
+    "total": 100,
+    "warnings": 0
+  }
+}

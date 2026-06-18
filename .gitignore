@@ -6,3 +6,45 @@ __pycache__/
 *firebase-key*.json
 ai-mastery-handoff.md
 CLAUDE.md
+
+# EdgePatch generated validation outputs
+targets/
+zlib-artifacts/optimized/repro_optimized
+zlib-artifacts/optimized/*.log
+zlib-artifacts/optimized/build.log
+zlib-artifacts/optimized/docker_build.log
+zlib-artifacts/optimized/docker_post_patch_validation.log
+zlib-artifacts/optimized/docker_zlib_make_test.log
+
+# local/dev noise
+gemini-venv/
+.DS_Store
+
+# EdgePatch generated Docker helper
+zlib-artifacts/optimized/Dockerfile.validate
+
+# old local validation script superseded by Docker validator
+scripts/validate_zlib_patch.sh
+
+# unrelated local scratch files
+ask_gemini.py
+audit_vertex.py
+index-backup-20260611.html
+p5-trainer-state.json
+content-engine/intelligence_library.json
+phase2_patch_score_raw_gemini_output.txt
+phase2_patch_score_fix_zlib_raw.txt
+phase2_patch_score_fix_zlib_raw.txt
+phase2_patch_score_adversarial_raw.txt
+phase2_patch_score_adversarial_raw.txt
+phase2_reporter_raw_gemini_output.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Gemini raw generation outputs
+phase2_reporter_raw_gemini_output.txt
+
+# Libpng candidate raw model output
+eval_cases/libpng-cve-2025-64505/candidate_gemini_pro_patch.raw.txt
