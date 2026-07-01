@@ -413,10 +413,10 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;max-width:var(--ma
     <div class="proj-row">
       <div class="pmon"><span class="pnum">P6</span>JUN<br>2026</div>
       <div>
-        <div class="pname">EdgePatch — Air-Gapped Patch Evaluation</div>
-        <div class="pcase">Evaluating AI-generated C patches offline, before they ship</div>
-        <div class="pdesc">A deterministic gate for AI-generated security patches in disconnected environments. A model proposes a fix — from a local model, a secure enclave, or a signed upstream pack — and deterministic tooling decides whether to trust it: structural scoring, behavioral evidence, and a verdict packaged for a human to approve. The patch is generative; the verification is deterministic. v1 ships a provenance-gated benchmark across four real C libraries (zlib, libpng, expat, libxml2) and a CLI that reproduces it from a clean clone — zero network egress. Built for ICS, critical infrastructure, and regulated environments the cloud can't reach.</div>
-        <div class="pstack"><span class="stk">Python</span><span class="stk">Deterministic scoring</span><span class="stk">Behavioral validation</span><span class="stk">Provenance-gated benchmark</span><span class="stk">Reproducible CLI</span><span class="stk">Local LLM</span></div>
+        <div class="pname">EdgePatch — Offline Patch Checking</div>
+        <div class="pcase">Checking AI-written C security patches offline, before they ship</div>
+        <div class="pdesc">A tool for checking AI-written security patches without an internet connection. An AI suggests a fix; EdgePatch runs a fixed set of automated checks — does the patch apply, does it change the right place, does it build and pass the tests — and packages the results into one report for a person to approve. The AI writes the patch; the checking doesn't rely on the AI. v1 includes a benchmark across four real C libraries (zlib, libpng, expat, libxml2) that anyone can reproduce with a single command, fully offline. Built for critical infrastructure, industrial control, and other high-stakes systems the cloud can't reach.</div>
+        <div class="pstack"><span class="stk">Python</span><span class="stk">Offline / air-gapped</span><span class="stk">Automated checks</span><span class="stk">Reproducible benchmark</span><span class="stk">Local LLM</span></div>
         <div class="plinks">
           <div class="live"><span class="live-dot"></span>v1 DONE</div>
           <a href="edgepatch.html" class="plink" target="_blank">Summary ↗</a>
