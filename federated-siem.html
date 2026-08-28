@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centralize Like You Mean It, Federate Like You Have To — Anton Chuvakin &amp; Usman Chaudhary</title>
+<meta name="description" content="When does federated SIEM actually work, and when does it blow up in your face at 2 AM? Seven honest criteria, an architecture spectrum, and a pragmatic hybrid mapping — by Anton Chuvakin and Usman Chaudhary.">
+<meta property="og:title" content="Centralize Like You Mean It, Federate Like You Have To">
+<meta property="og:description" content="Not 'is federation the future?' — the far more useful question: when, precisely, does federated SIEM actually work?">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://usmanc.com/federated-siem.html">
+<meta property="og:image" content="https://usmanc.com/siem-spectrum-3pos-dark.png">
+<meta property="og:site_name" content="Usman Chaudhary">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Centralize Like You Mean It, Federate Like You Have To">
+<meta name="twitter:description" content="Seven honest criteria for when federated SIEM actually works.">
+<meta name="twitter:image" content="https://usmanc.com/siem-spectrum-3pos-dark.png">
+<style>
+  :root{
+    --ink:#171A1F; --soft:#4a4f57; --faint:#8a9099; --line:#e6e8e4; --bg:#FBFBFA; --card:#ffffff;
+    --play:#4f46b8; --play-bg:#EEEDFA; --play-bd:#d4d1f2;
+    --adv:#0f7b6c;  --adv-bg:#E4F1ED;  --adv-bd:#c2e1d8;
+    --skip:#b3452c; --skip-bg:#FAECE7; --skip-bd:#f0d2c6;
+    --amber:#9a6b16;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:var(--play);text-decoration:none;border-bottom:1px solid var(--play-bd)}
+  a:hover{border-bottom-color:var(--play)}
+  .topnav{display:flex;justify-content:space-between;align-items:center;padding:26px 0 0;font-size:15.5px}
+  .topnav a{border-bottom:none;color:var(--soft);font-weight:600}
+  .topnav a:hover{color:var(--ink)}
+  .cat{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-top:44px}
+  h1{font-size:clamp(32px,5vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-top:14px}
+  .dek{font-size:21px;color:var(--soft);margin-top:16px;line-height:1.5}
+  .byline{display:flex;align-items:center;gap:14px;margin-top:26px;padding:18px 0;border-top:1.5px solid var(--line);border-bottom:1.5px solid var(--line)}
+  .avatars{display:flex;flex:none}.avatar{width:46px;height:46px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:none;border:2px solid var(--bg)}.av2{margin-left:-12px;background:var(--play)}
+  .byline .who{font-size:16px}
+  .byline .who b{font-weight:700}
+  .byline .who .meta{color:var(--faint);font-size:14.5px;margin-top:2px}
+  .flagline{font-style:italic;color:var(--soft);border-left:3px solid var(--play);padding:6px 0 6px 18px;margin:34px 0}
+  h2{font-size:26px;letter-spacing:-.01em;font-weight:800;margin:46px 0 14px}
+  h3{font-size:19px;font-weight:700;margin:30px 0 10px}
+  p{margin:14px 0}
+  ul,ol{margin:14px 0 14px 26px}
+  li{margin:8px 0}
+  .tldr{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px 26px;margin-top:34px}
+  .tldr .t{font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .tldr p{margin:10px 0 0;font-size:17.5px}
+  .risk{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px 26px;margin:18px 0}
+  .risk-num{font-family:var(--mono);font-weight:700;font-size:13px;color:#fff;background:var(--skip);border-radius:8px;padding:3px 10px;display:inline-block;margin-bottom:8px}
+  .criteria-list{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:26px 34px 26px 58px;margin:22px 0;margin-left:0}
+  .criteria-list li{margin:16px 0;padding-left:10px}
+  .criteria-list li::marker{font-family:var(--mono);font-weight:700;color:var(--play)}
+  .crosspost{margin-top:14px;font-size:15px;color:var(--soft);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 16px}
+  .crosspost a{border-bottom-width:1.5px}
+  .hero{margin:28px 0 8px;border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+  .hero img{width:100%;height:auto;display:block}
+  .note{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--amber);border-radius:12px;padding:16px 20px;margin:26px 0;font-size:17px}
+  .sovereignty{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--adv);border-radius:12px;padding:16px 20px;margin:26px 0;font-size:17px}
+  figure{margin:32px 0}
+  figure img{width:100%;height:auto;border-radius:12px;border:1.5px solid var(--line)}
+  figcaption{font-size:14px;color:var(--faint);text-align:center;margin-top:8px}
+  .punch{font-weight:700;margin-top:18px}
+  .sources{margin-top:16px;padding-left:22px;font-size:16px;color:var(--soft)}
+  .sources li{margin:8px 0}
+  .footer{margin:60px 0 40px;padding-top:20px;border-top:1.5px solid var(--line);font-size:14.5px;color:var(--faint);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <a href="https://usmanc.com/index.html">&larr; Usman Chaudhary</a>
+    <span style="font-family:var(--mono);font-size:13px;color:var(--faint)">Article &middot; August 2026</span>
+  </nav>
+
+  <div class="cat">Security &middot; SIEM &middot; Data Architecture</div>
+  <h1>Centralize Like You Mean It, Federate Like You Have To</h1>
+  <p class="dek">Not "is federation the future?" It is a future, not the future. The far more useful question: when, precisely, does federated SIEM actually work — and when does it blow up in your face at 2 AM?</p>
+
+  <div class="byline">
+    <div class="avatars"><div class="avatar">AC</div><div class="avatar av2">UC</div></div>
+    <div class="who">
+      <b><a href="https://medium.com/anton-on-security">Anton Chuvakin</a></b> &amp; <b><a href="https://www.linkedin.com/in/usmanchaudhary/">Usman Chaudhary</a></b>
+      <div class="meta">Security Advisor, Office of the CISO, Google Cloud &middot; Field CISO, Google Cloud &middot; August 2026 &middot; ~9 min read</div>
+    </div>
+  </div>
+
+  <div class="crosspost">
+    This article also appears on Anton on Security as <a href="https://medium.com/anton-on-security/siem-centralize-like-you-mean-it-federate-like-you-have-to-c976d40dfc9e">"SIEM: Centralize Like You Mean It, Federate Like You Have To"</a>.
+  </div>
+
+  <div class="hero">
+    <img src="siem-spectrum-3pos-dark.png" alt="The SIEM architecture spectrum: fully centralized, centralized plus cheap tier, and hybrid">
+  </div>
+
+  <h2 style="margin-top:34px">Prologue: Three Years After "The End Is Nigh"</h2>
+
+  <p>Back in 2023, one of us wrote <a href="https://medium.com/anton-on-security/log-centralization-the-end-is-nigh-b28efaa98379">"Log Centralization: The End Is Nigh?"</a> — an admittedly incomplete-thought blog with a scary premise: after 20+ years of yelling "centralize your logs!" (the earliest surviving deck is from 2003), we may be running out of places where centralizing <i>all</i> the logs is feasible, workable, or even worth the pain.</p>
+
+  <p>The conclusion then was cautious: <b>centralize as long as you can, in as many places as you can, and augment with some form of centrally defined, lightly managed, highly distributed collection.</b> By <a href="https://medium.com/anton-on-security/decoupled-siem-where-i-think-we-are-now-89ab9f3df43f">2025 the position got more contrarian</a>: the SIEM of 2027 will be roughly <b>"90% centralized / 10% federated,"</b> and anybody promising you the inverse is selling a demo, not an architecture.</p>
+
+  <p>This post is the practical sequel. Not "is federation the future?" (it is <i>a</i> future, not <i>the</i> future), but the far more useful question: <b>when, precisely, does the federated SIEM actually work — and when does it blow up in your face at 2 AM?</b></p>
+
+  <h2>The Breaking Point of the Centralized Vault</h2>
+
+  <p>For more than <a href="https://medium.com/anton-on-security/20-years-of-siem-celebrating-my-dubious-anniversary-f1cda2b453d3">two decades</a>, SIEM tools ran on a simple covenant: collect all telemetry into one repository, pay for the ingest and the storage, normalize everything upfront into one grand schema, and query from one console. In the era of predictable on-premises networks this worked — and, frankly, it still works for a lot of organizations.</p>
+
+  <p>But multi-cloud sprawl, ephemeral infrastructure, hundreds of SaaS applications and now AI agents have strained it in four specific ways:</p>
+
+  <ul>
+    <li><b>The ingest and duplication burden.</b> If you are present in multiple public clouds <i>at scale</i>, you are very likely <i>not</i> collecting logs into one place in one cloud. Egress fees, redundant storage, and pipeline sprawl make that a questionable decision. Add a few hundred SaaS apps, and "one vault" becomes a very expensive fantasy.</li>
+    <li><b>The fragile taxonomy tax.</b> Forcing thousands of log sources into one rigid, deeply nested data model creates brittle pipelines. This was largely known since the mid 2000s when the first schema-on-read vendors appeared. A minor upstream vendor format change silently breaks parser mappings, and your detection rules go blind without so much as a warning.</li>
+    <li><b>The volume-to-value problem.</b> Some log types are hugely useful <i>in bulk and for investigations</i> but almost never trigger a detection on their own — DHCP leases, VPC flow logs, the long tail of DNS resolution logs. Many organizations simply stop collecting them because they are "too costly to centralize." That is not a data decision; that is a billing decision masquerading as one. (Making that tradeoff an explicit engineering discipline — cost per detection, which telemetry earns full-fidelity treatment — is something we've written about in <a href="https://cloud.google.com/transform/finops-for-secops-how-to-optimize-the-agentic-soc-for-value?e=48754805">FinOps for SecOps</a>.)</li>
+    <li><b>The volume curve just bent.</b> Log growth was already relentless; AI made it vertical. A recent <a href="https://www.dynatrace.com/monitoring/platform/log-monitoring-2/">State of Log Management 2026 research</a> found AI workloads drove a 93% increase in log and telemetry volume in a single year, with 1 in 5 organizations seeing growth above 150% — and organizations now exclude an average of 86% of their log data just to manage cost. Read that again: most enterprises are already discarding the vast majority of their telemetry, not by security design, but by budget necessity. Agents generating machine-speed telemetry will not slow this down.</li>
+  </ul>
+
+  <p>Here is the honest framing, unchanged since 2023: <b>the problem isn't that the distributed approach is easy. The problem is that the centralized approach is getting harder as volumes, source counts, and geographic sprawl go up.</b> And, as we keep saying in the <a href="https://medium.com/anton-on-security/output-driven-siem-13-years-later-c549370abf11">output-driven SIEM</a> context: <i>if you collect, you pay.</i> Somebody has to own the hard drives.</p>
+
+  <div class="sovereignty">
+    There is also another driver that is neither cost nor architecture: <b>data sovereignty.</b> For multi-jurisdiction and sovereign-cloud organizations, some telemetry legally cannot cross borders — residency mandates make centralizing certain logs not expensive but impossible. For that class of organization, federation is not a temptation to resist; it is a compliance requirement to engineer for.
+  </div>
+
+  <h2>The Federated Temptation</h2>
+
+  <p>Into this gap stepped two families of technology alternatives:</p>
+
+  <ol>
+    <li><b>Federated query platforms.</b> Leave the telemetry where it lives — cloud object stores, SaaS vendor event stores, edge repositories, your uncle's flooded basement — and push the compute to the data via distributed indexing and schema-on-read.</li>
+    <li><b>The open security lakehouse.</b> Decouple storage from analytics: keep structured logs in open formats (Apache Iceberg, Parquet, etc.) on cheap cloud storage and query them through engines you already have (BigQuery, Snowflake, Databricks, and friends).</li>
+  </ol>
+
+  <p>Plus the classic third option that predates both — <b>tiering</b>: dump the "less useful" logs into cheap storage and pray to the security gods you never have to search them at speed.</p>
+
+  <p>The pitch is intoxicating: <i>stop paying egress! stop duplicating data! just federate the search!</i> It is also, in specific and bounded conditions, correct. The trouble starts when "specific and bounded" quietly becomes "default."</p>
+
+  <figure>
+    <img src="siem-pitch-vs-fineprint-dark.png" alt="Comparison: where federation genuinely shines vs. what the demo does not show you">
+    <figcaption>What the demo shows you — and what it doesn't.</figcaption>
+  </figure>
+
+  <h2>The Dark Side of Federation (Read This Before You Sign)</h2>
+
+  <p>Federated search sounds magical until you are investigating a breach at 2 AM. Here are the costs and risks you actually have to swallow:</p>
+
+  <div class="risk">
+    <div class="risk-num">1</div>
+    <h3 style="margin-top:0">It is slower than centralized — unless you architect specifically for speed (and then pay for it)</h3>
+    <p>A federated query across three clouds and forty SaaS APIs is bounded by the slowest source, the tightest rate limit, and the coldest object-storage tier. It looks fast on a demo dataset sitting in one bucket. Cross-source joins on read are expensive by construction. The vendors know this, which is why the serious ones build distributed indexes at the source — but indexes must be built, refreshed, stored, and paid for.</p>
+    <p>And here is the trap from the 2023 post: <b>if you deploy big indexers in every cloud, you haven't eliminated centralization — you've just created several smaller islands of it.</b> That isn't inherently bad, but let's be honest about what you're doing: you aren't escaping the architectural tax of centralization, you're just trading one big central bill and management domain for three smaller ones that will each grow their own operational headaches over time.</p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">2</div>
+    <h3 style="margin-top:0">You trade cost for resilience</h3>
+    <p>This one is rarely on the slide. A centralized SIEM is one thing to harden, one SLA, one on-call rotation. A federated platform is a query engine whose answer depends on <i>N</i> independent sources being up, reachable, authenticated, and under quota — at the exact moment you need them.</p>
+    <p>You pay less for storage, and in exchange the overall resilience of your detection-and-response platform goes <i>down</i>. Every added source is an added dependency, and dependencies fail at the least convenient time, by definition.</p>
+    <p>Centralized platforms fail too — but that risk is priced, contractually owned, and covered by one SLA. In federation, you self-insure across N sources. In theory, people assume that "distributed systems" are somehow more resilient. In practice and in this case, they are clearly less so.</p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">3</div>
+    <h3 style="margin-top:0">No assurance the logs are even there</h3>
+    <p><b>If you simply hope the logs will be there when your decentralized query tool reaches for them, you will be disappointed a lot.</b> Sources get compromised, and attackers delete local logs. SaaS retention windows expire. A well-meaning admin "cleans up" a bucket. Then your IR consultant finishes the engagement and says: "Sorry, not sure what happened here — there were no logs — but here is the $100K bill for all the things we tried." Centralization has a cost, but once you pay it, you reliably <i>own</i> the logs. Federation gives you a pointer, not a possession.</p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">4</div>
+    <h3 style="margin-top:0">Compliance did not get the memo</h3>
+    <p>Many mandates directly require collection <i>and centralization</i>. <a href="https://www.pcisecuritystandards.org/standards/pci-dss/">PCI DSS v4</a> Requirement 10.3.3, for one, expects audit logs to be promptly backed up to a secure and central log server (or other media that is difficult to modify). Security people love to mock regulations as outdated for the cloud era; in this case they are a stabilizing force, perhaps.</p>
+    <p>Yes, you <i>can</i> mitigate this in a federated model — object lock, versioning, WORM buckets, immutable retention policies, documented evidence that every source enforces them. But note who does that work: <b>you, the client.</b> The federated search vendor gives you a query layer; it does not give you an audit trail your QSA will accept, at least not without a stressful argument. Budget the engineering time — and the assessor's skepticism — accordingly.</p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">5</div>
+    <h3 style="margin-top:0">Federated <i>search</i> is workable; federated <i>analytics</i> mostly isn't</h3>
+    <p>Detection is not the same as search. Continuous complex event processing — stateful detection windows, multi-event sequences, streaming IoC matches at line rate — needs data flowing through one high-speed engine, normalized to <i>something</i>. Mapping blast radius and lateral movement across users, assets, and service accounts needs a persistent entity graph, not a multi-table join fired off on read.</p>
+    <p>If your algorithms rely on normalized logs, you will wait a very long time for all logs to be normalized "naturally" wherever they sit (OCSF or no OCSF). We have barely made <i>centralized</i> analytics work well; decentralized analytics is a research project, not a product category. In the age of AI-speed attacks, speed matters again.</p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">6</div>
+    <h3 style="margin-top:0">Operational toil, and nobody to scream at</h3>
+    <p>A natively designed, integrated SIEM is simpler to run than a multi-component stack you assemble at home. A DIY lakehouse-plus-federated-search-plus-detection-layer is a data platform, and data platforms come with data platform engineers. If you do not employ them, you are not building a federated SIEM; you are building a science project with a SIEM logo. And when it breaks, you lose the underrated benefit of a <b>"single face to scream at."</b></p>
+  </div>
+
+  <div class="risk">
+    <div class="risk-num">7</div>
+    <h3 style="margin-top:0">AI agents do not make it less messy (enough)</h3>
+    <p>AI agents genuinely help here in one specific way: they are patient. An agent can fan out slow federated queries in the background without a human staring at a spinner. But "I didn't save any logs from X — hey agent, go get me the logs from X" does not work in real life. Worse, watch for the nastiest failure mode: an agent that reports <i>"nothing found"</i> when the truth is <i>"source unreachable."</i> In a centralized system that distinction is obvious. In a federated one it is a silent false negative, and <a href="https://medium.com/anton-on-security/stop-building-a-2003-soc-with-ai-triage-must-die-part-2-9843edbe2b32">automation bias</a> will make sure nobody questions it. Always require explicit status reporting from agents so that absence of evidence does not become evidence of absence.</p>
+  </div>
+
+  <h2>The Architectural Spectrum</h2>
+
+  <p>Yes, there is a middle path — but it is much closer to the centralized end than the vendor decks suggest. Three honest positions, shown at the top of this piece: fully centralized ("the vault"), centralized plus a cheap tier ("classic tiering"), and hybrid — an integrated hot core with a small, well-governed federated reach.</p>
+
+  <p>Two observations. First, the "classic tiering" position is where many organizations already live comfortably and should probably stay. Second, the jump from "hybrid" to "federation-first" is not a matter of degree — it flips who bears the assurance, compliance, and resilience burden from the platform to your engineering team.</p>
+
+  <h2>When Can Federated Actually Work? The Criteria</h2>
+
+  <p>Federation is not a wand; it is a tool for specific conditions. The discipline that matters is deciding — in writing, ahead of time — which bucket each source falls into, rather than discovering the answer mid-incident. For a given log source, federated/decentralized handling works well when <b>all</b> of the following hold:</p>
+
+  <ol class="criteria-list">
+    <li><b>The use is largely asynchronous.</b> Deep-dive forensics, threat hunting, post-incident review — situations where a query that takes 20 minutes costs you patience, not the company. If an active attacker is moving laterally, you cannot afford an hourglass spinner.</li>
+    <li><b>The source is reliable, managed, and tamper-resistant.</b> A robust SaaS platform with documented retention, or a cloud store with versioning, object lock, and retention policies <i>you</i> control and can prove. If the attacker who compromised the host can delete the log, that log is not federated — it is gone.</li>
+    <li><b>The volume-to-value ratio is terrible.</b> Petabytes of flows and DNS queries you rarely touch but desperately need when a specific IP shows up in an alert.</li>
+    <li><b>The queries are targeted, not fishing.</b> "All DHCP leases for MAC X on date Y" — yes. "Show me anything weird across everything" — no, that is what your hot core is for.</li>
+    <li><b>No compliance mandate requires a central, immutable copy of this data</b> — or you have already built and evidenced the equivalent controls at the source.</li>
+    <li><b>Nothing in your real-time detection depends on it.</b> Federated data is for <i>context and investigation</i>. The moment a detection rule needs it, it belongs in the core.</li>
+    <li><b>Somebody owns the "is it still there?" question.</b> A central catalog of what lives where, with retention, ownership, and health checks — <i>centrally defined, lightly managed, highly distributed.</i> Without this, you have not federated your logs; you have misplaced them.</li>
+  </ol>
+
+  <p>If any criterion fails for a given source, the pragmatic answer is boring: <b>centralize that source.</b></p>
+
+  <h2>The Pragmatic Hybrid: Mapping Telemetry to Tiers</h2>
+
+  <p>Rather than an all-or-nothing choice, modern architectures converge on an integrated high-speed core for continuous detection and graph correlation, coupled with open lakehouse federation for on-demand investigation.</p>
+
+  <figure>
+    <img src="siem-tiers-final-dark.png" alt="Mapping telemetry and use cases to centralized, federated, and cold-storage tiers">
+    <figcaption>What belongs in the core — and what earns federation.</figcaption>
+  </figure>
+
+  <h2>Strategic Takeaways for Security Leaders</h2>
+
+  <ul>
+    <li><b>Avoid dogmatic extremes — but anchor on centralized.</b> Pure centralization creates cost and schema bottlenecks; a fully disconnected DIY federated stack trades those for operational complexity, lost resilience, performance surprises, and toil. Look for platforms that integrate fast streaming detection with flexible storage options, with the center of gravity firmly in the integrated core.</li>
+    <li><b>Separate hot detections from cold investigations, and expect AI to widen the gap.</b> Route identity, endpoint, and control-plane data through real-time detection; stow voluminous low-signal telemetry in cost-effective open lakehouses. AI-driven detection will <i>increase</i> the pull toward the hot core — models correlating across identity, endpoint, and cloud events need the data in one place, fresh, and normalized. The federated tier is where AI <i>agents</i> go for context, at their own pace, with a hard rule that "unreachable" is never reported as "nothing found."</li>
+    <li><b>Inventory before you federate.</b> Know which logs exist, where, for how long, under whose control, and with what immutability guarantees. If you cannot answer those questions for a source, you are not ready to leave it there.</li>
+    <li><b>Build on open standards — but "open" is not "free."</b> Open formats preserve agility and keep security telemetry aligned with the enterprise data architecture. Somebody still runs the lakehouse, and that somebody works for you.</li>
+    <li><b>Test the 2 AM query.</b> Before production, run your worst realistic investigation query across every federated source during a simulated outage of one of them. The result tells you more than any vendor benchmark.</li>
+  </ul>
+
+  <h2>The Verdict</h2>
+
+  <p>The centralized approach to logs will work as long as it can and in as many places as it can — that sentence has survived three years and two blog posts unchanged, and we see no reason to retire it. The physics of cloud-scale data means we <i>will</i> augment the centralized brain with centrally defined, lightly managed, highly distributed collection and federated analysis. Fine. Just remember what you are buying: cheaper storage in exchange for assurance, resilience, speed, and compliance work that lands on your desk.</p>
+
+  <p>Choose the 10% wisely. Or prepare to explain either your cloud storage bill to the CFO, or your missing logs to the regulator — and only one of those conversations ends with a budget adjustment. We aren't going back to the 1980s where you need to telnet to see logs. But we are entering an era where every log has to earn its place in the center.</p>
+
+  <div class="flagline">Centralize like you mean it, federate like you have to.</div>
+
+  <h2 style="margin-top:52px;font-size:20px">Related posts</h2>
+  <ul class="sources">
+    <li><a href="https://medium.com/anton-on-security/log-centralization-the-end-is-nigh-b28efaa98379">Log Centralization: The End Is Nigh?</a> (2023)</li>
+    <li><a href="https://medium.com/anton-on-security/decoupled-siem-where-i-think-we-are-now-89ab9f3df43f">Decoupled SIEM: Where I Think We Are Now?</a> (2025)</li>
+    <li><a href="https://medium.com/anton-on-security/why-your-security-data-lake-project-will-well-actually-78e0e360c292">Why Your Security Data Lake Project Will … Well, Actually …</a></li>
+    <li><a href="https://medium.com/anton-on-security/output-driven-siem-13-years-later-c549370abf11">Output-driven SIEM — 13 Years Later</a></li>
+    <li><a href="https://medium.com/anton-on-security/stop-building-a-2003-soc-with-ai-triage-must-die-part-2-9843edbe2b32">Stop Building a 2003 SOC with AI: Triage Must Die (Part 2)</a></li>
+    <li><a href="https://cloud.google.com/transform/finops-for-secops-how-to-optimize-the-agentic-soc-for-value?e=48754805">FinOps for SecOps: How to optimize the agentic SOC for value</a></li>
+  </ul>
+
+  <div class="footer">
+    Centralize Like You Mean It, Federate Like You Have To &middot; Anton Chuvakin &amp; Usman Chaudhary &middot; August 2026<br>
+    All references drawn from public sources. Views are the authors' own.
+  </div>
+
+</div>
+</body>
+</html>
