@@ -9,12 +9,12 @@
 <meta property="og:description" content="Not 'is federation the future?' — the far more useful question: when, precisely, does federated SIEM actually work?">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://usmanc.com/federated-siem.html">
-<meta property="og:image" content="https://usmanc.com/siem-spectrum-3pos-dark.png">
+<meta property="og:image" content="https://usmanc.com/siem-spectrum-3pos-light.png">
 <meta property="og:site_name" content="Usman Chaudhary">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Centralize Like You Mean It, Federate Like You Have To">
 <meta name="twitter:description" content="Seven honest criteria for when federated SIEM actually works.">
-<meta name="twitter:image" content="https://usmanc.com/siem-spectrum-3pos-dark.png">
+<meta name="twitter:image" content="https://usmanc.com/siem-spectrum-3pos-light.png">
 <style>
   :root{
     --ink:#171A1F; --soft:#4a4f57; --faint:#8a9099; --line:#e6e8e4; --bg:#FBFBFA; --card:#ffffff;
@@ -59,11 +59,12 @@
   .criteria-list li::marker{font-family:var(--mono);font-weight:700;color:var(--play)}
   .crosspost{margin-top:14px;font-size:15px;color:var(--soft);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 16px}
   .crosspost a{border-bottom-width:1.5px}
-  .hero{margin:28px 0 8px;border-radius:12px;overflow:hidden;border:1.5px solid var(--line)}
+  .hero{margin:28px 0 8px;border-radius:12px;overflow:hidden;border:1.5px solid var(--line);width:min(1100px,92vw);margin-left:50%;transform:translateX(-50%)}
   .hero img{width:100%;height:auto;display:block}
   .note{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--amber);border-radius:12px;padding:16px 20px;margin:26px 0;font-size:17px}
   .sovereignty{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--adv);border-radius:12px;padding:16px 20px;margin:26px 0;font-size:17px}
-  figure{margin:32px 0}
+  figure{margin:32px 0;width:min(1100px,92vw);margin-left:50%;transform:translateX(-50%)}
+  figure figcaption{width:100%}
   figure img{width:100%;height:auto;border-radius:12px;border:1.5px solid var(--line)}
   figcaption{font-size:14px;color:var(--faint);text-align:center;margin-top:8px}
   .punch{font-weight:700;margin-top:18px}
@@ -141,7 +142,7 @@
   <p>The pitch is intoxicating: <i>stop paying egress! stop duplicating data! just federate the search!</i> It is also, in specific and bounded conditions, correct. The trouble starts when "specific and bounded" quietly becomes "default."</p>
 
   <figure>
-    <img src="siem-pitch-vs-fineprint-dark.png" alt="Comparison: where federation genuinely shines vs. what the demo does not show you">
+    <img src="siem-pitch-vs-fineprint-light.png" alt="Comparison: where federation genuinely shines vs. what the demo does not show you">
     <figcaption>What the demo shows you — and what it doesn't.</figcaption>
   </figure>
 
@@ -201,7 +202,7 @@
   <p>Yes, there is a middle path — but it is much closer to the centralized end than the vendor decks suggest. Three honest positions:</p>
 
   <figure>
-    <img src="siem-spectrum-3pos-dark.png" alt="The SIEM architecture spectrum: fully centralized, centralized plus cheap tier, and hybrid">
+    <img src="siem-spectrum-3pos-light.png" alt="The SIEM architecture spectrum: fully centralized, centralized plus cheap tier, and hybrid">
     <figcaption>Centralize like you mean it, federate like you have to.</figcaption>
   </figure>
 
@@ -228,7 +229,7 @@
   <p>Rather than an all-or-nothing choice, modern architectures converge on an integrated high-speed core for continuous detection and graph correlation, coupled with open lakehouse federation for on-demand investigation.</p>
 
   <figure>
-    <img src="siem-tiers-final-dark.png" alt="Mapping telemetry and use cases to centralized, federated, and cold-storage tiers">
+    <img src="siem-tiers-final-light.png" alt="Mapping telemetry and use cases to centralized, federated, and cold-storage tiers">
     <figcaption>What belongs in the core — and what earns federation.</figcaption>
   </figure>
 
