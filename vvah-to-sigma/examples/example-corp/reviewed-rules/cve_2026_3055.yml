@@ -1,0 +1,32 @@
+title: Citrix NetScaler CVE-2026-3055 Memory Overread Probe (/wsfed/passive?wctx)
+id: a77739bc-ca2c-597d-8d2c-10b27c319b64
+status: experimental
+description: 'Detects HTTP requests to the NetScaler WS-Federation passive endpoint with a valueless ''wctx'' query parameter,
+  the request shape used to trigger the CVE-2026-3055 out-of-bounds read that leaks memory via the NSC_TASS cookie.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2026-3055. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2026-3055
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2026-3055
+logsource:
+  category: proxy
+detection:
+  selection:
+    cs-method:
+    - GET
+    cs-uri-stem|endswith:
+    - /wsfed/passive
+    cs-uri-query:
+    - wctx
+    - ?wctx
+  condition: selection
+falsepositives:
+- Internal vulnerability scanners or authorised penetration tests running the Nuclei CVE-2026-3055 template
+- Malformed WS-Federation client requests that omit the wctx value (rare)
+level: high

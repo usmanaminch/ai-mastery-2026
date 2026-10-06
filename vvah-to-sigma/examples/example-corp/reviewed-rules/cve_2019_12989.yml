@@ -1,0 +1,29 @@
+title: Citrix SD-WAN/NetScaler SD-WAN get_package_file SQL Injection (CVE-2019-12989)
+id: bd0f7bd7-6097-54ac-9481-fe8e3ce5e46a
+status: experimental
+description: 'Detects HTTP POST requests to the Citrix SD-WAN NITRO endpoint /sdwan/nitro/v1/config/get_package_file with
+  action=file_download, the SSL_CLIENT_VERIFY auth-bypass header, or SQL injection payloads (UNION SELECT / INTO OUTFILE in
+  site_name) as used by the CVE-2019-12989 exploit and Nuclei scanner check.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2019-12989. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): removed an unused selection with mismatched fields; path matched on the URI stem.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2019-12989
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2019-12989
+logsource:
+  category: proxy
+detection:
+  selection:
+    cs-method:
+    - POST
+    cs-uri-stem|contains:
+    - /sdwan/nitro/v1/config/get_package_file
+  condition: selection
+falsepositives:
+- Legitimate Citrix SD-WAN management or orchestration traffic calling the get_package_file NITRO API
+level: high

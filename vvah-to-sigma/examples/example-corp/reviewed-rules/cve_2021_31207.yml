@@ -1,0 +1,44 @@
+title: Exchange Autodiscover SSRF Abuse (ProxyShell/ProxyNotShell)
+id: 9fc266e6-ac7d-5451-96eb-2a0e5abeaeac
+status: experimental
+description: 'Detects successful POST requests to /autodiscover/autodiscover.json carrying ProxyShell-style backend access
+  markers in the query string (X-Rps-CAT token impersonation, /powershell/? backend, /mapi/ SID lookup), as used in exploitation
+  of CVE-2021-34473/34523/31207 and CVE-2022-41040/41082. Translated from the Splunk analytic ''Windows Exchange Autodiscover
+  SSRF Abuse''.
+
+  Translated from other:detections windows_exchange_autodiscover_ssrf_abuse.yml (splunk-spl); keep that project''s license
+  notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2021-31207. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2021-31207
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2021-31207
+logsource:
+  category: webserver
+  product: windows
+  service: iis
+detection:
+  selection_request:
+    cs-method:
+    - POST
+    sc-status:
+    - 200
+    cs-uri-stem|contains:
+    - autodiscover/autodiscover.json
+  selection_chain:
+    cs-uri-query|contains:
+    - X-Rps-CAT=
+    - /powershell/?
+    - /mapi/
+  condition: selection_request and selection_chain
+falsepositives:
+- Authorized Exchange penetration tests or vulnerability scanning of the Autodiscover endpoint
+- Custom automation tooling that proxies Exchange PowerShell or MAPI through Autodiscover (rare; source rule states false
+  positives are limited)
+level: high

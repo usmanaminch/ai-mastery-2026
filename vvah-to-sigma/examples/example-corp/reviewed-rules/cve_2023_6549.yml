@@ -1,0 +1,30 @@
+title: Citrix NetScaler CVE-2023-6549 Out-Of-Bounds Read Probe (/nf/auth/startwebview.do with overlong Host)
+id: 0c326b92-0225-569b-ba65-ce5f7639318a
+status: experimental
+description: 'Detects the scanner/exploit request for CVE-2023-6549 against Citrix NetScaler ADC/Gateway: a GET to /nf/auth/startwebview.do
+  carrying an oversized Host header (long run of ''A'' characters) used to trigger the out-of-bounds memory read.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2023-6549. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): check that your proxy logs the Host header under cs-host.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2023-6549
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2023-6549
+logsource:
+  category: proxy
+detection:
+  selection:
+    cs-method:
+    - GET
+    cs-uri-stem|endswith:
+    - /nf/auth/startwebview.do
+    cs-host|contains:
+    - AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  condition: selection
+falsepositives:
+- Authorized vulnerability scanning of NetScaler appliances using the same Nuclei template
+level: high

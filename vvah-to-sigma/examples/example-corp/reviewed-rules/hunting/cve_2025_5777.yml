@@ -1,0 +1,36 @@
+title: Citrix NetScaler CitrixBleed 2 (CVE-2025-5777) doAuthentication.do Memory Disclosure Attempt
+id: 42a14423-f7b2-5a61-bff2-96be7e91ee26
+status: experimental
+description: 'Detects POST requests to the Citrix NetScaler /p/u/doAuthentication.do endpoint returning HTTP 200, the request
+  pattern used to trigger the CVE-2025-5777 memory overread (CitrixBleed 2). Translated from the Splunk detection ''Citrix
+  ADC and Gateway CitrixBleed 2 Memory Disclosure''.
+
+  Translated from other:detections cisco_secure_firewall___citrix_netscaler_memory_overread_attempt.yml (splunk-spl); keep
+  that project''s license notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2025-5777. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): matches normal login traffic; use as a hunting query, not an alert.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2025-5777
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2025-5777
+logsource:
+  category: proxy
+detection:
+  selection:
+    cs-method:
+    - POST
+    cs-uri-stem|contains:
+    - /p/u/doAuthentication.do
+    sc-status:
+    - 200
+  condition: selection
+falsepositives:
+- Legitimate NetScaler Gateway authentication flows also POST to /p/u/doAuthentication.do; focus on repeated automated requests
+  or non-standard user agents
+- Authorized vulnerability scanning or security testing
+level: low

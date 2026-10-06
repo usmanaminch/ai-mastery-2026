@@ -1,0 +1,35 @@
+title: Cisco ASA Unauthorized VPN Session via Default Tunnel Group (CVE-2023-20269)
+id: f54e2087-53fb-5da8-9fea-fed25967f538
+status: experimental
+description: 'Detects Cisco ASA syslog messages %ASA-7-734003 (session establishment attempt) or %ASA-4-113019 (session termination)
+  that reference the default connection profiles/tunnel groups DefaultADMINGroup or DefaultL2LGroup, which Cisco lists as
+  indicators of attempted or successful unauthorized clientless SSL VPN session establishment (CVE-2023-20269).
+
+  DRAFT written by claude-opus-5 from public text for CVE-2023-20269. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2023-20269
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2023-20269
+logsource:
+  product: cisco
+  service: asa
+detection:
+  selection_msgid:
+    Message|contains:
+    - '%ASA-7-734003'
+    - '%ASA-4-113019'
+  selection_group:
+    Message|contains:
+    - DefaultADMINGroup
+    - DefaultL2LGroup
+  condition: selection_msgid and selection_group
+falsepositives:
+- Administrators or site-to-site peers legitimately configured to use the DefaultADMINGroup or DefaultL2LGroup connection
+  profiles
+- Lab or test VPN sessions deliberately created against default tunnel groups
+level: high

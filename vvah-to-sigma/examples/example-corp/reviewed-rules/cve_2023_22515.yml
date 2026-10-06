@@ -1,0 +1,36 @@
+title: Atlassian Confluence CVE-2023-22515 Exploitation Trigger via server-info.action
+id: 7d99c823-f70f-5e61-a3c0-ed176a7a663f
+status: experimental
+description: 'Detects successful (HTTP 200) GET requests to /server-info.action with the bootstrapStatusProvider.applicationConfig.setupComplete
+  parameter, the request used to re-enable the Confluence setup wizard and create an unauthorized administrator account (CVE-2023-22515).
+  Translated from the Splunk analytic ''Confluence CVE-2023-22515 Trigger Vulnerability''.
+
+  Translated from other:detections windows_unusual_file_creation_in_confluence_directory.yml (splunk-spl); keep that project''s
+  license notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2023-22515. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2023-22515
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2023-22515
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-uri|contains:
+    - /server-info.action?bootstrapStatusProvider.applicationConfig.setupComplete=false
+    - /server-info.action?bootstrapStatusProvider.applicationConfig.setupComplete=0&
+    cs-method:
+    - GET
+    sc-status:
+    - 200
+  condition: selection
+falsepositives:
+- Legitimate applications or vulnerability scanners probing Confluence; filter by destination IP or restrict to known Confluence
+  servers
+level: high

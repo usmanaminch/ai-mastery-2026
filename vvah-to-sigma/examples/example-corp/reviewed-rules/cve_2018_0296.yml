@@ -1,0 +1,27 @@
+title: Cisco ASA WebVPN Path Traversal Probe (CVE-2018-0296)
+id: 20c13fbe-b7f2-5114-8dd4-960a45c7c5f4
+status: experimental
+description: 'Detects HTTP requests containing the Cisco ASA WebVPN directory traversal URI used by the CVE-2018-0296 Nuclei
+  template and the public exploit to list files and active sessions (/+CSCOU+/../+CSCOE+/files/file_list.json?path=...).
+
+  DRAFT written by claude-opus-5 from public text for CVE-2018-0296. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): kept the most general traversal entry (it covers the others). ASA syslog does not record URIs: deploy
+  on proxy or WAF logs.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2018-0296
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2018-0296
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-uri-query|contains:
+    - +CSCOU+/../+CSCOE+/files/file_list.json
+  condition: selection
+falsepositives:
+- Authorised vulnerability scanning or penetration testing of the ASA WebVPN interface
+level: high

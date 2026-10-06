@@ -1,0 +1,40 @@
+title: Citrix ADC/NetScaler CVE-2023-3519 Exploitation Attempt (SAML Endpoints)
+id: ba72d130-19cc-5296-9acc-f4c7a0e76ff5
+status: experimental
+description: 'Detects POST requests to Citrix ADC / NetScaler Gateway endpoints associated with exploitation of CVE-2023-3519,
+  as defined in the Splunk analytic ''Citrix ADC Exploitation CVE-2023-3519''. Scanner probes (e.g. Nuclei) send POST /saml/login
+  with a crafted SAMLRequest parameter.
+
+  Translated from other:detections citrix_adc_exploitation_cve_2023_3519.yml (splunk-spl); keep that project''s license notice
+  when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2023-3519. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): matches normal login traffic; use as a hunting query, not an alert.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2023-3519
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2023-3519
+logsource:
+  category: proxy
+detection:
+  selection:
+    cs-method:
+    - POST
+    c-uri|contains:
+    - /cgi/logout
+    - /cgi/samlart?samlart=
+    - /cgi/samlauth
+    - /gwtest/formssso?event=start&target=
+    - /netscaler/ns_gui/vpn/
+    - /saml/activelogin
+    - /saml/login
+  condition: selection
+falsepositives:
+- Legitimate SAML authentication traffic to Citrix Gateway (/saml/login, /saml/activelogin) and normal logout requests to
+  /cgi/logout
+- Organizational use of SAML utilities; restrict the rule to Citrix NetScaler hosts (e.g. citrix-gw-01)
+level: low

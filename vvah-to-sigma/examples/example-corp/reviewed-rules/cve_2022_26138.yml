@@ -1,0 +1,32 @@
+title: Atlassian Confluence Hardcoded disabledsystemuser Login Attempt (CVE-2022-26138)
+id: 02ccf719-d39b-5e3f-b6ef-8ebb2a6071f3
+status: experimental
+description: 'Detects login attempts to Confluence''s /dologin.action using the hardcoded ''disabledsystemuser'' account created
+  by the Questions for Confluence app (CVE-2022-26138), including the Nuclei probe that sets os_destination=/httpvoid.action.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2022-26138. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): credentials travel in the POST body; fires only where bodies are logged. Prefer Confluence''s authentication
+  log for logins by the hard-coded account.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2022-26138
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2022-26138
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-uri-stem|contains:
+    - /dologin.action
+    cs-uri-query|contains:
+    - os_username=disabledsystemuser
+    - disabledsystemuser
+    - os_destination=%2Fhttpvoid.action
+  condition: selection
+falsepositives:
+- Authorized vulnerability scanning or internal verification of the disabledsystemuser account
+- Web server not logging POST bodies will cause this rule to miss real exploitation rather than produce false positives
+level: high

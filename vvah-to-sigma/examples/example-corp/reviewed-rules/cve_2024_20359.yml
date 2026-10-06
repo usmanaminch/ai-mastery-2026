@@ -1,0 +1,34 @@
+title: 'Cisco ASA/FTD Line Runner Persistence Artifacts on disk0: (CVE-2024-20359)'
+id: 59533678-450a-5473-afa7-25c0e60f3ccb
+status: experimental
+description: 'Detects Cisco ASA/FTD syslog or command-accounting messages referencing the file and path artifacts used to
+  exploit CVE-2024-20359: a client_bundle*.zip preload bundle copied to disk0:, the csco_config.lua boot script, the Line
+  Runner webcontent hash endpoint, and the lina_cs / krbkdc6 staging paths.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2024-20359. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): removed the bare file-name prefix, which can match legitimate files; log source set to ASA.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2024-20359
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2024-20359
+logsource:
+  product: cisco
+  service: asa
+detection:
+  selection:
+    msg|contains:
+    - client_bundle_install.zip
+    - csco_config.lua
+    - disk0:/csco_config/97/webcontent/
+    - 1515480F4B538B669648B17C02337098
+    - /asa/scripts/lina_cs
+    - /run/lock/subsys/krbkdc6
+  condition: selection
+falsepositives:
+- Legitimate administrative use of the legacy VPN client/plug-in preload capability with a file named client_bundle*.zip
+- Incident responders copying the suspicious .zip off the device per Cisco's recovery instructions
+level: high

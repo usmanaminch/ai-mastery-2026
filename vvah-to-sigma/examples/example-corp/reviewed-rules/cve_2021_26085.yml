@@ -1,0 +1,31 @@
+title: Atlassian Confluence Pre-Auth Arbitrary File Read via /s/ Endpoint (CVE-2021-26085)
+id: 310ef00f-7fcf-5330-a9fc-6afcc434671c
+status: experimental
+description: 'Detects requests matching the CVE-2021-26085 scanner/exploit pattern against Atlassian Confluence Server, where
+  the /s/ endpoint is abused with a ''/_/;/WEB-INF/'' path traversal-style segment to read restricted resources such as WEB-INF/web.xml.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2021-26085. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2021-26085
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2021-26085
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-uri-stem|startswith:
+    - /s/
+    cs-uri-stem|contains|all:
+    - /_/;/
+    - /WEB-INF/
+    cs-method:
+    - GET
+  condition: selection
+falsepositives:
+- Authorized vulnerability scanning of Confluence hosts (Nuclei template CVE-2021-26085)
+level: high

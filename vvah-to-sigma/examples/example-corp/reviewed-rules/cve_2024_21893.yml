@@ -1,0 +1,37 @@
+title: Ivanti Connect Secure SSRF in SAML Component (CVE-2024-21893)
+id: 1c2f693a-2696-52b5-9779-da6e2ea5f317
+status: experimental
+description: 'Detects POST requests to Ivanti Connect Secure/Policy Secure SAML endpoints vulnerable to the SSRF issue CVE-2024-21893
+  that returned an HTTP 200 response, indicating possible successful exploitation.
+
+  Translated from other:detections ivanti_connect_secure_ssrf_in_saml_component.yml (splunk-spl); keep that project''s license
+  notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2024-21893. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): baseline normal SAML use on these endpoints before alerting.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2024-21893
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2024-21893
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-method:
+    - POST
+    cs-uri-stem|contains:
+    - /dana-ws/saml20.ws
+    - /dana-ws/saml.ws
+    - /dana-ws/samlecp.ws
+    - /dana-na/auth/saml-logout.cgi/
+    sc-status:
+    - 200
+  condition: selection
+falsepositives:
+- Legitimate SAML SSO/SLO traffic to these endpoints from configured identity providers
+- Vulnerability scanners probing the appliance
+level: high

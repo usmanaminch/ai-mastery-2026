@@ -1,0 +1,39 @@
+title: Pulse Connect Secure CVE-2019-11539 tcpdump options Command Injection Attempt
+id: 58c8ffc5-f0cf-577f-9b8d-d33c8c27c6e8
+status: experimental
+description: 'Detects requests to the Pulse/Ivanti admin diagnostics CGI (/dana-admin/diag/diag.cgi) carrying the ''options''
+  parameter with tcpdump argument-injection artifacts described in the DEVCORE write-up (system$x, -r$x, redirection into
+  the template cache /data/runtime/tmp/tt/ as *.thtml.ttc), and the subsequent retrieval of the poisoned setcookie.cgi template
+  used to execute the injected Perl/shell command.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2019-11539. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): removed the bare parameter name, which matches normal diagnostic use. Inventory version (22.7R2) is
+  outside the affected range; confirm before deploying.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2019-11539
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2019-11539
+logsource:
+  category: webserver
+detection:
+  selection_diag:
+    cs-uri-stem|contains:
+    - /dana-admin/diag/diag.cgi
+    cs-uri-query|contains:
+    - system$x
+    - -r$x
+    - /data/runtime/tmp/tt/
+    - .thtml.ttc
+  selection_payload_anywhere:
+    cs-uri-query|contains:
+    - /data/runtime/tmp/tt/setcookie.thtml.ttc
+    - system$x
+  condition: selection_diag or selection_payload_anywhere
+falsepositives:
+- Legitimate administrator use of the built-in tcpdump diagnostics page (would not contain system$x, -r$x or /data/runtime/tmp/tt/
+  strings)
+level: high

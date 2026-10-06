@@ -1,0 +1,28 @@
+title: Cisco ASA SNMP Process Crash Consistent with EXTRABACON (CVE-2016-6366)
+id: e3d0020e-2d78-5857-b5d6-93b607686afe
+status: experimental
+description: 'Detects the ASA crash traceback left by exploitation of the SNMP buffer overflow used by the EXTRABACON exploit,
+  where the SNMP thread faults (''Thread Name: snmp'' / ''Page fault: Unknown'') after processing a crafted IPv4 SNMP packet.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2016-6366. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): post-crash indicator: confirms a crash happened, not an attempt. Log source set to ASA.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2016-6366
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2016-6366
+logsource:
+  product: cisco
+  service: asa
+detection:
+  selection:
+    message|contains|all:
+    - 'Thread Name: snmp'
+    - Page fault
+  condition: selection
+falsepositives:
+- Genuine SNMP agent crash caused by an unrelated software defect or hardware fault on the appliance
+level: high

@@ -1,0 +1,42 @@
+title: Ivanti Connect Secure Command Injection / Bookmark Endpoint Probing (CVE-2023-46805, CVE-2024-21887)
+id: 00c86a1e-7678-5c3b-b8f1-270617eae85b
+status: experimental
+description: 'Detects requests to the Ivanti Connect Secure bookmark endpoint returning 403 (vulnerability probe) and requests
+  to the /api/v1/totp/user-backup-code/../../ traversal endpoints returning 200 (command injection exploitation), as defined
+  in the Splunk analytics ''Access to Vulnerable Ivanti Connect Secure Bookmark Endpoint'' and ''Ivanti Connect Secure Command
+  Injection Attempts''.
+
+  Translated from other:detections access_to_vulnerable_ivanti_connect_secure_bookmark_endpoint.yml (splunk-spl); keep that
+  project''s license notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2024-21887. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): approved as drafted.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2024-21887
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2024-21887
+logsource:
+  category: webserver
+detection:
+  selection_probe_url:
+    cs-uri-stem|contains: /api/v1/configuration/users/user-roles/user-role/rest-userrole1/web/web-bookmarks/bookmark
+    cs-method: GET
+    sc-status: 403
+  selection_exploit_url:
+    cs-uri-stem|contains:
+    - /api/v1/totp/user-backup-code/../../system/maintenance/archiving/cloud-server-test-connection
+    - /api/v1/totp/user-backup-code/../../license/keys-status/
+    cs-method:
+    - GET
+    - POST
+    sc-status: 200
+  condition: selection_probe_url or selection_exploit_url
+falsepositives:
+- Authorized vulnerability scanning or mitigation-verification checks against Ivanti appliances
+- 'Status-code filtering differences: the source rules are limited to 403/200 respectively and may miss or mismatch in environments
+  with IP restrictions or upstream blocking'
+level: high

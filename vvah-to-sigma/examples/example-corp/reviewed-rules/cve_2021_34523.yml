@@ -1,0 +1,46 @@
+title: Exchange Autodiscover SSRF Abuse (ProxyShell/ProxyNotShell) (CVE-2021-34523)
+id: 0525a33c-08d4-5f66-87a4-92886fc4ff1c
+status: experimental
+description: 'Detects successful POST requests to /autodiscover/autodiscover.json carrying ProxyShell/ProxyNotShell exploit-chain
+  artifacts (X-Rps-CAT token impersonation parameter, backend /powershell/ or /mapi/ paths, or Python/urllib user agents)
+  as described in the Splunk analytic windows_exchange_autodiscover_ssrf_abuse.yml.
+
+  Translated from other:detections windows_exchange_autodiscover_ssrf_abuse.yml (splunk-spl); keep that project''s license
+  notice when redistributing.
+
+  DRAFT written by claude-opus-5 from public text for CVE-2021-34523. Not tested against attack or benign logs. Review before
+  deploying; retire after patching.
+
+  Review (2026-10-06): user agent made optional enrichment (selection_ua); the source rule scored it, it did not require it.'
+references:
+- https://nvd.nist.gov/vuln/detail/CVE-2021-34523
+author: exposure_to_sigma draft (claude-opus-5)
+date: '2026-10-06'
+tags:
+- cve.2021-34523
+logsource:
+  category: webserver
+  product: windows
+  service: iis
+detection:
+  selection_base:
+    cs-method:
+    - POST
+    sc-status:
+    - 200
+    cs-uri-stem|contains:
+    - autodiscover/autodiscover.json
+  selection_chain:
+    cs-uri-query|contains:
+    - X-Rps-CAT=
+    - /powershell/?
+    - /mapi/
+  condition: selection_base and (selection_chain or selection_ua)
+  selection_ua:
+    cs-user-agent|contains:
+    - python
+    - urllib
+falsepositives:
+- Legitimate Autodiscover traffic from scripted/automated Exchange tooling using Python-based clients
+- Authorized vulnerability scanners or red-team exercises probing ProxyShell
+level: high
