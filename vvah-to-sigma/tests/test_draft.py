@@ -89,3 +89,32 @@ def test_prompt_carries_logs_and_advisory(tmp_path):
     prompt = D.build_prompt(gap, D.advisory_for(gap, {"CVE-2099-0001": "CISA KEV: x"}, F / "advisories", False))
     assert "COLLECTED LOGS (Sigma names): webserver" in prompt
     assert "CISA KEV: x" in prompt and "logon_hash=1" in prompt
+
+
+def test_reference_ranking_prefers_exploit_writeups():
+    nvd = ("NVD: desc\n"
+           "Reference: https://vendor.example/psirt [Vendor Advisory]\n"
+           "Reference: https://news.example/x [Press/Media Coverage]\n"
+           "Reference: https://blog.example/poc [Exploit, Third Party Advisory]\n")
+    assert D.reference_urls(nvd) == ["https://blog.example/poc", "https://vendor.example/psirt"]
+
+
+def test_short_values_never_count_as_grounded():
+    g, u = D.grounding({"sel": {"sc-status": 200, "cs-method": "POST", "x|contains": "logon_hash=1"}},
+                       "send a POST with logon_hash=1, server returns 200")
+    assert g == ["logon_hash=1"] and sorted(u) == ["200", "POST"]
+
+
+def test_html_is_reduced_to_text():
+    t = D._Text()
+    t.feed("<html><script>evil()</script><p>GET /remote/x</p><style>p{}</style></html>")
+    assert t.parts == ["GET /remote/x"]
+
+
+def test_logged_gaps_sort_first(tmp_path):
+    rows = [{"asset": a, "cve": c, "logs": l, "priority": "exploited", "ransomware": r,
+             "verdict": "Gap: x"} for a, c, l, r in
+            [("vpn", "CVE-2099-0009", [], True), ("web", "CVE-2099-0008", ["webserver"], False)]]
+    p = tmp_path / "e.json"
+    p.write_text(json.dumps(rows))
+    assert [g.cve for g in D.load_gaps(p)] == ["CVE-2099-0008", "CVE-2099-0009"]

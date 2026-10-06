@@ -172,15 +172,22 @@ ransomware-linked and confirmed-exploited first), asks the model you choose for 
 
 ```bash
 python -m exposure_to_sigma.draft out/example-corp/exposures.json \
-  --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-nvd \
+  --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-refs --only-logged \
   --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts
 ```
 
-- **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), and anything
-  you save as `out/drafts/advisories/<CVE>.txt` (a vendor advisory, a paid intel write-up). It is told to use only
-  indicators stated there, and to answer `insufficient_info` or `no_signature` rather than invent one.
+- **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), up to three
+  pages NVD links to, exploit write-ups first (`--fetch-refs`), and anything you add to
+  `out/drafts/advisories/<CVE>.txt` (a vendor advisory, a paid intel write-up). Everything is cached. It is told
+  to use only indicators stated there, and otherwise to answer `insufficient_info`, `behavioral` (an auth or MFA
+  bypass that looks like a normal login) or `no_signature` (denial of service, offline attacks).
+- **Fetched pages are untrusted input.** The model has no tools and its output is checked, so the worst a hostile
+  page can do is produce a bad draft that review rejects.
+- **Rules that can fire come first.** Gaps on assets that send logs are drafted first; `--only-logged` skips the rest.
+  A first run with NVD text alone drafted no rules: 9 of 10 were `insufficient_info`, because NVD descriptions
+  rarely name a path or log message. That is the intended behaviour, not a failure.
 - **Checked, not trusted.** Every value the rule matches on is searched for in the advisory text; misses are
-  listed as *ungrounded*. The rule's log source is checked against what the affected assets send. `sigma check`
+  listed as *ungrounded*, as are values under five characters (`POST`, `200`), which match too much to count. The rule's log source is checked against what the affected assets send. `sigma check`
   runs when sigma-cli is installed. The model also says whether the CWE matches the text, which catches
   mislabels like a denial-of-service bug tagged as a buffer overflow.
 - **Drafts only.** Rules are written as `status: experimental` with a deterministic ID per CVE. Nothing here
