@@ -60,6 +60,7 @@ def test_draft_is_checked_not_trusted(tmp_path):
     d = D.draft_one(gap, FakeClient(RULE_REPLY), "fake-model", adv, tmp_path / "rules")
     assert d.verdict == "rule" and d.logs_ok
     assert d.ungrounded == ["evil_param"]
+    assert d.context == []
     assert d.status.startswith("review:") and "ungrounded" in d.status
     rule = yaml.safe_load((tmp_path / d.file).read_text())
     assert rule["status"] == "experimental" and "cve.2099-0001" in rule["tags"]
@@ -99,10 +100,16 @@ def test_reference_ranking_prefers_exploit_writeups():
     assert D.reference_urls(nvd) == ["https://blog.example/poc", "https://vendor.example/psirt"]
 
 
-def test_short_values_never_count_as_grounded():
-    g, u = D.grounding({"sel": {"sc-status": 200, "cs-method": "POST", "x|contains": "logon_hash=1"}},
-                       "send a POST with logon_hash=1, server returns 200")
-    assert g == ["logon_hash=1"] and sorted(u) == ["200", "POST"]
+def test_grounding_separates_context_and_matches_tokens():
+    text = ("send a POST with logon_hash=1 to /webui/x; the server returns 200. "
+            "the os_username parameter set to disabledsystemuser; GET /wsfed/passive?wctx")
+    det = {"sel": {"sc-status": 200, "cs-method": "POST", "x|contains": ["logon_hash=1", "wctx",
+                   "os_username=disabledsystemuser", "installfile=%60", "/s/", "evil"]},
+           "condition": "sel"}
+    g, u, c = D.grounding(det, text)
+    assert sorted(c) == ["200", "POST"]
+    assert set(g) == {"logon_hash=1", "wctx", "os_username=disabledsystemuser"}
+    assert set(u) == {"installfile=%60", "/s/", "evil"}
 
 
 def test_html_is_reduced_to_text():
@@ -211,3 +218,17 @@ def test_refusal_is_an_outcome_not_an_error(tmp_path):
     assert d.status == "refused"
     md = D.needs_input([d], tmp_path / "adv")
     assert "CVE-2099-0001" in md and "refused" in md
+
+
+def test_recheck_regrades_without_calling_a_model(tmp_path):
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    adv = D.advisory_for(gap, {}, F / "advisories", fetch=False)
+    out = tmp_path / "run"
+    d = D.draft_one(gap, FakeClient(RULE_REPLY), "m", adv, out / "rules")
+    D.write_outputs([d], {"Model": "m"}, out, F / "advisories")
+    rule_path = out / d.file
+    rule = yaml.safe_load(rule_path.read_text())
+    rule["detection"]["selection"]["cs-uri-query|contains"] = ["logon_hash=1"]
+    rule_path.write_text(yaml.safe_dump(rule))
+    again = D.recheck(out, {gap.cve: gap}, lambda g: adv)
+    assert again[0].ungrounded == [] and again[0].status == "ready for review"

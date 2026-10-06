@@ -199,7 +199,7 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   A first run with NVD text alone drafted no rules: 9 of 10 were `insufficient_info`, because NVD descriptions
   rarely name a path or log message. That is the intended behaviour, not a failure.
 - **Checked, not trusted.** Every value the rule matches on is searched for in the advisory text; misses are
-  listed as *ungrounded*, as are values under five characters (`POST`, `200`), which match too much to count. The rule's log source is checked against what the affected assets send. `sigma check`
+  listed as *ungrounded*, HTTP methods and status codes are reported separately as context, not indicators. `--recheck` reruns all checks on an earlier run's rules (after you edit one, or add text to `advisories/`) without calling a model. The rule's log source is checked against what the affected assets send. `sigma check`
   runs when sigma-cli is installed. The model also says whether the CWE matches the text, which catches
   mislabels like a denial-of-service bug tagged as a buffer overflow.
 - **Drafts only.** Rules are written as `status: experimental` with a deterministic ID per CVE. Nothing here

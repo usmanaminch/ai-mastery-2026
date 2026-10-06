@@ -32,6 +32,7 @@ import shutil
 import subprocess
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 from collections import defaultdict
@@ -353,31 +354,53 @@ def parse_reply(text: str) -> dict:
     return json.loads(t[start:end + 1])
 
 
-def _values(node):
+CONTEXT_FIELDS = {"cs-method", "sc-status", "method", "status", "http_method", "http.method", "request_method",
+                  "status_code", "http_status", "response_code"}
+
+
+def _values(node, field=""):
+    """Yield (field, value) for every match value in a detection block."""
     if isinstance(node, dict):
         for k, v in node.items():
             if k != "condition":
-                yield from _values(v)
+                yield from _values(v, k.split("|")[0].lower() if isinstance(v, (str, int, float, list)) else field)
     elif isinstance(node, list):
         for v in node:
-            yield from _values(v)
+            yield from _values(v, field)
     elif isinstance(node, (str, int, float)) and not isinstance(node, bool):
-        yield str(node)
+        yield field, str(node)
 
 
-def grounding(detection: dict, advisory: str) -> tuple[list[str], list[str]]:
-    """Split the rule's match values into those found in the advisory text and those not."""
+def _found(token: str, hay: str) -> bool:
+    return bool(re.search(r"(?<![a-z0-9])" + re.escape(token) + r"(?![a-z0-9])", hay))
+
+
+def _grounded(value: str, hay: str) -> bool:
+    for cand in {value, urllib.parse.unquote(value)}:
+        needle = re.sub(r"\s+", " ", cand.replace("*", " ").replace("?", " ").lower()).strip()
+        if len(needle) >= MIN_VALUE_LEN and needle in hay:
+            return True
+        if len(needle) >= 3 and _found(needle, hay):
+            return True
+        pieces = re.findall(r"[a-z0-9_.%$-]{4,}", needle)
+        if len(pieces) > 1 and all(_found(x, hay) for x in pieces):
+            return True
+    return False
+
+
+def grounding(detection: dict, advisory: str) -> tuple[list[str], list[str], list[str]]:
+    """Sort the rule's match values into indicators found in the source text, indicators not found,
+    and context constraints (HTTP method, status code), which narrow a rule but aren't indicators.
+    An indicator counts as found when it appears verbatim (5+ characters), as a whole token
+    (3+ characters), or when each of its 4+ character parts does; URL-encoded forms are decoded first."""
     hay = re.sub(r"\s+", " ", advisory.lower())
-    grounded, ungrounded = [], []
-    for v in _values(detection):
-        needle = re.sub(r"\s+", " ", v.replace("*", " ").replace("?", " ").lower()).strip()
-        pieces = [p for p in needle.split(" ") if p]
-        if len(needle) < MIN_VALUE_LEN:
-            ok = False
+    grounded, ungrounded, context = [], [], []
+    for fld, v in _values(detection):
+        if fld in CONTEXT_FIELDS:
+            context.append(v)
         else:
-            ok = needle in hay or (len(pieces) > 1 and all(len(p) >= MIN_VALUE_LEN and p in hay for p in pieces))
-        (grounded if ok else ungrounded).append(v)
-    return grounded, ungrounded
+            (grounded if _grounded(v, hay) else ungrounded).append(v)
+    return grounded, ungrounded, context
 
 
 def logs_collected(logsource: dict, logs: set[str]) -> bool:
@@ -434,6 +457,7 @@ class Draft:
     file: str = ""
     grounded: list[str] = field(default_factory=list)
     ungrounded: list[str] = field(default_factory=list)
+    context: list[str] = field(default_factory=list)
     logs_ok: bool | None = None
     syntax: str = ""
     error: str = ""
@@ -482,14 +506,43 @@ def draft_one(gap: Gap, client, model: str, advisory: str, rules_dir: Path) -> D
             d.verdict, d.reason = "insufficient_info", "model returned no rule body"
         return d
     rule = finalize(reply["rule"], gap, model)
-    d.grounded, d.ungrounded = grounding(rule["detection"], advisory)
-    d.logs_ok = logs_collected(rule["logsource"], gap.logs)
     rules_dir.mkdir(parents=True, exist_ok=True)
     path = rules_dir / f"draft_{gap.cve.lower().replace('-', '_')}.yml"
     path.write_text(yaml.safe_dump(rule, sort_keys=False, allow_unicode=True, width=120), encoding="utf-8")
     d.file = str(path.relative_to(rules_dir.parent))
-    d.syntax = sigma_check(path)
+    check(d, rule, advisory, path)
     return d
+
+
+def check(d: Draft, rule: dict, advisory: str, path: Path) -> None:
+    d.grounded, d.ungrounded, d.context = grounding(rule.get("detection") or {}, advisory)
+    d.logs_ok = logs_collected(rule.get("logsource") or {}, d.gap.logs)
+    d.syntax = sigma_check(path)
+
+
+def recheck(out: Path, gaps: dict[str, Gap], advisory) -> list[Draft]:
+    """Re-run the checks on an earlier run's rules, with no model calls: after editing a rule by hand,
+    adding text to advisories/, or upgrading this tool."""
+    drafts = []
+    for e in json.loads((out / "drafts.json").read_text(encoding="utf-8")):
+        gap = gaps.get(e["cve"]) or Gap(e["cve"], assets=e.get("assets", []))
+        d = Draft(gap, e["verdict"], e.get("reason", ""), e.get("vuln_class", ""), e.get("cwe_note", ""),
+                  file=e.get("file", ""), error=e.get("error", ""))
+        if d.file and (out / d.file).exists():
+            check(d, yaml.safe_load((out / d.file).read_text(encoding="utf-8")) or {}, advisory(gap), out / d.file)
+        drafts.append(d)
+    return drafts
+
+
+def write_outputs(drafts: list[Draft], meta: dict, out: Path, adv_dir: Path) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "drafts.md").write_text(render(drafts, meta), encoding="utf-8")
+    (out / "needs-input.md").write_text(needs_input(drafts, adv_dir), encoding="utf-8")
+    (out / "drafts.json").write_text(json.dumps([{
+        "cve": d.gap.cve, "task": d.gap.mode, "assets": d.gap.assets, "outcome": d.status, "verdict": d.verdict,
+        "vuln_class": d.vuln_class, "cwe_note": d.cwe_note, "file": d.file, "ungrounded": d.ungrounded,
+        "context": d.context, "logs_collected": d.logs_ok, "syntax": d.syntax, "reason": d.reason,
+        "error": d.error} for d in drafts], indent=1), encoding="utf-8")
 
 
 def needs_input(drafts: list[Draft], adv_dir: Path) -> str:
@@ -520,6 +573,8 @@ def render(drafts: list[Draft], meta: dict) -> str:
               "|---|---|---|---|---|---|---|---|"]
     for d in drafts:
         g = f"{len(d.grounded)}/{len(d.grounded) + len(d.ungrounded)}" if d.verdict == "rule" else "-"
+        if d.context:
+            g += f" (+{len(d.context)} method/status)"
         logs = "-" if d.logs_ok is None else ("yes" if d.logs_ok else "**no**")
         lines.append(f"| {d.gap.cve} | {d.gap.mode} | {', '.join(sorted(d.gap.assets))} | {d.status} | {logs} | {g} | "
                      f"{d.syntax or '-'} | {('`' + d.file + '`') if d.file else '-'} |")
@@ -559,14 +614,31 @@ def main(argv=None) -> None:
     ap.add_argument("--api-key-env", help="environment variable holding the key")
     ap.add_argument("--max", type=int, default=10, help="draft at most this many CVEs (highest priority first)")
     ap.add_argument("--dry-run", action="store_true", help="write the prompts, call no model")
+    ap.add_argument("--recheck", action="store_true",
+                    help="re-run the checks on the rules already in --out (no model calls)")
     ap.add_argument("--out", type=Path, default=Path("out/drafts"))
     a = ap.parse_args(argv)
 
-    gaps = [g for g in load_gaps(a.exposures) if (g.logs or not a.only_logged)
-            and (not a.cve or g.cve in {c.upper() for c in a.cve})][: a.max]
+    all_gaps = load_gaps(a.exposures)
     adv_dir = a.advisories or a.out / "advisories"
     kev = kev_text(a.kev)
     nuc = nuclei_index(a.nuclei)
+    if a.recheck:
+        meta = {}
+        if (a.out / "drafts.md").exists():
+            for line in (a.out / "drafts.md").read_text(encoding="utf-8").splitlines()[2:]:
+                if not line.startswith("- "):
+                    break
+                k, _, v = line[2:].partition(": ")
+                meta[k] = v
+        meta["Rechecked"] = dt.date.today().isoformat()
+        drafts = recheck(a.out, {g.cve: g for g in all_gaps},
+                         lambda g: advisory_for(g, kev, adv_dir, False, False, nuc))
+        write_outputs(drafts, meta, a.out, adv_dir)
+        _summary(drafts, None)
+        return
+    gaps = [g for g in all_gaps if (g.logs or not a.only_logged)
+            and (not a.cve or g.cve in {c.upper() for c in a.cve})][: a.max]
     print(f"{len(gaps)} CVEs to draft or translate (cap --max {a.max}); "
           f"{sum(g.mode == 'translate' for g in gaps)} have a rule in another format")
     if a.dry_run:
@@ -589,18 +661,15 @@ def main(argv=None) -> None:
         drafts.append(draft_one(g, client, a.model, advisory_for(g, kev, adv_dir, a.fetch_nvd, a.fetch_refs, nuc), a.out / "rules"))
     meta = {"Model": f"{a.provider}:{a.model}", "Gap CVEs drafted": len(drafts),
             "Tokens": json.dumps(client.usage) if client.usage else "n/a"}
-    a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "drafts.md").write_text(render(drafts, meta), encoding="utf-8")
-    (a.out / "needs-input.md").write_text(needs_input(drafts, adv_dir), encoding="utf-8")
-    (a.out / "drafts.json").write_text(json.dumps([{
-        "cve": d.gap.cve, "assets": d.gap.assets, "outcome": d.status, "verdict": d.verdict,
-        "vuln_class": d.vuln_class, "cwe_note": d.cwe_note, "file": d.file, "ungrounded": d.ungrounded,
-        "logs_collected": d.logs_ok, "syntax": d.syntax, "reason": d.reason, "error": d.error}
-        for d in drafts], indent=1), encoding="utf-8")
+    write_outputs(drafts, meta, a.out, adv_dir)
+    _summary(drafts, client.usage)
+
+
+def _summary(drafts: list[Draft], usage) -> None:
     counts = defaultdict(int)
     for d in drafts:
         counts[d.status] += 1
-    print(json.dumps({"outcomes": counts, "usage": client.usage}, indent=2))
+    print(json.dumps({"outcomes": counts, "usage": usage}, indent=2))
 
 
 if __name__ == "__main__":
