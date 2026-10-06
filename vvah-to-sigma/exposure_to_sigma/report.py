@@ -52,8 +52,11 @@ def render(verdicts: list[Verdict], meta: dict) -> str:
 def write(verdicts: list[Verdict], meta: dict, out_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "coverage-exposures.md").write_text(render(verdicts, meta), encoding="utf-8")
-    rows = [{"asset": v.exposure.asset, "cve": v.exposure.cve, "product": v.exposure.product,
-             "version": v.exposure.version, "source": v.exposure.source, "cwes": v.exposure.cwes,
+    rows = [{"asset": v.exposure.asset, "cve": v.exposure.cve, "vendor": v.exposure.vendor,
+             "product": v.exposure.product, "version": v.exposure.version,
+             "version_checked": v.exposure.version_checked, "logs": sorted(v.exposure.logs),
+             "source": v.exposure.source, "cwes": v.exposure.cwes,
+             "notes": [f"{s.feed}: {s.note}" for s in v.signals if s.note],
              "priority": v.priority, "probability": v.probability, "ransomware": v.ransomware,
              "verdict": v.verdict, "rules": [f"{r.ruleset}:{r.path}" for r in v.rules]} for v in verdicts]
     (out_dir / "exposures.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")

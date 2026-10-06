@@ -165,6 +165,31 @@ python -m exposure_to_sigma --kev /tmp/kev-data/known_exploited_vulnerabilities.
 
 Example Corp is fictional. Its inventory, rules and exports exist only to exercise every verdict.
 
+## Draft rules for the gaps
+
+`exposure_to_sigma.draft` takes the `exposures.json` above and, for each prioritised **Gap** (grouped by CVE,
+ransomware-linked and confirmed-exploited first), asks the model you choose for a scoped Sigma rule.
+
+```bash
+python -m exposure_to_sigma.draft out/example-corp/exposures.json \
+  --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-nvd \
+  --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts
+```
+
+- **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), and anything
+  you save as `out/drafts/advisories/<CVE>.txt` (a vendor advisory, a paid intel write-up). It is told to use only
+  indicators stated there, and to answer `insufficient_info` or `no_signature` rather than invent one.
+- **Checked, not trusted.** Every value the rule matches on is searched for in the advisory text; misses are
+  listed as *ungrounded*. The rule's log source is checked against what the affected assets send. `sigma check`
+  runs when sigma-cli is installed. The model also says whether the CWE matches the text, which catches
+  mislabels like a denial-of-service bug tagged as a buffer overflow.
+- **Drafts only.** Rules are written as `status: experimental` with a deterministic ID per CVE. Nothing here
+  tests them against attack or benign logs; `drafts.md` is a review sheet for a detection engineer.
+- **Your model.** `--provider anthropic` reads `ANTHROPIC_API_KEY`. `--provider openai` works with any
+  OpenAI-compatible server (`--base-url`, key from `OPENAI_API_KEY` or `--api-key-env`): OpenAI, Gemini's
+  OpenAI-compatible endpoint, a local Ollama or vLLM. Keys are read from the environment and never written.
+- `--dry-run` writes the prompts without calling a model, so you can see exactly what would be sent.
+
 ## Limits
 
 - **Inventory matches ignore versions.** CISA's catalog lists products, not affected versions, so a product
