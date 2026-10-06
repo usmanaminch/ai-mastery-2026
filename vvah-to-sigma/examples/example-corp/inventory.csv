@@ -1,0 +1,8 @@
+asset,vendor,product,version,logs
+vpn-gw-01,Fortinet,FortiOS,7.0.12,
+edge-fw-01,Cisco,Adaptive Security Appliance,9.16.4,cisco
+ivanti-vpn-01,Ivanti,Connect Secure,22.7R2,webserver
+citrix-gw-01,Citrix,NetScaler,14.1-12,proxy
+mail-01,Microsoft,Exchange Server,2019 CU14,webserver;process_creation:windows
+wiki-01,Atlassian,Confluence,8.5.3,webserver;process_creation:linux
+pa-fw-01,Palo Alto Networks,PAN-OS,10.2.9,

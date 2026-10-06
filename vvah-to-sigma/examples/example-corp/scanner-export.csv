@@ -1,0 +1,3 @@
+Host,CVE,Plugin Name,Version,Solution
+hr-portal-01,CVE-2017-5638,Apache Struts 2 Jakarta Multipart Parser RCE,2.3.31,Upgrade to 2.3.32
+hr-portal-01,"CVE-2021-44228, CVE-2021-45046",Apache Log4j RCE,2.14.1,Upgrade to 2.17.1

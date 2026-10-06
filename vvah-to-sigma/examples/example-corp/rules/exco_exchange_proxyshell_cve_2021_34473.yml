@@ -1,0 +1,20 @@
+title: Example Corp - Exchange ProxyShell autodiscover abuse (CVE-2021-34473)
+id: 4f0a6a52-3b1e-4c7e-9b2a-1a2b3c4d5e02
+status: experimental
+description: Fictional Example Corp internal rule. No SigmaHQ rule names this CVE, so this shows coverage only you have.
+references:
+    - https://nvd.nist.gov/vuln/detail/CVE-2021-34473
+author: Example Corp SOC (fictional)
+date: 2026-10-06
+tags:
+    - attack.initial_access
+    - attack.t1190
+    - cve.2021-34473
+logsource:
+    category: webserver
+detection:
+    selection:
+        cs-uri-stem|contains: '/autodiscover/autodiscover.json'
+        cs-uri-query|contains: '/mapi/'
+    condition: selection
+level: high

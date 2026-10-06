@@ -1,0 +1,999 @@
+{
+ "matches": [
+  {
+   "vulnerability": {
+    "id": "GHSA-j7hp-h8jx-5ppr",
+    "dataSource": "https://github.com/advisories/GHSA-j7hp-h8jx-5ppr",
+    "namespace": "github:language:python",
+    "severity": "High",
+    "urls": [
+     "https://nvd.nist.gov/vuln/detail/CVE-2023-4863",
+     "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html",
+     "https://crbug.com/1479274",
+     "https://github.com/qnighy/libwebp-sys2-rs/pull/21",
+     "https://github.com/qnighy/libwebp-sys2-rs/commit/4560c473a76ec8bd8c650f19ddf9d7a44f719f8b",
+     "https://github.com/webmproject/libwebp/commit/902bc9190331343b2017211debcec8d2ab87e17a",
+     "https://bugzilla.suse.com/show_bug.cgi?id=1215231",
+     "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-4863",
+     "https://news.ycombinator.com/item?id=37478403",
+     "https://rustsec.org/advisories/RUSTSEC-2023-0060.html",
+     "https://security-tracker.debian.org/tracker/CVE-2023-4863",
+     "https://github.com/electron/electron/pull/39823",
+     "https://github.com/electron/electron/pull/39825",
+     "https://github.com/electron/electron/pull/39826",
+     "https://github.com/electron/electron/pull/39827",
+     "https://github.com/electron/electron/pull/39828",
+     "https://github.com/webmproject/libwebp/releases/tag/v1.3.2",
+     "https://lists.debian.org/debian-lts-announce/2023/09/msg00015.html",
+     "https://lists.debian.org/debian-lts-announce/2023/09/msg00016.html",
+     "https://lists.debian.org/debian-lts-announce/2023/09/msg00017.html",
+     "https://rustsec.org/advisories/RUSTSEC-2023-0061.html",
+     "https://security.gentoo.org/glsa/202309-05",
+     "https://www.debian.org/security/2023/dsa-5496",
+     "https://www.debian.org/security/2023/dsa-5497",
+     "https://www.debian.org/security/2023/dsa-5498",
+     "http://www.openwall.com/lists/oss-security/2023/09/21/4",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/1",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/3",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/4",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/5",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/6",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/7",
+     "http://www.openwall.com/lists/oss-security/2023/09/22/8",
+     "http://www.openwall.com/lists/oss-security/2023/09/26/1",
+     "http://www.openwall.com/lists/oss-security/2023/09/26/7",
+     "http://www.openwall.com/lists/oss-security/2023/09/28/1",
+     "http://www.openwall.com/lists/oss-security/2023/09/28/2",
+     "http://www.openwall.com/lists/oss-security/2023/09/28/4",
+     "https://github.com/jaredforth/webp/pull/30",
+     "https://github.com/python-pillow/Pillow/pull/7395",
+     "https://github.com/jaredforth/webp/commit/9d4c56e63abecc777df71c702503c3eaabd7dcbc",
+     "https://pillow.readthedocs.io/en/stable/releasenotes/10.0.1.html#security",
+     "https://github.com/ImageMagick/ImageMagick/discussions/6664",
+     "https://github.com/dlemstra/Magick.NET/releases/tag/13.3.0",
+     "https://security.gentoo.org/glsa/202401-10",
+     "https://sethmlarson.dev/security-developer-in-residence-weekly-report-16",
+     "https://security.netapp.com/advisory/ntap-20230929-0011",
+     "https://stackdiary.com/critical-vulnerability-in-webp-codec-cve-2023-4863",
+     "https://www.bentley.com/advisories/be-2023-0001",
+     "https://www.bleepingcomputer.com/news/google/google-fixes-another-chrome-zero-day-bug-exploited-in-attacks",
+     "https://www.mozilla.org/en-US/security/advisories/mfsa2023-40",
+     "https://www.vicarius.io/vsociety/posts/zero-day-webp-vulnerability-cve-2023-4863",
+     "https://adamcaudill.com/2023/09/14/whose-cve-is-it-anyway",
+     "https://blog.isosceles.com/the-webp-0day",
+     "https://en.bandisoft.com/honeyview/history",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6T655QF7CQ3DYAMPFV7IECQYGDEUIVVT",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/FYYKLG6CRGEDTNRBSU26EEWAO6D6U645",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KUQ7CTX3W372X3UY56VVNAHCH6H2F4X3",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/OZDGWWMJREPAGKWCJKSCM4WYLANSKIFX",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/PYZV7TMKF4QHZ54SFJX54BDN52VHGGCX",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WHOLML7N2G5KCAZXFWC5IDFFHSQS5SDB",
+     "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WTRUIS3564P7ZLM2S2IH4Y4KZ327LI4I"
+    ],
+    "description": "libwebp: OOB write in BuildHuffmanTable",
+    "cvss": [
+     {
+      "type": "Secondary",
+      "version": "3.1",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+      "metrics": {
+       "baseScore": 8.8,
+       "exploitabilityScore": 2.9,
+       "impactScore": 5.9
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "knownExploited": [
+     {
+      "cve": "CVE-2023-4863",
+      "vendorProject": "Google",
+      "product": "Chromium WebP",
+      "dateAdded": "2023-09-13",
+      "requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+      "dueDate": "2023-10-04",
+      "knownRansomwareCampaignUse": "unknown",
+      "urls": [
+       "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html?m=1",
+       "https://nvd.nist.gov/vuln/detail/CVE-2023-4863"
+      ],
+      "cwes": [
+       "CWE-787"
+      ]
+     }
+    ],
+    "epss": [
+     {
+      "cve": "CVE-2023-4863",
+      "epss": 0.99979,
+      "percentile": 0.9998,
+      "date": "2026-10-05"
+     }
+    ],
+    "cwes": [
+     {
+      "cve": "CVE-2023-4863",
+      "cwe": "CWE-787",
+      "source": "nvd@nist.gov",
+      "type": "Primary"
+     },
+     {
+      "cve": "CVE-2023-4863",
+      "cwe": "CWE-787",
+      "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "type": "Secondary"
+     }
+    ],
+    "fix": {
+     "versions": [
+      "10.0.1"
+     ],
+     "state": "fixed",
+     "available": [
+      {
+       "version": "10.0.1",
+       "date": "2023-10-04",
+       "kind": "first-observed"
+      }
+     ]
+    },
+    "advisories": [],
+    "risk": 85.57500000000002
+   },
+   "relatedVulnerabilities": [
+    {
+     "id": "CVE-2023-4863",
+     "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2023-4863",
+     "namespace": "nvd:cpe",
+     "severity": "High",
+     "urls": [
+      "http://www.openwall.com/lists/oss-security/2023/09/21/4",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/1",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/3",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/4",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/5",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/6",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/7",
+      "http://www.openwall.com/lists/oss-security/2023/09/22/8",
+      "http://www.openwall.com/lists/oss-security/2023/09/26/1",
+      "http://www.openwall.com/lists/oss-security/2023/09/26/7",
+      "http://www.openwall.com/lists/oss-security/2023/09/28/1",
+      "http://www.openwall.com/lists/oss-security/2023/09/28/2",
+      "http://www.openwall.com/lists/oss-security/2023/09/28/4",
+      "https://adamcaudill.com/2023/09/14/whose-cve-is-it-anyway/",
+      "https://blog.isosceles.com/the-webp-0day/",
+      "https://bugzilla.suse.com/show_bug.cgi?id=1215231",
+      "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html",
+      "https://crbug.com/1479274",
+      "https://en.bandisoft.com/honeyview/history/",
+      "https://github.com/webmproject/libwebp/commit/902bc9190331343b2017211debcec8d2ab87e17a",
+      "https://github.com/webmproject/libwebp/releases/tag/v1.3.2",
+      "https://lists.debian.org/debian-lts-announce/2023/09/msg00015.html",
+      "https://lists.debian.org/debian-lts-announce/2023/09/msg00016.html",
+      "https://lists.debian.org/debian-lts-announce/2023/09/msg00017.html",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6T655QF7CQ3DYAMPFV7IECQYGDEUIVVT/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/FYYKLG6CRGEDTNRBSU26EEWAO6D6U645/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KUQ7CTX3W372X3UY56VVNAHCH6H2F4X3/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/OZDGWWMJREPAGKWCJKSCM4WYLANSKIFX/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/PYZV7TMKF4QHZ54SFJX54BDN52VHGGCX/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WHOLML7N2G5KCAZXFWC5IDFFHSQS5SDB/",
+      "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WTRUIS3564P7ZLM2S2IH4Y4KZ327LI4I/",
+      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-4863",
+      "https://news.ycombinator.com/item?id=37478403",
+      "https://security-tracker.debian.org/tracker/CVE-2023-4863",
+      "https://security.gentoo.org/glsa/202309-05",
+      "https://security.gentoo.org/glsa/202401-10",
+      "https://security.netapp.com/advisory/ntap-20230929-0011/",
+      "https://sethmlarson.dev/security-developer-in-residence-weekly-report-16",
+      "https://stackdiary.com/critical-vulnerability-in-webp-codec-cve-2023-4863/",
+      "https://www.bentley.com/advisories/be-2023-0001/",
+      "https://www.bleepingcomputer.com/news/google/google-fixes-another-chrome-zero-day-bug-exploited-in-attacks/",
+      "https://www.debian.org/security/2023/dsa-5496",
+      "https://www.debian.org/security/2023/dsa-5497",
+      "https://www.debian.org/security/2023/dsa-5498",
+      "https://www.mozilla.org/en-US/security/advisories/mfsa2023-40/",
+      "https://www.vicarius.io/vsociety/posts/zero-day-webp-vulnerability-cve-2023-4863",
+      "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-4863"
+     ],
+     "description": "Heap buffer overflow in libwebp in Google Chrome prior to 116.0.5845.187 and libwebp 1.3.2 allowed a remote attacker to perform an out of bounds memory write via a crafted HTML page. (Chromium security severity: Critical)",
+     "cvss": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "metrics": {
+        "baseScore": 8.8,
+        "exploitabilityScore": 2.9,
+        "impactScore": 5.9
+       },
+       "vendorMetadata": {}
+      },
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+       "metrics": {
+        "baseScore": 8.8,
+        "exploitabilityScore": 2.9,
+        "impactScore": 5.9
+       },
+       "vendorMetadata": {}
+      }
+     ],
+     "knownExploited": [
+      {
+       "cve": "CVE-2023-4863",
+       "vendorProject": "Google",
+       "product": "Chromium WebP",
+       "dateAdded": "2023-09-13",
+       "requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+       "dueDate": "2023-10-04",
+       "knownRansomwareCampaignUse": "unknown",
+       "urls": [
+        "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html?m=1",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-4863"
+       ],
+       "cwes": [
+        "CWE-787"
+       ]
+      }
+     ],
+     "epss": [
+      {
+       "cve": "CVE-2023-4863",
+       "epss": 0.99979,
+       "percentile": 0.9998,
+       "date": "2026-10-05"
+      }
+     ],
+     "cwes": [
+      {
+       "cve": "CVE-2023-4863",
+       "cwe": "CWE-787",
+       "source": "nvd@nist.gov",
+       "type": "Primary"
+      },
+      {
+       "cve": "CVE-2023-4863",
+       "cwe": "CWE-787",
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary"
+      }
+     ]
+    }
+   ],
+   "matchDetails": [
+    {
+     "type": "exact-direct-match",
+     "matcher": "python-matcher",
+     "searchedBy": {
+      "language": "python",
+      "namespace": "github:language:python",
+      "package": {
+       "name": "pillow",
+       "version": "9.4.0"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "GHSA-j7hp-h8jx-5ppr",
+      "versionConstraint": "<10.0.1 (python)"
+     },
+     "fix": {
+      "suggestedVersion": "10.0.1"
+     }
+    }
+   ],
+   "artifact": {
+    "id": "a8d6464832ea5fb8",
+    "name": "pillow",
+    "version": "9.4.0",
+    "type": "python",
+    "locations": [
+     {
+      "path": "/requirements.txt",
+      "accessPath": "/requirements.txt",
+      "annotations": {
+       "evidence": "primary"
+      }
+     }
+    ],
+    "language": "python",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:python-pillow:python-pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-pillow:python_pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_pillow:python-pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_pillow:python_pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:pillow:python-pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:pillow:python_pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-pillow:pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python-pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python_pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_pillow:pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:pillow:pillow:9.4.0:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:pillow:9.4.0:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:pypi/pillow@9.4.0",
+    "upstreams": []
+   }
+  },
+  {
+   "vulnerability": {
+    "id": "GHSA-qmf9-6jqf-j8fq",
+    "dataSource": "https://github.com/advisories/GHSA-qmf9-6jqf-j8fq",
+    "namespace": "github:language:python",
+    "severity": "High",
+    "urls": [
+     "https://nvd.nist.gov/vuln/detail/CVE-2023-46695",
+     "https://groups.google.com/forum/#!forum/django-announce",
+     "https://github.com/django/django/commit/048a9ebb6ea468426cb4e57c71572cbbd975517f",
+     "https://github.com/django/django/commit/4965bfdde2e5a5c883685019e57d123a3368a75e",
+     "https://github.com/django/django/commit/f9a7fb8466a7ba4857eaf930099b5258f3eafb2b",
+     "https://github.com/pypa/advisory-database/tree/main/vulns/django/PYSEC-2023-222.yaml",
+     "https://groups.google.com/forum/#%21forum/django-announce",
+     "https://docs.djangoproject.com/en/4.2/releases/security",
+     "https://security.netapp.com/advisory/ntap-20231214-0001",
+     "https://www.djangoproject.com/weblog/2023/nov/01/security-releases"
+    ],
+    "description": "Django potential denial of service vulnerability in UsernameField on Windows",
+    "cvss": [
+     {
+      "type": "Secondary",
+      "version": "3.1",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "metrics": {
+       "baseScore": 7.5,
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      },
+      "vendorMetadata": {}
+     },
+     {
+      "type": "Secondary",
+      "version": "4.0",
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+      "metrics": {
+       "baseScore": 8.7
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "epss": [
+     {
+      "cve": "CVE-2023-46695",
+      "epss": 0.49774,
+      "percentile": 0.98866,
+      "date": "2026-10-05"
+     }
+    ],
+    "cwes": [
+     {
+      "cve": "CVE-2023-46695",
+      "cwe": "CWE-770",
+      "source": "nvd@nist.gov",
+      "type": "Primary"
+     }
+    ],
+    "fix": {
+     "versions": [
+      "3.2.23"
+     ],
+     "state": "fixed",
+     "available": [
+      {
+       "version": "3.2.23",
+       "date": "2023-11-03",
+       "kind": "first-observed"
+      }
+     ]
+    },
+    "advisories": [],
+    "risk": 38.82372
+   },
+   "relatedVulnerabilities": [
+    {
+     "id": "CVE-2023-46695",
+     "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2023-46695",
+     "namespace": "nvd:cpe",
+     "severity": "High",
+     "urls": [
+      "https://docs.djangoproject.com/en/4.2/releases/security/",
+      "https://groups.google.com/forum/#%21forum/django-announce",
+      "https://security.netapp.com/advisory/ntap-20231214-0001/",
+      "https://www.djangoproject.com/weblog/2023/nov/01/security-releases/"
+     ],
+     "description": "An issue was discovered in Django 3.2 before 3.2.23, 4.1 before 4.1.13, and 4.2 before 4.2.7. The NFKC normalization is slow on Windows. As a consequence, django.contrib.auth.forms.UsernameField is subject to a potential DoS (denial of service) attack via certain inputs with a very large number of Unicode characters.",
+     "cvss": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "metrics": {
+        "baseScore": 7.5,
+        "exploitabilityScore": 3.9,
+        "impactScore": 3.6
+       },
+       "vendorMetadata": {}
+      }
+     ],
+     "epss": [
+      {
+       "cve": "CVE-2023-46695",
+       "epss": 0.49774,
+       "percentile": 0.98866,
+       "date": "2026-10-05"
+      }
+     ],
+     "cwes": [
+      {
+       "cve": "CVE-2023-46695",
+       "cwe": "CWE-770",
+       "source": "nvd@nist.gov",
+       "type": "Primary"
+      }
+     ]
+    }
+   ],
+   "matchDetails": [
+    {
+     "type": "exact-direct-match",
+     "matcher": "python-matcher",
+     "searchedBy": {
+      "language": "python",
+      "namespace": "github:language:python",
+      "package": {
+       "name": "django",
+       "version": "3.2.18"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "GHSA-qmf9-6jqf-j8fq",
+      "versionConstraint": ">=3.2a1,<3.2.23 (python)"
+     },
+     "fix": {
+      "suggestedVersion": "3.2.23"
+     }
+    }
+   ],
+   "artifact": {
+    "id": "aa79995ad17227d0",
+    "name": "django",
+    "version": "3.2.18",
+    "type": "python",
+    "locations": [
+     {
+      "path": "/dockerized_labs/sensitive_data_exposure/requirements.txt",
+      "accessPath": "/dockerized_labs/sensitive_data_exposure/requirements.txt",
+      "annotations": {
+       "evidence": "primary"
+      }
+     }
+    ],
+    "language": "python",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:python-django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:django:3.2.18:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:pypi/django@3.2.18",
+    "upstreams": []
+   }
+  },
+  {
+   "vulnerability": {
+    "id": "GHSA-qmf9-6jqf-j8fq",
+    "dataSource": "https://github.com/advisories/GHSA-qmf9-6jqf-j8fq",
+    "namespace": "github:language:python",
+    "severity": "High",
+    "urls": [
+     "https://nvd.nist.gov/vuln/detail/CVE-2023-46695",
+     "https://groups.google.com/forum/#!forum/django-announce",
+     "https://github.com/django/django/commit/048a9ebb6ea468426cb4e57c71572cbbd975517f",
+     "https://github.com/django/django/commit/4965bfdde2e5a5c883685019e57d123a3368a75e",
+     "https://github.com/django/django/commit/f9a7fb8466a7ba4857eaf930099b5258f3eafb2b",
+     "https://github.com/pypa/advisory-database/tree/main/vulns/django/PYSEC-2023-222.yaml",
+     "https://groups.google.com/forum/#%21forum/django-announce",
+     "https://docs.djangoproject.com/en/4.2/releases/security",
+     "https://security.netapp.com/advisory/ntap-20231214-0001",
+     "https://www.djangoproject.com/weblog/2023/nov/01/security-releases"
+    ],
+    "description": "Django potential denial of service vulnerability in UsernameField on Windows",
+    "cvss": [
+     {
+      "type": "Secondary",
+      "version": "3.1",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "metrics": {
+       "baseScore": 7.5,
+       "exploitabilityScore": 3.9,
+       "impactScore": 3.6
+      },
+      "vendorMetadata": {}
+     },
+     {
+      "type": "Secondary",
+      "version": "4.0",
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+      "metrics": {
+       "baseScore": 8.7
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "epss": [
+     {
+      "cve": "CVE-2023-46695",
+      "epss": 0.49774,
+      "percentile": 0.98866,
+      "date": "2026-10-05"
+     }
+    ],
+    "cwes": [
+     {
+      "cve": "CVE-2023-46695",
+      "cwe": "CWE-770",
+      "source": "nvd@nist.gov",
+      "type": "Primary"
+     }
+    ],
+    "fix": {
+     "versions": [
+      "4.2.7"
+     ],
+     "state": "fixed",
+     "available": [
+      {
+       "version": "4.2.7",
+       "date": "2023-11-03",
+       "kind": "first-observed"
+      }
+     ]
+    },
+    "advisories": [],
+    "risk": 38.82372
+   },
+   "relatedVulnerabilities": [
+    {
+     "id": "CVE-2023-46695",
+     "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2023-46695",
+     "namespace": "nvd:cpe",
+     "severity": "High",
+     "urls": [
+      "https://docs.djangoproject.com/en/4.2/releases/security/",
+      "https://groups.google.com/forum/#%21forum/django-announce",
+      "https://security.netapp.com/advisory/ntap-20231214-0001/",
+      "https://www.djangoproject.com/weblog/2023/nov/01/security-releases/"
+     ],
+     "description": "An issue was discovered in Django 3.2 before 3.2.23, 4.1 before 4.1.13, and 4.2 before 4.2.7. The NFKC normalization is slow on Windows. As a consequence, django.contrib.auth.forms.UsernameField is subject to a potential DoS (denial of service) attack via certain inputs with a very large number of Unicode characters.",
+     "cvss": [
+      {
+       "source": "nvd@nist.gov",
+       "type": "Primary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+       "metrics": {
+        "baseScore": 7.5,
+        "exploitabilityScore": 3.9,
+        "impactScore": 3.6
+       },
+       "vendorMetadata": {}
+      }
+     ],
+     "epss": [
+      {
+       "cve": "CVE-2023-46695",
+       "epss": 0.49774,
+       "percentile": 0.98866,
+       "date": "2026-10-05"
+      }
+     ],
+     "cwes": [
+      {
+       "cve": "CVE-2023-46695",
+       "cwe": "CWE-770",
+       "source": "nvd@nist.gov",
+       "type": "Primary"
+      }
+     ]
+    }
+   ],
+   "matchDetails": [
+    {
+     "type": "exact-direct-match",
+     "matcher": "python-matcher",
+     "searchedBy": {
+      "language": "python",
+      "namespace": "github:language:python",
+      "package": {
+       "name": "django",
+       "version": "4.2"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "GHSA-qmf9-6jqf-j8fq",
+      "versionConstraint": ">=4.2a1,<4.2.7 (python)"
+     },
+     "fix": {
+      "suggestedVersion": "4.2.7"
+     }
+    }
+   ],
+   "artifact": {
+    "id": "23d0d89cdc54d116",
+    "name": "django",
+    "version": "4.2",
+    "type": "python",
+    "locations": [
+     {
+      "path": "/requirements.txt",
+      "accessPath": "/requirements.txt",
+      "annotations": {
+       "evidence": "primary"
+      }
+     }
+    ],
+    "language": "python",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:python-django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:django:4.2:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:pypi/django@4.2",
+    "upstreams": []
+   }
+  },
+  {
+   "vulnerability": {
+    "id": "GHSA-frmv-pr5f-9mcr",
+    "dataSource": "https://github.com/advisories/GHSA-frmv-pr5f-9mcr",
+    "namespace": "github:language:python",
+    "severity": "Critical",
+    "urls": [
+     "https://nvd.nist.gov/vuln/detail/CVE-2025-64459",
+     "https://docs.djangoproject.com/en/dev/releases/security",
+     "https://groups.google.com/g/django-announce",
+     "https://www.djangoproject.com/weblog/2025/nov/05/security-releases",
+     "https://github.com/django/django/commit/06dd38324ac3d60d83d9f3adabf0dcdf423d2a85",
+     "https://github.com/django/django/commit/59ae82e67053d281ff4562a24bbba21299f0a7d4",
+     "https://github.com/django/django/commit/6703f364d767e949c5b0e4016433ef75063b4f9b",
+     "https://github.com/django/django/commit/72d2c87431f2ae0431d65d0ec792047f078c8241",
+     "https://shivasurya.me/security/django/2025/11/07/django-sql-injection-CVE-2025-64459.html",
+     "https://github.com/omarkurt/django-connector-CVE-2025-64459-testbed",
+     "https://github.com/pypa/advisory-database/tree/main/vulns/django/PYSEC-2025-108.yaml"
+    ],
+    "description": "Django vulnerable to SQL injection via _connector keyword argument in QuerySet and Q objects.",
+    "cvss": [
+     {
+      "type": "Secondary",
+      "version": "3.1",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "metrics": {
+       "baseScore": 9.1,
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "epss": [
+     {
+      "cve": "CVE-2025-64459",
+      "epss": 0.19396,
+      "percentile": 0.97287,
+      "date": "2026-10-05"
+     }
+    ],
+    "cwes": [
+     {
+      "cve": "CVE-2025-64459",
+      "cwe": "CWE-89",
+      "source": "6a34fbeb-21d4-45e7-8e0a-62b95bc12c92",
+      "type": "Secondary"
+     }
+    ],
+    "fix": {
+     "versions": [
+      "4.2.26"
+     ],
+     "state": "fixed",
+     "available": [
+      {
+       "version": "4.2.26",
+       "date": "2025-11-06",
+       "kind": "first-observed"
+      }
+     ]
+    },
+    "advisories": [],
+    "risk": 17.55338
+   },
+   "relatedVulnerabilities": [
+    {
+     "id": "CVE-2025-64459",
+     "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2025-64459",
+     "namespace": "nvd:cpe",
+     "severity": "Critical",
+     "urls": [
+      "https://docs.djangoproject.com/en/dev/releases/security/",
+      "https://groups.google.com/g/django-announce",
+      "https://www.djangoproject.com/weblog/2025/nov/05/security-releases/",
+      "https://shivasurya.me/security/django/2025/11/07/django-sql-injection-CVE-2025-64459.html"
+     ],
+     "description": "An issue was discovered in 5.1 before 5.1.14, 4.2 before 4.2.26, and 5.2 before 5.2.8.\nThe methods `QuerySet.filter()`, `QuerySet.exclude()`, and `QuerySet.get()`, and the class `Q()`, are subject to SQL injection when using a suitably crafted dictionary, with dictionary expansion, as the `_connector` argument.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank cyberstan for reporting this issue.",
+     "cvss": [
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "metrics": {
+        "baseScore": 9.1,
+        "exploitabilityScore": 3.9,
+        "impactScore": 5.2
+       },
+       "vendorMetadata": {}
+      }
+     ],
+     "epss": [
+      {
+       "cve": "CVE-2025-64459",
+       "epss": 0.19396,
+       "percentile": 0.97287,
+       "date": "2026-10-05"
+      }
+     ],
+     "cwes": [
+      {
+       "cve": "CVE-2025-64459",
+       "cwe": "CWE-89",
+       "source": "6a34fbeb-21d4-45e7-8e0a-62b95bc12c92",
+       "type": "Secondary"
+      }
+     ]
+    }
+   ],
+   "matchDetails": [
+    {
+     "type": "exact-direct-match",
+     "matcher": "python-matcher",
+     "searchedBy": {
+      "language": "python",
+      "namespace": "github:language:python",
+      "package": {
+       "name": "django",
+       "version": "3.2.18"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "GHSA-frmv-pr5f-9mcr",
+      "versionConstraint": "<4.2.26 (python)"
+     },
+     "fix": {
+      "suggestedVersion": "4.2.26"
+     }
+    }
+   ],
+   "artifact": {
+    "id": "aa79995ad17227d0",
+    "name": "django",
+    "version": "3.2.18",
+    "type": "python",
+    "locations": [
+     {
+      "path": "/dockerized_labs/sensitive_data_exposure/requirements.txt",
+      "accessPath": "/dockerized_labs/sensitive_data_exposure/requirements.txt",
+      "annotations": {
+       "evidence": "primary"
+      }
+     }
+    ],
+    "language": "python",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:python-django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python-django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python_django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:django:3.2.18:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:django:3.2.18:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:pypi/django@3.2.18",
+    "upstreams": []
+   }
+  },
+  {
+   "vulnerability": {
+    "id": "GHSA-frmv-pr5f-9mcr",
+    "dataSource": "https://github.com/advisories/GHSA-frmv-pr5f-9mcr",
+    "namespace": "github:language:python",
+    "severity": "Critical",
+    "urls": [
+     "https://nvd.nist.gov/vuln/detail/CVE-2025-64459",
+     "https://docs.djangoproject.com/en/dev/releases/security",
+     "https://groups.google.com/g/django-announce",
+     "https://www.djangoproject.com/weblog/2025/nov/05/security-releases",
+     "https://github.com/django/django/commit/06dd38324ac3d60d83d9f3adabf0dcdf423d2a85",
+     "https://github.com/django/django/commit/59ae82e67053d281ff4562a24bbba21299f0a7d4",
+     "https://github.com/django/django/commit/6703f364d767e949c5b0e4016433ef75063b4f9b",
+     "https://github.com/django/django/commit/72d2c87431f2ae0431d65d0ec792047f078c8241",
+     "https://shivasurya.me/security/django/2025/11/07/django-sql-injection-CVE-2025-64459.html",
+     "https://github.com/omarkurt/django-connector-CVE-2025-64459-testbed",
+     "https://github.com/pypa/advisory-database/tree/main/vulns/django/PYSEC-2025-108.yaml"
+    ],
+    "description": "Django vulnerable to SQL injection via _connector keyword argument in QuerySet and Q objects.",
+    "cvss": [
+     {
+      "type": "Secondary",
+      "version": "3.1",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "metrics": {
+       "baseScore": 9.1,
+       "exploitabilityScore": 3.9,
+       "impactScore": 5.2
+      },
+      "vendorMetadata": {}
+     }
+    ],
+    "epss": [
+     {
+      "cve": "CVE-2025-64459",
+      "epss": 0.19396,
+      "percentile": 0.97287,
+      "date": "2026-10-05"
+     }
+    ],
+    "cwes": [
+     {
+      "cve": "CVE-2025-64459",
+      "cwe": "CWE-89",
+      "source": "6a34fbeb-21d4-45e7-8e0a-62b95bc12c92",
+      "type": "Secondary"
+     }
+    ],
+    "fix": {
+     "versions": [
+      "4.2.26"
+     ],
+     "state": "fixed",
+     "available": [
+      {
+       "version": "4.2.26",
+       "date": "2025-11-06",
+       "kind": "first-observed"
+      }
+     ]
+    },
+    "advisories": [],
+    "risk": 17.55338
+   },
+   "relatedVulnerabilities": [
+    {
+     "id": "CVE-2025-64459",
+     "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2025-64459",
+     "namespace": "nvd:cpe",
+     "severity": "Critical",
+     "urls": [
+      "https://docs.djangoproject.com/en/dev/releases/security/",
+      "https://groups.google.com/g/django-announce",
+      "https://www.djangoproject.com/weblog/2025/nov/05/security-releases/",
+      "https://shivasurya.me/security/django/2025/11/07/django-sql-injection-CVE-2025-64459.html"
+     ],
+     "description": "An issue was discovered in 5.1 before 5.1.14, 4.2 before 4.2.26, and 5.2 before 5.2.8.\nThe methods `QuerySet.filter()`, `QuerySet.exclude()`, and `QuerySet.get()`, and the class `Q()`, are subject to SQL injection when using a suitably crafted dictionary, with dictionary expansion, as the `_connector` argument.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank cyberstan for reporting this issue.",
+     "cvss": [
+      {
+       "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+       "type": "Secondary",
+       "version": "3.1",
+       "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+       "metrics": {
+        "baseScore": 9.1,
+        "exploitabilityScore": 3.9,
+        "impactScore": 5.2
+       },
+       "vendorMetadata": {}
+      }
+     ],
+     "epss": [
+      {
+       "cve": "CVE-2025-64459",
+       "epss": 0.19396,
+       "percentile": 0.97287,
+       "date": "2026-10-05"
+      }
+     ],
+     "cwes": [
+      {
+       "cve": "CVE-2025-64459",
+       "cwe": "CWE-89",
+       "source": "6a34fbeb-21d4-45e7-8e0a-62b95bc12c92",
+       "type": "Secondary"
+      }
+     ]
+    }
+   ],
+   "matchDetails": [
+    {
+     "type": "exact-direct-match",
+     "matcher": "python-matcher",
+     "searchedBy": {
+      "language": "python",
+      "namespace": "github:language:python",
+      "package": {
+       "name": "django",
+       "version": "4.2"
+      }
+     },
+     "found": {
+      "vulnerabilityID": "GHSA-frmv-pr5f-9mcr",
+      "versionConstraint": "<4.2.26 (python)"
+     },
+     "fix": {
+      "suggestedVersion": "4.2.26"
+     }
+    }
+   ],
+   "artifact": {
+    "id": "23d0d89cdc54d116",
+    "name": "django",
+    "version": "4.2",
+    "type": "python",
+    "locations": [
+     {
+      "path": "/requirements.txt",
+      "accessPath": "/requirements.txt",
+      "annotations": {
+       "evidence": "primary"
+      }
+     }
+    ],
+    "language": "python",
+    "licenses": [],
+    "cpes": [
+     "cpe:2.3:a:python-django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python-django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python-django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:python_django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python_django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:django:django:4.2:*:*:*:*:*:*:*",
+     "cpe:2.3:a:python:django:4.2:*:*:*:*:*:*:*"
+    ],
+    "purl": "pkg:pypi/django@4.2",
+    "upstreams": []
+   }
+  }
+ ]
+}

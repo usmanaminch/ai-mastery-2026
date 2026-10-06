@@ -1,0 +1,3 @@
+asset,vendor,product,version,logs
+wiki-01,Atlassian,Confluence,8.5.3,webserver;process_creation:linux
+vpn-gw-01,Fortinet,FortiOS,7.0.12,

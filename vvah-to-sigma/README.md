@@ -1,5 +1,12 @@
 # vvah-to-sigma
 
+Two tools for the same gap: the time between "we know we're vulnerable" and "the fix is deployed."
+
+| Your code | Vendor code |
+|---|---|
+| `vvah_to_sigma`: findings from Visa's VVAH scanner become scoped Sigma rules | `exposure_to_sigma`: exploited CVEs in what you run, checked against your rules and public rules |
+
+
 Turn findings from Visa's open-source [Vulnerability Agentic Harness (VVAH)](https://github.com/visa/visa-vulnerability-agentic-harness)
 into [Sigma](https://sigmahq.io) detection rules, so a SOC can watch for exploitation of a known
 vulnerability during the window between "found" and "fix deployed."
@@ -94,3 +101,76 @@ python -m pytest -q
 
 The test fixture is a hand-written report in VVAH's Markdown format, converted to SARIF by VVAH's own
 `md_to_sarif`, so the input matches what a real scan emits.
+
+
+---
+
+# exposure_to_sigma: vendor and dependency CVEs
+
+Answers, for every CVE in what you run: **is it being exploited, and can you detect it today?**
+
+```
+ Trivy / Grype JSON ─┐
+ Inventory CSV ──────┼──► exposures ──► exploitation feeds ──► rulesets ──► logs you collect ──► verdict
+ Any scanner CSV ────┘                 (CISA KEV, EPSS,       (yours, SigmaHQ,
+                                        paid intel)            vendor packs)
+```
+
+## Verdicts
+
+| Verdict | Meaning | What to do |
+|---|---|---|
+| Detected by your rules | Your rule names the CVE and reads a log this asset sends | Confirm it's deployed |
+| Public rule available: deploy it | A public rule names it and reads a log you collect | Deploy; retire after patching |
+| Generic coverage likely (heuristic) | No rule names it, but a rule for the same weakness class reads a log you collect | Test before relying on it |
+| Rule exists, logs not collected | The rule can never fire here | Fix the log pipeline, not the rule |
+| No log signature (e.g. denial of service) | Nothing a rule could match | Patch |
+| Gap | Nothing names it, nothing generic applies | Draft a scoped rule |
+
+## Inputs
+
+| Input | Flag | Notes |
+|---|---|---|
+| Trivy JSON | `--trivy` | `trivy fs --scanners vuln --format json` |
+| Grype JSON | `--grype` | `grype dir:. -o json`; `--epss-from-grype` reuses the EPSS scores it embeds |
+| Inventory CSV | `--inventory` | `asset,vendor,product,version,logs`; matched by product name, **version not checked** |
+| Any scanner's CSV export | `--mapped-csv CSV MAPPING` | Tenable, Qualys, Wiz, Rapid7...: a YAML file names the columns |
+| CISA KEV | `--kev` | `known_exploited_vulnerabilities.json` from cisagov/kev-data |
+| FIRST EPSS | `--epss` | Daily CSV from first.org; CVEs above `--likely` (default 0.1) are prioritised |
+| Paid threat intel | `--feed EXPORT MAPPING` | CSV or JSON export plus a field mapping |
+| Rulesets | `--own-rules`, `--public-rules` | Any Sigma folders; repeatable |
+
+`logs` (in the inventory, or `--logs` for scanner inputs) lists the log sources that asset sends to your SIEM,
+using Sigma's names: `webserver`, `proxy`, `process_creation:linux`, `process_creation:windows`, `fortios`,
+`paloalto`, `cisco`. No inventory tool exports this today, so it is the one column you maintain by hand.
+
+API connectors for scanners and intel platforms would implement the same interfaces as the file adapters
+(`load_x(...) -> list[Exposure]`, `feed.lookup(cve) -> ExploitSignal`). Example mappings in
+`examples/example-corp/` use illustrative column names: set them to your export's real headers.
+
+## Run the examples
+
+```bash
+git clone --depth 1 https://github.com/cisagov/kev-data /tmp/kev-data
+git clone --depth 1 https://github.com/SigmaHQ/sigma /tmp/sigma
+
+python -m exposure_to_sigma --kev /tmp/kev-data/known_exploited_vulnerabilities.json \
+  --inventory examples/example-corp/inventory.csv \
+  --mapped-csv examples/example-corp/scanner-export.csv examples/example-corp/scanner-mapping.yaml \
+  --asset hr-portal-01 --logs "webserver;process_creation:linux" \
+  --own-rules examples/example-corp/rules \
+  --public-rules /tmp/sigma/rules --public-rules /tmp/sigma/rules-emerging-threats \
+  --out out/example-corp
+```
+
+Example Corp is fictional. Its inventory, rules and exports exist only to exercise every verdict.
+
+## Limits
+
+- **Inventory matches ignore versions.** CISA's catalog lists products, not affected versions, so a product
+  CSV over-reports. Feed it scanner output for version-accurate results.
+- **"Generic coverage likely" is a heuristic** from CWE tags and rule titles. CWE tags can mislead: NVD tags
+  some Django denial-of-service bugs as buffer overflows. Treat it as a lead, not a guarantee.
+- **Native SIEM rules (SPL, YARA-L, KQL) are not analysed.** Only Sigma folders. Reading what an untagged
+  native query detects is a separate problem.
+- Test fixtures include rules copied from SigmaHQ under the Detection Rule License 1.1 (see the NOTICE there).

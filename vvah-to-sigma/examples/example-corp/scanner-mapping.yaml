@@ -1,0 +1,9 @@
+# Example column mapping for a commercial scanner's CSV export.
+# Column names here are illustrative. Set them to match your own export's headers.
+source: commercial-scanner-export
+columns:
+  asset: "Host"
+  cve: "CVE"
+  product: "Plugin Name"
+  version: "Version"
+  fixed_version: "Solution"

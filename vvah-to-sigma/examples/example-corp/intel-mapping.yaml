@@ -1,0 +1,8 @@
+# Example field mapping for a paid threat-intel export. Field names are illustrative.
+format: csv
+source: sample-paid-feed
+fields:
+  cve: "cve_id"
+  exploited: "exploited"
+  probability: "score"
+  note: "summary"
