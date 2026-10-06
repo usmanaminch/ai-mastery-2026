@@ -1,0 +1,12 @@
+# VVAH model overlay: Anthropic, budget.
+# High-volume detection stages on Sonnet; verification (the stage that rejects
+# false positives) stays on Opus. Cost and quality vs. the default are NOT yet
+# measured by this project.
+models:
+  autoexclude:    {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  graph_annotate: {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  threatmodel:    {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  decompose:      {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  deepdive:       {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  dedup:          {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}
+  chain:          {id: claude-sonnet-4-6, via: deepagents, provider: anthropic}

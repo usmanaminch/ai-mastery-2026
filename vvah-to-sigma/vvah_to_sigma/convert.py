@@ -173,7 +173,8 @@ def convert(sarif_path: Path, out_dir: Path, routes_path: Path | None = None,
                     files.append(f"shared_{_slug(det.name)}.yml")
                     continue
                 rule = build_rule(f, det, routes, author)
-                name = f"{_slug(f.cwe_id or 'unknown')}_{_slug(det.name)}_{f.finding_id[:8]}.yml"
+                short = hashlib.sha256(f.finding_id.encode()).hexdigest()[:10]
+                name = f"{_slug(f.cwe_id or 'unknown')}_{_slug(det.name)}_{short}.yml"
                 (rules_dir / name).write_text(yaml.safe_dump(rule, sort_keys=False, allow_unicode=True),
                                               encoding="utf-8")
                 files.append(name)

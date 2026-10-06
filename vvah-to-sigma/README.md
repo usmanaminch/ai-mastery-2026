@@ -56,6 +56,12 @@ entries win over derived ones:
 
 `--min-confidence 0.8` skips rule generation for low-confidence findings (they still appear in the report).
 
+## Which model runs the scan
+
+The converter uses no LLM. The scan does, and you choose which: see
+[`model-profiles/`](model-profiles/README.md) for Anthropic default, an Anthropic budget profile, and any
+OpenAI-compatible endpoint (Gemini, local Ollama or vLLM).
+
 ## Validate and compile
 
 ```bash

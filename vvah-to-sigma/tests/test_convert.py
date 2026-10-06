@@ -90,3 +90,16 @@ def test_app_wide_rules_are_merged_not_duplicated(tmp_path):
     assert sum(n.startswith("shared_") for n in names) == len({n for n in names if n.startswith("shared_")})
     shared = yaml.safe_load((tmp_path / "rules" / "shared_app_runtime_child_shell.yml").read_text())
     assert "CWE-502" in shared["description"] and "CWE-78" in shared["description"]
+
+
+def test_rule_filenames_do_not_collide_on_shared_id_prefixes(tmp_path):
+    import json
+    sarif = json.loads(SARIF.read_text())
+    for i, r in enumerate(sarif["runs"][0]["results"]):
+        r.setdefault("partialFingerprints", {})["vvaFindingId/v1"] = f"vvaf1_{i:04d}"
+    p = tmp_path / "prefixed.sarif"
+    p.write_text(json.dumps(sarif))
+    convert(p, tmp_path / "out", FIX / "routes.example.yaml")
+    per_finding = [n for n in (x.name for x in (tmp_path / "out" / "rules").glob("*.yml"))
+                   if not n.startswith("shared_")]
+    assert len(per_finding) == len(set(per_finding)) and len(per_finding) > 1

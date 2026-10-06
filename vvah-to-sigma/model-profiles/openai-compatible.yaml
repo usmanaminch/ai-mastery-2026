@@ -1,0 +1,36 @@
+# VVAH model overlay: any OpenAI-compatible endpoint (Gemini's OpenAI-compatible
+# API, a local Ollama or vLLM server, or another vendor).
+#
+# Set in .env (never in this file):
+#   OPENAI_API_KEY=<key for that endpoint>
+#   OPENAI_BASE_URL=<that endpoint's OpenAI-compatible base URL>
+# Replace MODEL_ID below with a model your endpoint serves.
+#
+# Every role uses the direct `via: openai` route. VVAH's docs warn that Gemini's
+# multi-step roles (preprocess, verify) fail on the default `via: deepagents` route;
+# `via: openai` replays tool calls intact. Not yet measured by this project.
+models:
+  autoexclude:    {id: MODEL_ID, via: openai}
+  graph_annotate: {id: MODEL_ID, via: openai}
+  preprocess:     {id: MODEL_ID, via: openai}
+  threatmodel:    {id: MODEL_ID, via: openai}
+  decompose:      {id: MODEL_ID, via: openai}
+  deepdive:       {id: MODEL_ID, via: openai}
+  verify:         {id: MODEL_ID, via: openai}
+  dedup:          {id: MODEL_ID, via: openai}
+  chain:          {id: MODEL_ID, via: openai}
+
+  # Stages after detection (auto-fix, fix validation, live exploit verification).
+  # vvah-to-sigma stops at s9 and never runs them, but VVAH's readiness check expects
+  # a model for each, so they point at the same endpoint.
+  remediate: {id: MODEL_ID, via: deepagents, provider: openai}
+  validate:
+    orchestrator:        {id: MODEL_ID, via: deepagents, provider: openai}
+    security_architect:  {id: MODEL_ID}
+    penetration_tester:  {id: MODEL_ID}
+    cross_repo_analyzer: {id: MODEL_ID}
+  exploit_verification:
+    attacker: {id: MODEL_ID, via: deepagents, provider: openai}
+    judge:    {id: MODEL_ID, via: deepagents, provider: openai}
+    classify: {id: MODEL_ID, via: deepagents, provider: openai}
+    mapper:   {id: MODEL_ID, via: deepagents, provider: openai}
