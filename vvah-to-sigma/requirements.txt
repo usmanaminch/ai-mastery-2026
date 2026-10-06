@@ -1,0 +1,6 @@
+pyyaml>=6
+sigma-cli>=3
+pySigma-backend-splunk
+pySigma-backend-elasticsearch
+pySigma-backend-secops
+pytest

@@ -1,0 +1,14 @@
+name: VVAH webserver fields to Google SecOps UDM
+priority: 10
+transformations:
+  - id: web_fields_to_udm
+    type: field_name_mapping
+    mapping:
+      cs-uri-query: target.url
+      cs-uri-stem: target.url
+      cs-method: network.http.method
+      sc-status: network.http.response_code
+      c-ip: principal.ip
+    rule_conditions:
+      - type: logsource
+        category: webserver

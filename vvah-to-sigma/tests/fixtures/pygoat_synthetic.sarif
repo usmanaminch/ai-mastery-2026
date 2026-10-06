@@ -1,0 +1,552 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Agentic SAST",
+          "version": "1.4.0",
+          "rules": [
+            {
+              "id": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+              "name": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+              "shortDescription": {
+                "text": "Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)"
+              }
+            },
+            {
+              "id": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+              "name": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+              "shortDescription": {
+                "text": "Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)"
+              }
+            },
+            {
+              "id": "CWE-918: Server-Side Request Forgery (SSRF)",
+              "name": "CWE-918: Server-Side Request Forgery (SSRF)",
+              "shortDescription": {
+                "text": "Server-Side Request Forgery (SSRF)"
+              }
+            },
+            {
+              "id": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+              "name": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+              "shortDescription": {
+                "text": "Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)"
+              }
+            },
+            {
+              "id": "CWE-502: Deserialization of Untrusted Data",
+              "name": "CWE-502: Deserialization of Untrusted Data",
+              "shortDescription": {
+                "text": "Deserialization of Untrusted Data"
+              }
+            },
+            {
+              "id": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+              "name": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+              "shortDescription": {
+                "text": "Improper Neutralization of Input During Web Page Generation (Cross-site Scripting)"
+              }
+            },
+            {
+              "id": "CWE-798: Use of Hard-coded Credentials",
+              "name": "CWE-798: Use of Hard-coded Credentials",
+              "shortDescription": {
+                "text": "Use of Hard-coded Credentials"
+              }
+            },
+            {
+              "id": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+              "name": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+              "shortDescription": {
+                "text": "Use of a Broken or Risky Cryptographic Algorithm"
+              }
+            },
+            {
+              "id": "CWE-639: Authorization Bypass Through User-Controlled Key",
+              "name": "CWE-639: Authorization Bypass Through User-Controlled Key",
+              "shortDescription": {
+                "text": "Authorization Bypass Through User-Controlled Key"
+              }
+            }
+          ],
+          "supportedTaxonomies": [
+            {
+              "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+            }
+          ]
+        }
+      },
+      "taxonomies": [
+        {
+          "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3",
+          "name": "CWE",
+          "organization": "MITRE",
+          "shortDescription": {
+            "text": "The MITRE Common Weakness Enumeration"
+          },
+          "informationUri": "https://cwe.mitre.org/",
+          "taxa": [
+            {
+              "id": "CWE-22",
+              "helpUri": "https://cwe.mitre.org/data/definitions/22.html",
+              "name": "Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)",
+              "shortDescription": {
+                "text": "Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)"
+              }
+            },
+            {
+              "id": "CWE-78",
+              "helpUri": "https://cwe.mitre.org/data/definitions/78.html",
+              "name": "Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)",
+              "shortDescription": {
+                "text": "Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)"
+              }
+            },
+            {
+              "id": "CWE-79",
+              "helpUri": "https://cwe.mitre.org/data/definitions/79.html",
+              "name": "Improper Neutralization of Input During Web Page Generation (Cross-site Scripting)",
+              "shortDescription": {
+                "text": "Improper Neutralization of Input During Web Page Generation (Cross-site Scripting)"
+              }
+            },
+            {
+              "id": "CWE-89",
+              "helpUri": "https://cwe.mitre.org/data/definitions/89.html",
+              "name": "Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)",
+              "shortDescription": {
+                "text": "Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)"
+              }
+            },
+            {
+              "id": "CWE-327",
+              "helpUri": "https://cwe.mitre.org/data/definitions/327.html",
+              "name": "Use of a Broken or Risky Cryptographic Algorithm",
+              "shortDescription": {
+                "text": "Use of a Broken or Risky Cryptographic Algorithm"
+              }
+            },
+            {
+              "id": "CWE-502",
+              "helpUri": "https://cwe.mitre.org/data/definitions/502.html",
+              "name": "Deserialization of Untrusted Data",
+              "shortDescription": {
+                "text": "Deserialization of Untrusted Data"
+              }
+            },
+            {
+              "id": "CWE-639",
+              "helpUri": "https://cwe.mitre.org/data/definitions/639.html",
+              "name": "Authorization Bypass Through User-Controlled Key",
+              "shortDescription": {
+                "text": "Authorization Bypass Through User-Controlled Key"
+              }
+            },
+            {
+              "id": "CWE-798",
+              "helpUri": "https://cwe.mitre.org/data/definitions/798.html",
+              "name": "Use of Hard-coded Credentials",
+              "shortDescription": {
+                "text": "Use of Hard-coded Credentials"
+              }
+            },
+            {
+              "id": "CWE-918",
+              "helpUri": "https://cwe.mitre.org/data/definitions/918.html",
+              "name": "Server-Side Request Forgery (SSRF)",
+              "shortDescription": {
+                "text": "Server-Side Request Forgery (SSRF)"
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "applicationId": "pygoat"
+      },
+      "results": [
+        {
+          "ruleId": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+          "level": "error",
+          "message": {
+            "text": "SQL injection in login lab via string-formatted query  [CVSS 9.8: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 120
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "critical",
+            "security-severity": "9.8",
+            "cvssRating": "Critical",
+            "category": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "cwe": "CWE-89 - Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)",
+            "cweId": "CWE-89",
+            "cweName": "Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)",
+            "cvssScore": 9.8,
+            "confidence": 0.92,
+            "description": "#### Description\nUser-supplied `name` and `pass` parameters are concatenated into a raw SQL query."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-89"
+            }
+          ],
+          "rank": 98.0
+        },
+        {
+          "ruleId": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+          "level": "error",
+          "message": {
+            "text": "OS command injection in DNS lookup lab  [CVSS 9.8: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 410
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "critical",
+            "security-severity": "9.8",
+            "cvssRating": "Critical",
+            "category": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "cwe": "CWE-78 - Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)",
+            "cweId": "CWE-78",
+            "cweName": "Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)",
+            "cvssScore": 9.8,
+            "confidence": 0.95,
+            "description": "#### Description\nThe `domain` parameter is passed to `subprocess.Popen(..., shell=True)`."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-78"
+            }
+          ],
+          "rank": 98.0
+        },
+        {
+          "ruleId": "CWE-918: Server-Side Request Forgery (SSRF)",
+          "level": "error",
+          "message": {
+            "text": "Server-side request forgery in URL fetch lab  [CVSS 8.6: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 880
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "security-severity": "8.6",
+            "cvssRating": "High",
+            "category": "CWE-918: Server-Side Request Forgery (SSRF)",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+            "cwe": "CWE-918 - Server-Side Request Forgery (SSRF)",
+            "cweId": "CWE-918",
+            "cweName": "Server-Side Request Forgery (SSRF)",
+            "cvssScore": 8.6,
+            "confidence": 0.88,
+            "description": "#### Description\nA user-supplied URL is fetched server-side with no allowlist."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-918"
+            }
+          ],
+          "rank": 86.0
+        },
+        {
+          "ruleId": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+          "level": "error",
+          "message": {
+            "text": "Path traversal in file read endpoint  [CVSS 7.5: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 650
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "security-severity": "7.5",
+            "cvssRating": "High",
+            "category": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "cwe": "CWE-22 - Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)",
+            "cweId": "CWE-22",
+            "cweName": "Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)",
+            "cvssScore": 7.5,
+            "confidence": 0.81,
+            "description": "#### Description\nA filename parameter is joined to a base directory without normalization."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-22"
+            }
+          ],
+          "rank": 75.0
+        },
+        {
+          "ruleId": "CWE-502: Deserialization of Untrusted Data",
+          "level": "error",
+          "message": {
+            "text": "Insecure deserialization of cookie with pickle  [CVSS 9.8: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 540
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "security-severity": "9.8",
+            "cvssRating": "Critical",
+            "category": "CWE-502: Deserialization of Untrusted Data",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "cwe": "CWE-502 - Deserialization of Untrusted Data",
+            "cweId": "CWE-502",
+            "cweName": "Deserialization of Untrusted Data",
+            "cvssScore": 9.8,
+            "confidence": 0.9,
+            "description": "#### Description\nA base64 cookie value is passed to `pickle.loads`."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-502"
+            }
+          ],
+          "rank": 98.0
+        },
+        {
+          "ruleId": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "level": "warning",
+          "message": {
+            "text": "Reflected cross-site scripting in search lab  [CVSS 6.1: CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/templates/Lab/XSS/xss_lab.html"
+                },
+                "region": {
+                  "startLine": 22
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "medium",
+            "security-severity": "6.1",
+            "cvssRating": "Medium",
+            "category": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+            "cwe": "CWE-79 - Improper Neutralization of Input During Web Page Generation (Cross-site Scripting)",
+            "cweId": "CWE-79",
+            "cweName": "Improper Neutralization of Input During Web Page Generation (Cross-site Scripting)",
+            "cvssScore": 6.1,
+            "confidence": 0.86,
+            "description": "#### Description\nThe `q` parameter is rendered with the `safe` filter."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-79"
+            }
+          ],
+          "rank": 61.0
+        },
+        {
+          "ruleId": "CWE-798: Use of Hard-coded Credentials",
+          "level": "error",
+          "message": {
+            "text": "Hardcoded Django SECRET_KEY  [CVSS 7.5: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pygoat/settings.py"
+                },
+                "region": {
+                  "startLine": 23
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "security-severity": "7.5",
+            "cvssRating": "High",
+            "category": "CWE-798: Use of Hard-coded Credentials",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "cwe": "CWE-798 - Use of Hard-coded Credentials",
+            "cweId": "CWE-798",
+            "cweName": "Use of Hard-coded Credentials",
+            "cvssScore": 7.5,
+            "confidence": 0.97,
+            "description": "#### Description\n`SECRET_KEY` is committed in source."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-798"
+            }
+          ],
+          "rank": 75.0
+        },
+        {
+          "ruleId": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+          "level": "warning",
+          "message": {
+            "text": "Weak password hashing with MD5  [CVSS 5.9: CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 300
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.9",
+            "cvssRating": "Medium",
+            "category": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+            "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "cwe": "CWE-327 - Use of a Broken or Risky Cryptographic Algorithm",
+            "cweId": "CWE-327",
+            "cweName": "Use of a Broken or Risky Cryptographic Algorithm",
+            "cvssScore": 5.9,
+            "confidence": 0.84,
+            "description": "#### Description\nPasswords are hashed with unsalted MD5."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-327"
+            }
+          ],
+          "rank": 59.0
+        },
+        {
+          "ruleId": "CWE-639: Authorization Bypass Through User-Controlled Key",
+          "level": "error",
+          "message": {
+            "text": "Insecure direct object reference on user profile  [CVSS 6.5: CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "introduction/views.py"
+                },
+                "region": {
+                  "startLine": 720
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "security-severity": "6.5",
+            "cvssRating": "Medium",
+            "category": "CWE-639: Authorization Bypass Through User-Controlled Key",
+            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+            "cwe": "CWE-639 - Authorization Bypass Through User-Controlled Key",
+            "cweId": "CWE-639",
+            "cweName": "Authorization Bypass Through User-Controlled Key",
+            "cvssScore": 6.5,
+            "confidence": 0.79,
+            "description": "#### Description\nThe `id` parameter selects any user's profile without an ownership check."
+          },
+          "taxa": [
+            {
+              "toolComponent": {
+                "name": "CWE",
+                "guid": "b7c8d9e0-1f2a-3b4c-5d6e-7f8090a1b2c3"
+              },
+              "id": "CWE-639"
+            }
+          ],
+          "rank": 65.0
+        }
+      ]
+    }
+  ]
+}
