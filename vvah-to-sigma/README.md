@@ -1,11 +1,59 @@
 # vvah-to-sigma
 
-Two tools for the same gap: the time between "we know we're vulnerable" and "the fix is deployed."
+Detection for the window between "we know we're vulnerable" and "the fix is deployed", for your own code
+and for the vendor products you run. AI does the drafting; checks and a human review decide what ships.
+
+```mermaid
+flowchart LR
+  subgraph Own["Your code"]
+    A[VVAH scan] --> B[vvah_to_sigma] --> C[Scoped rules<br>+ coverage.md]
+  end
+  subgraph Vendor["Vendor and dependency code"]
+    D[Trivy / Grype / inventory<br>/ scanner exports] --> E[exposure_to_sigma]
+    F[CISA KEV, EPSS,<br>paid intel] --> E
+    G[Sigma, Splunk, Elastic,<br>SecOps rulesets] --> E
+    E --> H{Verdict per exposure}
+    H -->|Gap or other format| I[draft: your model<br>drafts or translates]
+    I --> J[Checks: grounding,<br>logs, sigma check]
+    J --> K[Human review]
+  end
+  K --> L[Reviewed rules]
+  C --> L
+```
 
 | Your code | Vendor code |
 |---|---|
-| `vvah_to_sigma`: findings from Visa's VVAH scanner become scoped Sigma rules | `exposure_to_sigma`: exploited CVEs in what you run, checked against your rules and public rules |
+| `vvah_to_sigma`: findings from Visa's VVAH scanner become scoped Sigma rules | `exposure_to_sigma`: exploited CVEs in what you run, checked against your rules, public rules and the logs you collect; `exposure_to_sigma.draft` drafts the missing rules |
 
+## Results so far
+
+Measured on two test targets. Example Corp is fictional; its inventory exists to exercise every path.
+
+**PyGoat (your code).** VVAH confirmed 63 findings. 18 are covered by 5 scoped rules, 8 sit behind
+POST bodies that web logs don't record, 17 need behavioral baselines, 20 have no request-time signal.
+
+**Example Corp (vendor code), 48 exploited CVEs on assets that send logs**, drafted by Claude Opus 5:
+
+| Outcome | CVEs |
+|---|---|
+| Detection rule approved after human review (8 as drafted, 11 with edits) | 19 |
+| Hunting query (matches normal traffic; not an alert) | 2 |
+| Drafted, rejected in review | 4 |
+| Correctly classified: no signature (DoS) or behavioral | 5 |
+| Public text too thin: listed in `needs-input.md` | 16 |
+| Model declined (inputs contained exploit write-ups) | 2 |
+
+What moved the numbers was input, not the model: with NVD text alone, 0 of 10 CVEs got a rule.
+Translating existing Splunk and Elastic detections, and reading Nuclei scanner checks, did the rest.
+Passing the automated checks is not approval: of the 19 drafts that passed every check, 8 still needed
+edits, 2 became hunting queries and 1 was rejected. Reviewed rules and notes: [`examples/example-corp/reviewed-rules/`](examples/example-corp/reviewed-rules/).
+
+**Model choice:** use the best model you have access to. Security-specialized tiers offered to vetted
+defenders refuse less on exploit material and should do better here. See [`model-profiles/`](model-profiles/README.md).
+
+---
+
+# vvah_to_sigma: your code
 
 Turn findings from Visa's open-source [Vulnerability Agentic Harness (VVAH)](https://github.com/visa/visa-vulnerability-agentic-harness)
 into [Sigma](https://sigmahq.io) detection rules, so a SOC can watch for exploitation of a known
