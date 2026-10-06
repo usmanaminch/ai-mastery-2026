@@ -59,6 +59,7 @@ CWE_CLASS = {
 @dataclass
 class _Rule:
     path: str
+    file: str
     title: str
     logsource: dict
     cves: set[str]
@@ -80,14 +81,14 @@ class Ruleset:
                 continue
             d = docs[0]
             cves = {f"CVE-{a}-{b}" for a, b in CVE_ANY.findall(text)}
-            rule = _Rule(path=str(f.relative_to(self.folder)), title=str(d.get("title", "")),
+            rule = _Rule(path=str(f.relative_to(self.folder)), file=str(f.resolve()), title=str(d.get("title", "")),
                          logsource=d.get("logsource") or {}, cves=cves, text_lower=str(d.get("title", "")).lower())
             self.rules.append(rule)
             for c in cves:
                 self.by_cve.setdefault(c, []).append(rule)
 
     def specific(self, cve: str) -> list[RuleRef]:
-        return [RuleRef(self.name, r.path, r.title, r.logsource, "specific")
+        return [RuleRef(self.name, r.path, r.title, r.logsource, "specific", r.file)
                 for r in self.by_cve.get(cve.upper(), [])]
 
     def generic(self, cwes: list[str], exploited: bool = False) -> list[RuleRef]:
@@ -102,8 +103,39 @@ class Ruleset:
                 if cats is not None and cat not in cats:
                     continue
                 if re.search(rx, r.text_lower):
-                    hits.append(RuleRef(self.name, r.path, r.title, r.logsource, "generic"))
+                    hits.append(RuleRef(self.name, r.path, r.title, r.logsource, "generic", r.file))
         return hits
+
+
+class ForeignRuleset:
+    """Detection content in other formats: Splunk security_content (YAML with SPL), Elastic
+    detection-rules (TOML), Google SecOps community rules (YARA-L). Only CVE mentions are indexed:
+    which logs a native query reads isn't parsed, so these refs can't be checked against your logs.
+    Deprecated folders are skipped."""
+
+    FORMATS = {".yml": "splunk-spl", ".yaml": "splunk-spl", ".toml": "elastic", ".yaral": "yara-l"}
+    TITLE = {"splunk-spl": r"^name:\s*(.+)$", "elastic": r'^name\s*=\s*"(.+)"', "yara-l": r"^rule\s+(\w+)"}
+
+    def __init__(self, name: str, folder: Path):
+        self.name, self.folder = name, Path(folder)
+        self.rules: list[RuleRef] = []
+        self.by_cve: dict[str, list[RuleRef]] = {}
+        for f in sorted(self.folder.rglob("*")):
+            fmt = self.FORMATS.get(f.suffix)
+            if not fmt or not f.is_file() or any("deprecated" in part.lower() for part in f.parts):
+                continue
+            text = f.read_text(encoding="utf-8", errors="replace")
+            if fmt == "splunk-spl" and not re.search(r"^search:", text, re.M):
+                continue
+            m = re.search(self.TITLE[fmt], text, re.M)
+            ref = RuleRef(self.name, str(f.relative_to(self.folder)), m.group(1).strip() if m else f.stem,
+                          {}, "specific", str(f.resolve()), fmt)
+            self.rules.append(ref)
+            for a, b in CVE_ANY.findall(text):
+                self.by_cve.setdefault(f"CVE-{a}-{b}", []).append(ref)
+
+    def specific(self, cve: str) -> list[RuleRef]:
+        return list(self.by_cve.get(cve.upper(), []))
 
 
 def log_tokens(logsource: dict) -> set[str]:

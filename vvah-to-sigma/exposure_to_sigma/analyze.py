@@ -10,12 +10,13 @@ from .rulesets import NO_SIGNATURE as NO_SIG_CWES, Ruleset, collected
 # Verdicts, best first.
 DETECTED = "Detected by your rules"
 DEPLOY_PUBLIC = "Public rule available: deploy it"
+OTHER_FORMAT = "Public rule in another format (SPL, KQL, YARA-L): translate it"
 GENERIC = "Generic coverage likely (heuristic)"
 YOURS_NO_LOGS = "Your rule exists, but its logs are not collected"
 PUBLIC_NO_LOGS = "Public rule exists, but its logs are not collected"
 NO_SIGNATURE = "No log signature for this weakness (e.g. denial of service): patch"
 GAP = "Gap: no rule names it; draft a scoped rule"
-ORDER = [DETECTED, DEPLOY_PUBLIC, GENERIC, YOURS_NO_LOGS, PUBLIC_NO_LOGS, NO_SIGNATURE, GAP]
+ORDER = [DETECTED, DEPLOY_PUBLIC, OTHER_FORMAT, GENERIC, YOURS_NO_LOGS, PUBLIC_NO_LOGS, NO_SIGNATURE, GAP]
 
 
 @dataclass
@@ -37,7 +38,7 @@ class Verdict:
 
 
 def analyze(exposures: list[Exposure], feeds: list, own: list[Ruleset], public: list[Ruleset],
-            likely_threshold: float = 0.1) -> list[Verdict]:
+            likely_threshold: float = 0.1, other: list | None = None) -> list[Verdict]:
     out = []
     for e in exposures:
         signals = [s for s in (f.lookup(e.cve) for f in feeds) if s]
@@ -51,12 +52,12 @@ def analyze(exposures: list[Exposure], feeds: list, own: list[Ruleset], public: 
             prio = "low"
         v = Verdict(e, signals, prio)
         if prio != "low":
-            _judge(v, own, public)
+            _judge(v, own, public, other or [])
         out.append(v)
     return out
 
 
-def _judge(v: Verdict, own: list[Ruleset], public: list[Ruleset]) -> None:
+def _judge(v: Verdict, own: list[Ruleset], public: list[Ruleset], other: list) -> None:
     e = v.exposure
     candidates: list[tuple[str, RuleRef]] = []
     for rs in own:
@@ -65,7 +66,13 @@ def _judge(v: Verdict, own: list[Ruleset], public: list[Ruleset]) -> None:
     for rs in public:
         for r in rs.specific(e.cve):
             candidates.append((DEPLOY_PUBLIC if collected(r, e.logs) else PUBLIC_NO_LOGS, r))
-    if not any(c[0] in (DETECTED, DEPLOY_PUBLIC) for c in candidates):
+    if not candidates:
+        # Only when no Sigma rule names the CVE: a "logs not collected" verdict is the more useful
+        # finding, and an SPL or KQL rule for it would need the same logs.
+        for rs in other:
+            for r in rs.specific(e.cve):
+                candidates.append((OTHER_FORMAT, r))
+    if not any(c[0] in (DETECTED, DEPLOY_PUBLIC, OTHER_FORMAT) for c in candidates):
         for rs in own + public:
             for r in rs.generic(e.cwes, exploited=v.priority == "exploited"):
                 if collected(r, e.logs):

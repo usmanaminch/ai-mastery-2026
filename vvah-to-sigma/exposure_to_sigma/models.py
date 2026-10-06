@@ -39,3 +39,5 @@ class RuleRef:
     title: str
     logsource: dict
     match: str                            # "specific" or "generic"
+    file: str = ""                        # absolute path, so the drafter can read the rule
+    fmt: str = "sigma"                    # sigma | splunk-spl | elastic | yara-l

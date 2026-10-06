@@ -1,0 +1,7 @@
+name: ExampleOS Admin Creation CVE-2099-0001
+id: 00000000-0000-0000-0000-000000000001
+description: Synthetic test detection in Splunk security_content layout.
+search: '| tstats count FROM datamodel=Web WHERE Web.url="*/webui/logoutconfirm.html*logon_hash=1*" BY Web.src'
+tags:
+  cve:
+  - CVE-2099-0001

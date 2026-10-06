@@ -36,6 +36,9 @@ def render(verdicts: list[Verdict], meta: dict) -> str:
     lines += ["", "## How to read this", "",
               "- **Detected by your rules / Public rule available:** a rule that names this CVE reads a log "
               "source this asset sends. Deploy or confirm it, and retire it once patched.",
+              "- **Public rule in another format:** Splunk, Elastic or Google SecOps content names this CVE. "
+              "Deploy it if that's your SIEM, or translate it to Sigma (the drafter does this, grounded in the "
+              "source rule). Which logs it reads isn't checked.",
               "- **Generic coverage likely:** no rule names the CVE, but a rule for the same weakness class "
               "(from the CWE) reads a log you collect. A heuristic: test it before relying on it.",
               "- **Rule exists, logs not collected:** the detection exists but can never fire here. "
@@ -58,7 +61,8 @@ def write(verdicts: list[Verdict], meta: dict, out_dir: Path) -> dict:
              "source": v.exposure.source, "cwes": v.exposure.cwes,
              "notes": [f"{s.feed}: {s.note}" for s in v.signals if s.note],
              "priority": v.priority, "probability": v.probability, "ransomware": v.ransomware,
-             "verdict": v.verdict, "rules": [f"{r.ruleset}:{r.path}" for r in v.rules]} for v in verdicts]
+             "verdict": v.verdict, "rules": [f"{r.ruleset}:{r.path}" for r in v.rules],
+             "rule_files": [{"file": r.file, "format": r.fmt, "ruleset": r.ruleset} for r in v.rules]} for v in verdicts]
     (out_dir / "exposures.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")
     prio = [v for v in verdicts if v.priority != "low"]
     return {"exposures": len(verdicts), "prioritised": len(prio),

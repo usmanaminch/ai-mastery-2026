@@ -6,7 +6,7 @@ from .adapters import dedupe, load_grype, load_mapped_csv, load_product_csv, loa
 from .analyze import analyze
 from .feeds import EpssFeed, KevFeed, MappedFeed
 from .report import write
-from .rulesets import Ruleset
+from .rulesets import ForeignRuleset, Ruleset
 
 
 def main() -> None:
@@ -26,6 +26,9 @@ def main() -> None:
                     help="paid threat-intel export plus its field mapping")
     ap.add_argument("--own-rules", type=Path, action="append", default=[], help="your Sigma rules folder")
     ap.add_argument("--public-rules", type=Path, action="append", default=[], help="e.g. a SigmaHQ checkout")
+    ap.add_argument("--other-rules", type=Path, action="append", default=[],
+                    help="non-Sigma detection repos: Splunk security_content/detections, elastic/detection-rules/rules, "
+                         "chronicle/detection-rules (matched by CVE only)")
     ap.add_argument("--likely", type=float, default=0.1, help="EPSS threshold to prioritise unconfirmed CVEs")
     ap.add_argument("--out", type=Path, default=Path("out"))
     a = ap.parse_args()
@@ -52,10 +55,11 @@ def main() -> None:
 
     own = [Ruleset(f"yours:{p.name}", p) for p in a.own_rules]
     public = [Ruleset(f"public:{p.name}", p) for p in a.public_rules]
-    verdicts = analyze(exposures, feeds, own, public, a.likely)
+    other = [ForeignRuleset(f"other:{p.name}", p) for p in a.other_rules]
+    verdicts = analyze(exposures, feeds, own, public, a.likely, other)
     meta = {"CISA KEV catalog": kev.version,
             "Feeds": ", ".join(getattr(f, "source", f.name) for f in feeds),
-            "Rulesets": ", ".join(f"{r.name} ({len(r.rules)} rules)" for r in own + public) or "none"}
+            "Rulesets": ", ".join(f"{r.name} ({len(r.rules)} rules)" for r in own + public + other) or "none"}
     print(json.dumps(write(verdicts, meta, a.out), indent=2))
 
 

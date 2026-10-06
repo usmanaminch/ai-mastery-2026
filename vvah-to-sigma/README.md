@@ -122,6 +122,7 @@ Answers, for every CVE in what you run: **is it being exploited, and can you det
 |---|---|---|
 | Detected by your rules | Your rule names the CVE and reads a log this asset sends | Confirm it's deployed |
 | Public rule available: deploy it | A public rule names it and reads a log you collect | Deploy; retire after patching |
+| Public rule in another format: translate it | No Sigma rule names it, but Splunk, Elastic or SecOps content does | Deploy it natively, or let the drafter translate it |
 | Generic coverage likely (heuristic) | No rule names it, but a rule for the same weakness class reads a log you collect | Test before relying on it |
 | Rule exists, logs not collected | The rule can never fire here | Fix the log pipeline, not the rule |
 | No log signature (e.g. denial of service) | Nothing a rule could match | Patch |
@@ -139,6 +140,7 @@ Answers, for every CVE in what you run: **is it being exploited, and can you det
 | FIRST EPSS | `--epss` | Daily CSV from first.org; CVEs above `--likely` (default 0.1) are prioritised |
 | Paid threat intel | `--feed EXPORT MAPPING` | CSV or JSON export plus a field mapping |
 | Rulesets | `--own-rules`, `--public-rules` | Any Sigma folders; repeatable |
+| Other-format rules | `--other-rules` | Splunk `security_content/detections`, Elastic `detection-rules/rules`, Google SecOps `chronicle/detection-rules/rules`; matched by CVE only |
 
 `logs` (in the inventory, or `--logs` for scanner inputs) lists the log sources that asset sends to your SIEM,
 using Sigma's names: `webserver`, `proxy`, `process_creation:linux`, `process_creation:windows`, `fortios`,
@@ -167,12 +169,14 @@ Example Corp is fictional. Its inventory, rules and exports exist only to exerci
 
 ## Draft rules for the gaps
 
-`exposure_to_sigma.draft` takes the `exposures.json` above and, for each prioritised **Gap** (grouped by CVE,
-ransomware-linked and confirmed-exploited first), asks the model you choose for a scoped Sigma rule.
+`exposure_to_sigma.draft` takes the `exposures.json` above. For each prioritised **Gap** it asks the model you
+choose to draft a scoped Sigma rule; for each **Public rule in another format** it asks it to translate that rule.
+Assets that send logs come first.
 
 ```bash
 python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-refs --only-logged \
+  --nuclei /tmp/nuclei-templates \
   --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts
 ```
 
@@ -181,6 +185,14 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   `out/drafts/advisories/<CVE>.txt` (a vendor advisory, a paid intel write-up). Everything is cached. It is told
   to use only indicators stated there, and otherwise to answer `insufficient_info`, `behavioral` (an auth or MFA
   bypass that looks like a normal login) or `no_signature` (denial of service, offline attacks).
+- **Structured sources first.** Translating an existing detection is safer than drafting one, and the grounding
+  check then runs against the source rule. `--nuclei` adds the matching Nuclei template (the request a scanner sends
+  to test for the bug), which carries exact paths and has no bot walls.
+- **When public text runs out**, `needs-input.md` lists each CVE with the pages most likely to help. Open them in a
+  browser, save to `advisories/<CVE>.html` (or paste into `.txt`/`.md`), and rerun with `--cve`. Commercial
+  vulnerability intel plugs in the same way.
+- **Refusals are an outcome.** Some models decline when the input contains exploit write-ups; that's recorded as
+  `refused`, not an error.
 - **Fetched pages are untrusted input.** The model has no tools and its output is checked, so the worst a hostile
   page can do is produce a bad draft that review rejects.
 - **Rules that can fire come first.** Gaps on assets that send logs are drafted first; `--only-logged` skips the rest.
@@ -192,7 +204,9 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   mislabels like a denial-of-service bug tagged as a buffer overflow.
 - **Drafts only.** Rules are written as `status: experimental` with a deterministic ID per CVE. Nothing here
   tests them against attack or benign logs; `drafts.md` is a review sheet for a detection engineer.
-- **Your model.** `--provider anthropic` reads `ANTHROPIC_API_KEY`. `--provider openai` works with any
+- **Your model: use the best one you have access to.** Security-specialized model tiers, offered to vetted defenders
+  through verified-access programs, refuse far less on exploit material and should do better here. General models
+  work, but expect more `insufficient_info` and some `refused`. `--provider anthropic` reads `ANTHROPIC_API_KEY`. `--provider openai` works with any
   OpenAI-compatible server (`--base-url`, key from `OPENAI_API_KEY` or `--api-key-env`): OpenAI, Gemini's
   OpenAI-compatible endpoint, a local Ollama or vLLM. Keys are read from the environment and never written.
 - `--dry-run` writes the prompts without calling a model, so you can see exactly what would be sent.

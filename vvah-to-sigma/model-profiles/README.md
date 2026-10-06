@@ -10,6 +10,10 @@ one-file change.
 | `anthropic-budget.yaml` | Lower cost on Anthropic. Sonnet for high-volume stages, Opus kept for verification | Not yet |
 | `openai-compatible.yaml` | Gemini (via its OpenAI-compatible API), a local model on Ollama or vLLM, or another vendor | Not yet; passes VVAH's readiness check with no Anthropic key |
 
+**Short version: use the best model you have access to.** Security-specialized tiers, available to vetted
+defenders through verified-access programs, refuse far less on exploit work (including VVAH's exploit-verification
+stage) and should perform better. Any model below works.
+
 Model choice affects how many real vulnerabilities are found and how many false positives get through.
 Until a profile has been measured on the same app, treat its results as not comparable.
 

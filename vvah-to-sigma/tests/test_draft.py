@@ -118,3 +118,96 @@ def test_logged_gaps_sort_first(tmp_path):
     p = tmp_path / "e.json"
     p.write_text(json.dumps(rows))
     assert [g.cve for g in D.load_gaps(p)] == ["CVE-2099-0008", "CVE-2099-0009"]
+
+
+def test_api_errors_are_explained_and_temperature_is_dropped(monkeypatch):
+    import io
+    import urllib.error
+    sent = []
+
+    def fake_urlopen(req, timeout=0):
+        body = json.loads(req.data)
+        sent.append(body)
+        if "temperature" in body:
+            raise urllib.error.HTTPError(req.full_url, 400, "Bad Request", {},
+                                         io.BytesIO(b'{"error":{"message":"temperature is not supported"}}'))
+        class R:
+            def __enter__(s): return s
+            def __exit__(s, *a): return False
+            def read(s): return b'{"ok": 1}'
+        return R()
+
+    monkeypatch.setattr(D.urllib.request, "urlopen", fake_urlopen)
+    assert D._HTTPClient()._post("https://x", {}, {"model": "m", "temperature": 0}) == {"ok": 1}
+    assert "temperature" not in sent[-1]
+
+
+class SeqClient:
+    usage, last_stop = None, "end_turn"
+
+    def __init__(self, replies):
+        self.replies = list(replies)
+
+    def complete(self, system, user):
+        return self.replies.pop(0)
+
+
+def test_non_json_reply_is_retried_then_saved(tmp_path):
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    ok = json.dumps({"verdict": "insufficient_info", "reason": "r"})
+    assert D.draft_one(gap, SeqClient(["Here is my analysis...", ok]), "m", "t", tmp_path / "rules").verdict \
+        == "insufficient_info"
+    d = D.draft_one(gap, SeqClient(["prose", "more prose"]), "m", "t", tmp_path / "rules")
+    assert d.status == "error" and (tmp_path / "raw" / "CVE-2099-0001.txt").read_text() == "more prose"
+
+
+def test_no_cwe_means_no_mismatch_note(tmp_path):
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    gap.cwes = set()
+    reply = json.dumps({"verdict": "behavioral", "cwe_agrees": False, "cwe_note": "No CWE assigned"})
+    assert D.draft_one(gap, SeqClient([reply]), "m", "t", tmp_path / "rules").cwe_note == ""
+
+
+def test_other_format_rules_are_indexed_and_deprecated_skipped():
+    from exposure_to_sigma.rulesets import ForeignRuleset
+    rs = ForeignRuleset("other", F / "other")
+    assert {r.fmt for r in rs.rules} == {"splunk-spl", "elastic"}
+    assert rs.specific("CVE-2099-0001")[0].title.startswith("ExampleOS Admin")
+    assert not rs.specific("CVE-2099-0003")
+
+
+def test_other_format_beats_gap_and_drafter_translates(tmp_path):
+    from exposure_to_sigma.analyze import OTHER_FORMAT, analyze
+    from exposure_to_sigma.feeds import KevFeed
+    from exposure_to_sigma.models import Exposure
+    from exposure_to_sigma.report import write
+    from exposure_to_sigma.rulesets import ForeignRuleset
+    kev = tmp_path / "kev.json"
+    kev.write_text(json.dumps({"catalogVersion": "t", "vulnerabilities": [
+        {"cveID": "CVE-2099-0001", "cwes": [], "knownRansomwareCampaignUse": "Unknown"}]}))
+    ex = [Exposure(asset="edge-01", cve="CVE-2099-0001", logs={"webserver"})]
+    v = analyze(ex, [KevFeed(kev)], [], [], other=[ForeignRuleset("other", F / "other")])
+    assert v[0].verdict == OTHER_FORMAT
+    write(v, {}, tmp_path / "out")
+    gap = D.load_gaps(tmp_path / "out" / "exposures.json")[0]
+    assert gap.mode == "translate"
+    adv = D.advisory_for(gap, {}, tmp_path / "adv", fetch=False)
+    assert "SOURCE RULE (splunk-spl" in adv and "logon_hash=1" in adv
+    assert "translate the SOURCE RULE" in D.build_prompt(gap, adv)
+
+
+def test_nuclei_and_saved_pages_feed_the_prompt(tmp_path):
+    gap = D.Gap("CVE-2099-0004", assets=["a"])
+    (tmp_path / "CVE-2099-0004.html").write_text("<p>Vendor IOC: %EX-1-PWN</p><script>x</script>")
+    adv = D.advisory_for(gap, {}, tmp_path, False, nuclei=D.nuclei_index(F / "nuclei"))
+    assert "/cgi-bin/examplecheck.cgi" in adv and "%EX-1-PWN" in adv and "SAVED BY YOU" in adv
+
+
+def test_refusal_is_an_outcome_not_an_error(tmp_path):
+    class Refuser(SeqClient):
+        last_stop = "refusal"
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    d = D.draft_one(gap, Refuser([""]), "m", "t", tmp_path / "rules")
+    assert d.status == "refused"
+    md = D.needs_input([d], tmp_path / "adv")
+    assert "CVE-2099-0001" in md and "refused" in md

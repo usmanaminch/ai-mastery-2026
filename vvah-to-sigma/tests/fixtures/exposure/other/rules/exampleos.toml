@@ -1,0 +1,3 @@
+[rule]
+name = "ExampleOS Suspicious Login CVE-2099-0002"
+query = '''event.dataset:exampleos and message:"logon_hash"'''

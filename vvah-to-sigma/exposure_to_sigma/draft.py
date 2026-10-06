@@ -31,6 +31,7 @@ import re
 import shutil
 import subprocess
 import time
+import urllib.error
 import urllib.request
 import uuid
 from collections import defaultdict
@@ -43,15 +44,23 @@ import yaml
 from .rulesets import log_tokens
 
 GAP_PREFIX = "Gap"
+TRANSLATE_PREFIX = "Public rule in another format"
+SOURCE_RULE_CHARS = 8_000
 NS = uuid.UUID("8f6c6a52-5b1e-4c55-9d1e-7f0f3c1d2a90")
 NVD_API = "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve}"
 PAGE_CHARS = 15_000
 ADVISORY_CHARS = 45_000
 MIN_VALUE_LEN = 5
+MAX_OUTPUT = 4000
 
 SYSTEM = """You are a detection engineer writing Sigma rules for a SOC.
 
 Hard rules:
+- If the ADVISORY TEXT contains a SOURCE RULE (Splunk, Elastic or Google SecOps detection), translate
+  that rule's logic to Sigma faithfully: same values, same scope. Say in "reason" what could not be
+  expressed in Sigma (aggregations, data-model fields).
+- A SCANNER CHECK is the request a vulnerability scanner sends to test for the bug. Its path and
+  parameters are valid indicators of probing or exploitation; say which one the rule detects.
 - Use ONLY indicators stated in the ADVISORY TEXT: URL paths, parameters, process names, file
   paths, log message IDs, strings. Do not add indicators from memory, even ones you believe are
   correct; a reviewer must be able to trace every value to the text.
@@ -92,10 +101,20 @@ class _HTTPClient:
     usage = None
 
     def _post(self, url: str, headers: dict, body: dict) -> dict:
-        req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
-                                     headers={"content-type": "application/json", **headers})
-        with urllib.request.urlopen(req, timeout=180) as r:
-            return json.loads(r.read())
+        """POST JSON. Surfaces the API's error message (never the key). Some models reject sampling
+        parameters such as temperature; if the error says so, retry once without it."""
+        def send(b):
+            req = urllib.request.Request(url, data=json.dumps(b).encode(), method="POST",
+                                         headers={"content-type": "application/json", **headers})
+            with urllib.request.urlopen(req, timeout=180) as r:
+                return json.loads(r.read())
+        try:
+            return send(body)
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")[:400]
+            if exc.code == 400 and "temperature" in body and "temperature" in detail.lower():
+                return send({k: v for k, v in body.items() if k != "temperature"})
+            raise RuntimeError(f"HTTP {exc.code}: {detail}") from None
 
     def _add(self, i: int, o: int) -> None:
         self.usage = self.usage or {"input_tokens": 0, "output_tokens": 0, "calls": 0}
@@ -113,10 +132,11 @@ class AnthropicClient(_HTTPClient):
 
     def complete(self, system: str, user: str) -> str:
         d = self._post(self.url, {"x-api-key": os.environ[self.key_env], "anthropic-version": "2023-06-01"},
-                       {"model": self.model, "max_tokens": 2000, "temperature": 0, "system": system,
+                       {"model": self.model, "max_tokens": MAX_OUTPUT, "temperature": 0, "system": system,
                         "messages": [{"role": "user", "content": user}]})
         u = d.get("usage", {})
         self._add(u.get("input_tokens", 0), u.get("output_tokens", 0))
+        self.last_stop = d.get("stop_reason", "")
         return "".join(b.get("text", "") for b in d.get("content", []) if b.get("type") == "text")
 
 
@@ -134,7 +154,8 @@ class OpenAICompatClient(_HTTPClient):
                         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]})
         u = d.get("usage") or {}
         self._add(u.get("prompt_tokens", 0), u.get("completion_tokens", 0))
-        return d["choices"][0]["message"]["content"]
+        self.last_stop = d["choices"][0].get("finish_reason", "")
+        return d["choices"][0]["message"]["content"] or ""
 
 
 # ---------------------------------------------------------------- inputs
@@ -151,15 +172,25 @@ class Gap:
     probability: float = 0.0
     ransomware: bool = False
     version_unconfirmed: bool = False
+    sources: list[dict] = field(default_factory=list)   # other-format rules to translate
+
+    @property
+    def mode(self) -> str:
+        return "translate" if self.sources else "draft"
 
 
 def load_gaps(exposures_json: Path) -> list[Gap]:
     rows = json.loads(Path(exposures_json).read_text(encoding="utf-8"))
     by_cve: dict[str, Gap] = {}
     for r in rows:
-        if r.get("priority") == "low" or not str(r.get("verdict", "")).startswith(GAP_PREFIX):
+        verdict = str(r.get("verdict", ""))
+        if r.get("priority") == "low" or not verdict.startswith((GAP_PREFIX, TRANSLATE_PREFIX)):
             continue
         g = by_cve.setdefault(r["cve"], Gap(r["cve"]))
+        if verdict.startswith(TRANSLATE_PREFIX):
+            for src in r.get("rule_files") or []:
+                if src not in g.sources:
+                    g.sources.append(src)
         g.assets.append(r["asset"])
         g.products.add(" ".join(x for x in (r.get("vendor", ""), r.get("product", ""), r.get("version", "")) if x))
         g.logs |= set(r.get("logs") or [])
@@ -240,7 +271,8 @@ def reference_urls(nvd_text: str, max_refs: int = 3) -> list[str]:
     return [u for _, u in sorted(refs)[:max_refs]]
 
 
-def advisory_for(gap: Gap, kev: dict[str, str], adv_dir: Path, fetch: bool, fetch_refs: bool = False) -> str:
+def advisory_for(gap: Gap, kev: dict[str, str], adv_dir: Path, fetch: bool, fetch_refs: bool = False,
+                 nuclei: dict | None = None) -> str:
     """KEV text, plus <adv_dir>/<CVE>.txt (NVD, cached on first fetch; append a vendor advisory to it
     by hand), plus <adv_dir>/<CVE>.refs.txt (pages NVD links to, with --fetch-refs). Everything is
     cached, so reruns cost no network calls."""
@@ -266,15 +298,44 @@ def advisory_for(gap: Gap, kev: dict[str, str], adv_dir: Path, fetch: bool, fetc
                 pages.append(f"SOURCE PAGE: {url}\n{body}")
         refs_path.write_text("\n\n".join(pages) + "\n", encoding="utf-8")
     parts = [kev.get(gap.cve, "")]
+    for src in gap.sources[:2]:
+        f = Path(src.get("file", ""))
+        if f.is_file():
+            parts.append(f"SOURCE RULE ({src.get('format')}, {src.get('ruleset')}, {f.name}):\n"
+                         + f.read_text(encoding="utf-8", errors="replace")[:SOURCE_RULE_CHARS])
+    for t in (nuclei or {}).get(gap.cve, [])[:2]:
+        parts.append(f"SCANNER CHECK (Nuclei template {t.name}, MIT license):\n"
+                     + t.read_text(encoding="utf-8", errors="replace")[:SOURCE_RULE_CHARS])
     for f in (path, refs_path):
         if f.exists():
             parts.append(f.read_text(encoding="utf-8"))
+    for f in sorted(adv_dir.glob(f"{gap.cve}.*")):
+        if f in (path, refs_path) or f.suffix.lower() not in (".html", ".htm", ".md", ".txt"):
+            continue
+        body = f.read_text(encoding="utf-8", errors="replace")
+        if f.suffix.lower() in (".html", ".htm"):
+            t = _Text()
+            t.feed(body)
+            body = "\n".join(t.parts)
+        parts.append(f"SAVED BY YOU ({f.name}):\n{body[:PAGE_CHARS]}")
     return "\n\n".join(p.strip() for p in parts if p and p.strip())[:ADVISORY_CHARS]
+
+
+def nuclei_index(folder: Path | None) -> dict[str, list[Path]]:
+    """Map CVE -> Nuclei templates, by file name (nuclei-templates names them CVE-YYYY-NNNN.yaml)."""
+    idx: dict[str, list[Path]] = {}
+    if folder:
+        for f in Path(folder).rglob("CVE-*.yaml"):
+            m = re.match(r"(CVE-\d{4}-\d{4,7})", f.name, re.I)
+            if m:
+                idx.setdefault(m.group(1).upper(), []).append(f)
+    return idx
 
 
 def build_prompt(gap: Gap, advisory: str) -> str:
     return "\n".join([
         f"CVE: {gap.cve}",
+        f"TASK: {'translate the SOURCE RULE to Sigma' if gap.mode == 'translate' else 'draft a rule from the text'}",
         f"AFFECTED: {'; '.join(sorted(gap.products))} on {', '.join(sorted(gap.assets))}"
         + (" (product matched by name; affected version not confirmed)" if gap.version_unconfirmed else ""),
         f"CWE: {', '.join(sorted(gap.cwes)) or 'none listed'}",
@@ -337,7 +398,11 @@ def sigma_check(path: Path) -> str:
 def finalize(rule: dict, gap: Gap, model: str) -> dict:
     a, b = gap.cve.split("-")[1:]
     desc = (rule.get("description") or "").strip()
-    desc += (f"\nDRAFT written by {model} from public advisory text for {gap.cve}. "
+    if gap.sources:
+        src = gap.sources[0]
+        desc += (f"\nTranslated from {src.get('ruleset')} {Path(src.get('file', '')).name} ({src.get('format')}); "
+                 "keep that project's license notice when redistributing.")
+    desc += (f"\nDRAFT written by {model} from public text for {gap.cve}. "
              "Not tested against attack or benign logs. Review before deploying; retire after patching.")
     tags = [t for t in rule.get("tags", []) if re.fullmatch(r"attack\.[a-z0-9_.]+", str(t))]
     out = {
@@ -390,12 +455,28 @@ class Draft:
 
 
 def draft_one(gap: Gap, client, model: str, advisory: str, rules_dir: Path) -> Draft:
+    prompt, text = build_prompt(gap, advisory), ""
     try:
-        reply = parse_reply(client.complete(SYSTEM, build_prompt(gap, advisory)))
+        text = client.complete(SYSTEM, prompt)
+        if getattr(client, "last_stop", "") == "refusal":
+            return Draft(gap, "refused", reason="The model declined (stop reason: refusal), most likely because the "
+                         "input contained exploit details. Try another model, or remove exploit write-ups from the input.")
+        try:
+            reply = parse_reply(text)
+        except ValueError:
+            text = client.complete(SYSTEM, prompt + "\n\nYour previous reply was not a single JSON object. "
+                                   "Reply with the JSON object only, no prose.")
+            reply = parse_reply(text)
     except Exception as exc:
-        return Draft(gap, "error", error=f"{type(exc).__name__}: {exc}")
+        raw = rules_dir.parent / "raw"
+        raw.mkdir(parents=True, exist_ok=True)
+        (raw / f"{gap.cve}.txt").write_text(text or "(empty reply)", encoding="utf-8")
+        stop = getattr(client, "last_stop", "")
+        return Draft(gap, "error", error=f"{type(exc).__name__}: {exc}"
+                     + (f" (stop reason: {stop})" if stop else "") + f"; raw reply in raw/{gap.cve}.txt")
+    cwe_note = "" if reply.get("cwe_agrees", True) or not gap.cwes else reply.get("cwe_note", "")
     d = Draft(gap, reply.get("verdict", "insufficient_info"), reply.get("reason", ""),
-              reply.get("vuln_class", ""), "" if reply.get("cwe_agrees", True) else reply.get("cwe_note", ""))
+              reply.get("vuln_class", ""), cwe_note)
     if d.verdict != "rule" or not isinstance(reply.get("rule"), dict):
         if d.verdict == "rule":
             d.verdict, d.reason = "insufficient_info", "model returned no rule body"
@@ -411,6 +492,23 @@ def draft_one(gap: Gap, client, model: str, advisory: str, rules_dir: Path) -> D
     return d
 
 
+def needs_input(drafts: list[Draft], adv_dir: Path) -> str:
+    """The human-in-the-loop list: CVEs where the text ran out, and the pages most likely to help."""
+    todo = [d for d in drafts if d.verdict in ("insufficient_info", "refused", "error")]
+    lines = ["# Needs input", "",
+             f"{len(todo)} CVEs need better source text. For each, open a page below in your browser "
+             f"(they're often blocked for scripts), save it as `{adv_dir}/<CVE>.html` (or paste the text "
+             "into a `.txt` or `.md`), and rerun with `--cve <CVE>`. A vendor advisory with an "
+             "indicators-of-compromise section, or an intel write-up, helps most.", ""]
+    for d in todo:
+        nvd = adv_dir / f"{d.gap.cve}.txt"
+        urls = reference_urls(nvd.read_text(encoding="utf-8"), 5) if nvd.exists() else []
+        lines.append(f"## {d.gap.cve} ({', '.join(sorted(d.gap.assets))}): {d.verdict}")
+        lines += [f"- {u}" for u in urls] or [f"- https://nvd.nist.gov/vuln/detail/{d.gap.cve}"]
+        lines.append("")
+    return "\n".join(lines)
+
+
 def render(drafts: list[Draft], meta: dict) -> str:
     lines = ["# Drafted rules for detection gaps", ""]
     lines += [f"- {k}: {v}" for k, v in meta.items()]
@@ -418,12 +516,12 @@ def render(drafts: list[Draft], meta: dict) -> str:
               "text. The checks below are mechanical: they catch invented indicators, rules for logs you "
               "don't collect, and syntax errors. They do not show a rule catches the exploit or stays quiet "
               "on normal traffic. A detection engineer decides that.", "",
-              "| CVE | Assets | Outcome | Logs collected | Grounded values | Syntax | File |",
-              "|---|---|---|---|---|---|---|"]
+              "| CVE | Task | Assets | Outcome | Logs collected | Grounded values | Syntax | File |",
+              "|---|---|---|---|---|---|---|---|"]
     for d in drafts:
         g = f"{len(d.grounded)}/{len(d.grounded) + len(d.ungrounded)}" if d.verdict == "rule" else "-"
         logs = "-" if d.logs_ok is None else ("yes" if d.logs_ok else "**no**")
-        lines.append(f"| {d.gap.cve} | {', '.join(sorted(d.gap.assets))} | {d.status} | {logs} | {g} | "
+        lines.append(f"| {d.gap.cve} | {d.gap.mode} | {', '.join(sorted(d.gap.assets))} | {d.status} | {logs} | {g} | "
                      f"{d.syntax or '-'} | {('`' + d.file + '`') if d.file else '-'} |")
     lines += ["", "## Notes per CVE", ""]
     for d in drafts:
@@ -452,6 +550,8 @@ def main(argv=None) -> None:
     ap.add_argument("--fetch-refs", action="store_true",
                     help="also read up to 3 pages NVD links to (exploit write-ups, advisories); implies --fetch-nvd")
     ap.add_argument("--only-logged", action="store_true", help="skip CVEs where no affected asset sends logs")
+    ap.add_argument("--cve", action="append", default=[], help="draft only this CVE (repeatable)")
+    ap.add_argument("--nuclei", type=Path, help="a nuclei-templates checkout: scanner checks as extra input")
     ap.add_argument("--provider", choices=["anthropic", "openai"], default="anthropic",
                     help="'openai' means any OpenAI-compatible endpoint")
     ap.add_argument("--model", default="claude-sonnet-4-6")
@@ -462,16 +562,19 @@ def main(argv=None) -> None:
     ap.add_argument("--out", type=Path, default=Path("out/drafts"))
     a = ap.parse_args(argv)
 
-    gaps = [g for g in load_gaps(a.exposures) if g.logs or not a.only_logged][: a.max]
+    gaps = [g for g in load_gaps(a.exposures) if (g.logs or not a.only_logged)
+            and (not a.cve or g.cve in {c.upper() for c in a.cve})][: a.max]
     adv_dir = a.advisories or a.out / "advisories"
     kev = kev_text(a.kev)
-    print(f"{len(gaps)} gap CVEs to draft (cap --max {a.max})")
+    nuc = nuclei_index(a.nuclei)
+    print(f"{len(gaps)} CVEs to draft or translate (cap --max {a.max}); "
+          f"{sum(g.mode == 'translate' for g in gaps)} have a rule in another format")
     if a.dry_run:
         pdir = a.out / "prompts"
         pdir.mkdir(parents=True, exist_ok=True)
         for g in gaps:
             (pdir / f"{g.cve}.txt").write_text(SYSTEM + "\n\n---\n\n" + build_prompt(
-                g, advisory_for(g, kev, adv_dir, a.fetch_nvd, a.fetch_refs)), encoding="utf-8")
+                g, advisory_for(g, kev, adv_dir, a.fetch_nvd, a.fetch_refs, nuc)), encoding="utf-8")
         print(f"prompts written to {pdir}")
         return
 
@@ -483,11 +586,12 @@ def main(argv=None) -> None:
     drafts = []
     for g in gaps:
         print(f"  {g.cve} ...", flush=True)
-        drafts.append(draft_one(g, client, a.model, advisory_for(g, kev, adv_dir, a.fetch_nvd, a.fetch_refs), a.out / "rules"))
+        drafts.append(draft_one(g, client, a.model, advisory_for(g, kev, adv_dir, a.fetch_nvd, a.fetch_refs, nuc), a.out / "rules"))
     meta = {"Model": f"{a.provider}:{a.model}", "Gap CVEs drafted": len(drafts),
             "Tokens": json.dumps(client.usage) if client.usage else "n/a"}
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "drafts.md").write_text(render(drafts, meta), encoding="utf-8")
+    (a.out / "needs-input.md").write_text(needs_input(drafts, adv_dir), encoding="utf-8")
     (a.out / "drafts.json").write_text(json.dumps([{
         "cve": d.gap.cve, "assets": d.gap.assets, "outcome": d.status, "verdict": d.verdict,
         "vuln_class": d.vuln_class, "cwe_note": d.cwe_note, "file": d.file, "ungrounded": d.ungrounded,
