@@ -5,6 +5,28 @@ session, reading each rule against its source text the way a detection engineer 
 the verdicts and edits. `python -m exposure_to_sigma.draft ... --review` now runs the same step. "Ready for
 review" from the automated checks is not approval.
 
+## Repeat with the package's reviewer
+
+The same 25 original drafts were then reviewed with `--recheck --review --review-model claude-opus-5-5`
+(a different model from the drafter). Full output: [`ai-review-package-run.md`](ai-review-package-run.md).
+
+| | Keep | Edit | Hunt | Reject |
+|---|---|---|---|---|
+| Session review (above) | 8 | 11 | 2 | 4 |
+| Package reviewer | 3 | 11 | 4 | 7 |
+
+- Same verdict on 10 of 25. Where they differ, the package reviewer was stricter on 12 and looser on 3.
+- It caught all four problems in this file's "Reject or rewrite" and fidelity notes: the failed-VPN-login rule
+  (2024-20481), generic Java-spawns-shell (2021-45046), the translation stricter than its Splunk source
+  (2021-34523), and web rules on firewall syslog with no URIs (2018-0296, 2020-3580).
+- It also flagged things the session review missed: rules for hosts already on a fixed version (a hit means an
+  attempt, not a compromise), CVEs matched to the wrong product (SD-WAN CVEs on a NetScaler ADC; inventory
+  matching ignores versions and product lines), and a description citing the wrong source rule (2023-22515).
+- Of the 19 drafts that passed every automated check, it would ship 3 as written; 10 need edits, 3 are hunting
+  queries, 3 should be rejected.
+- Two AI reviews disagreeing on 15 of 25 is the case for the next layer: replay the attack and run alert-only on
+  normal traffic, so approval rests on evidence rather than opinion.
+
 | Verdict | Count | CVEs |
 |---|---|---|
 | Keep as is | 8 | 2021-26085, 2021-31207, 2023-20269, 2023-22515, 2023-22527, 2023-46805, 2024-21887, 2026-3055 |

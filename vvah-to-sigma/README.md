@@ -48,7 +48,10 @@ What moved the numbers was input, not the model: with NVD text alone, 0 of 10 CV
 Translating existing Splunk and Elastic detections, and reading Nuclei scanner checks, did the rest.
 Passing the automated checks is not approval: of the 19 drafts that passed every check, 8 still needed
 edits, 2 became hunting queries and 1 was rejected. That review was done by an AI reviewer (Claude, in a
-working session) and the edits were approved by the author; `--review` now makes the same step repeatable.
+working session) and the edits were approved by the author. Rerun with the package's own reviewer
+(`--review`, a different model), it agreed on 10 of 25 verdicts, caught every problem the session review found,
+was stricter on most of the rest, and also flagged hosts already patched and CVEs matched to the wrong product.
+Of the 19 that passed every automated check, it would ship 3 as written.
 Reviewed rules and notes: [`examples/example-corp/reviewed-rules/`](examples/example-corp/reviewed-rules/).
 
 **Model choice:** use the best model you have access to. Security-specialized tiers offered to vetted
