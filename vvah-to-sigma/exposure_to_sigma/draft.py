@@ -215,14 +215,16 @@ class Gap:
         return "translate" if self.sources else "draft"
 
 
-def load_gaps(exposures_json: Path) -> list[Gap]:
+def load_gaps(exposures_json: Path, exploited_only: bool = False) -> list[Gap]:
+    """Every gap, in order: assets that send logs, ransomware-linked, exploited, then by EPSS.
+    Exploitation orders the queue; it doesn't decide what gets a rule."""
     rows = json.loads(Path(exposures_json).read_text(encoding="utf-8"))
     by_cve: dict[str, Gap] = {}
     for r in rows:
         verdict = str(r.get("verdict", ""))
-        if r.get("priority") == "low" or not verdict.startswith((GAP_PREFIX, TRANSLATE_PREFIX)):
+        if (exploited_only and r.get("priority") == "low") or not verdict.startswith((GAP_PREFIX, TRANSLATE_PREFIX)):
             continue
-        g = by_cve.setdefault(r["cve"], Gap(r["cve"]))
+        g = by_cve.setdefault(r["cve"], Gap(r["cve"], priority="low"))
         if verdict.startswith(TRANSLATE_PREFIX):
             for src in r.get("rule_files") or []:
                 if src not in g.sources:
@@ -232,8 +234,8 @@ def load_gaps(exposures_json: Path) -> list[Gap]:
         g.logs |= set(r.get("logs") or [])
         g.cwes |= set(r.get("cwes") or [])
         g.notes |= set(r.get("notes") or [])
-        if r.get("priority") == "exploited":
-            g.priority = "exploited"
+        if r.get("priority") == "exploited" or (r.get("priority") == "likely" and g.priority == "low"):
+            g.priority = r["priority"]
         g.probability = max(g.probability, r.get("probability") or 0)
         g.ransomware |= bool(r.get("ransomware"))
         g.version_unconfirmed |= r.get("version_checked") is False
@@ -460,6 +462,10 @@ def finalize(rule: dict, gap: Gap, model: str) -> dict:
         src = gap.sources[0]
         desc += (f"\nTranslated from {src.get('ruleset')} {Path(src.get('file', '')).name} ({src.get('format')}); "
                  "keep that project's license notice when redistributing.")
+    level = rule.get("level") if rule.get("level") in ("low", "medium", "high", "critical") else "medium"
+    if gap.priority != "exploited" and level in ("high", "critical"):
+        level = "medium"
+        desc += "\nNot known to be exploited when drafted: level capped at medium. Raise it if the CVE appears on CISA KEV."
     desc += (f"\nDRAFT written by {model} from public text for {gap.cve}. "
              "Not tested against attack or benign logs. Review before deploying; retire after patching.")
     tags = [t for t in rule.get("tags", []) if re.fullmatch(r"attack\.[a-z0-9_.]+", str(t))]
@@ -475,7 +481,7 @@ def finalize(rule: dict, gap: Gap, model: str) -> dict:
         "logsource": {k: v for k, v in (rule.get("logsource") or {}).items() if v},
         "detection": rule.get("detection") or {},
         "falsepositives": rule.get("falsepositives") or ["Unknown; review required"],
-        "level": rule.get("level") if rule.get("level") in ("low", "medium", "high", "critical") else "medium",
+        "level": level,
     }
     return out
 
@@ -694,6 +700,8 @@ def main(argv=None) -> None:
     ap.add_argument("--fetch-refs", action="store_true",
                     help="also read up to 3 pages NVD links to (exploit write-ups, advisories); implies --fetch-nvd")
     ap.add_argument("--only-logged", action="store_true", help="skip CVEs where no affected asset sends logs")
+    ap.add_argument("--exploited-only", action="store_true",
+                    help="draft only exploited or likely CVEs (default: every gap, exploited first)")
     ap.add_argument("--cve", action="append", default=[], help="draft only this CVE (repeatable)")
     ap.add_argument("--nuclei", type=Path, help="a nuclei-templates checkout: scanner checks as extra input")
     ap.add_argument("--provider", choices=["anthropic", "openai"], default="anthropic",
@@ -712,7 +720,7 @@ def main(argv=None) -> None:
     ap.add_argument("--out", type=Path, default=Path("out/drafts"))
     a = ap.parse_args(argv)
 
-    all_gaps = load_gaps(a.exposures)
+    all_gaps = load_gaps(a.exposures, a.exploited_only)
     adv_dir = a.advisories or a.out / "advisories"
     kev = kev_text(a.kev)
     nuc = nuclei_index(a.nuclei)

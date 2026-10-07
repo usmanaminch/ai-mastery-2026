@@ -54,3 +54,13 @@ def test_public_rule_without_logs_is_flagged_not_counted():
     v = {(x.exposure.asset, x.exposure.cve): x.verdict for x in
          analyze(ex, [kev], [], [Ruleset("public", F / "sigma")])}
     assert v[("vpn-gw-01", "CVE-2022-42475")] == PUBLIC_NO_LOGS
+
+
+def test_every_exposure_gets_a_verdict_unless_exploited_only():
+    ex = dedupe(load_grype(F / "grype-small.json", "app", "webserver"))
+    feeds = [KevFeed(F / "kev-small.json")]                    # no EPSS: unexploited CVEs are "low"
+    full = {x.exposure.cve: x for x in analyze(ex, feeds, [], [Ruleset("public", F / "sigma")])}
+    low = [v for v in full.values() if v.priority == "low"]
+    assert low and all(v.verdict for v in low)
+    old = analyze(ex, feeds, [], [Ruleset("public", F / "sigma")], exploited_only=True)
+    assert all(not v.verdict for v in old if v.priority == "low")

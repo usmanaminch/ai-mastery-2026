@@ -269,3 +269,27 @@ def test_review_skips_non_rules_and_handles_refusal(tmp_path):
     d = D.draft_one(gap, FakeClient(RULE_REPLY), "m", "advisory", out / "rules")
     D.review_one(d, Refuser({}), "r", out, "advisory")
     assert d.review["verdict"] == "refused"
+
+
+def _with_low_gap(tmp_path):
+    p = _exposures(tmp_path, ["webserver"])
+    rows = json.loads(p.read_text())
+    rows.append({"asset": "app", "cve": "CVE-2099-0009", "priority": "low", "logs": ["webserver"],
+                 "verdict": "Gap: no rule names it; draft a scoped rule"})
+    p.write_text(json.dumps(rows))
+    return p
+
+
+def test_every_gap_is_drafted_exploited_first(tmp_path):
+    gaps = D.load_gaps(_with_low_gap(tmp_path))
+    assert [g.cve for g in gaps] == ["CVE-2099-0001", "CVE-2099-0009"]
+    assert gaps[1].priority == "low"
+    assert [g.cve for g in D.load_gaps(_with_low_gap(tmp_path), exploited_only=True)] == ["CVE-2099-0001"]
+
+
+def test_unexploited_rule_level_is_capped(tmp_path):
+    low = D.load_gaps(_with_low_gap(tmp_path))[1]
+    rule = D.finalize(RULE_REPLY["rule"], low, "m")
+    assert rule["level"] == "medium" and "CISA KEV" in rule["description"]
+    hot = D.load_gaps(_with_low_gap(tmp_path))[0]
+    assert D.finalize(RULE_REPLY["rule"], hot, "m")["level"] == "critical"

@@ -38,7 +38,11 @@ class Verdict:
 
 
 def analyze(exposures: list[Exposure], feeds: list, own: list[Ruleset], public: list[Ruleset],
-            likely_threshold: float = 0.1, other: list | None = None) -> list[Verdict]:
+            likely_threshold: float = 0.1, other: list | None = None,
+            exploited_only: bool = False) -> list[Verdict]:
+    """Give every exposure a coverage verdict. Exploitation data (KEV, EPSS) sets the priority, which
+    orders the work; it doesn't decide what gets a verdict, because what isn't exploited today may be
+    tomorrow. exploited_only=True restores the old behaviour: low-priority exposures are only counted."""
     out = []
     for e in exposures:
         signals = [s for s in (f.lookup(e.cve) for f in feeds) if s]
@@ -51,7 +55,7 @@ def analyze(exposures: list[Exposure], feeds: list, own: list[Ruleset], public: 
         else:
             prio = "low"
         v = Verdict(e, signals, prio)
-        if prio != "low":
+        if prio != "low" or not exploited_only:
             _judge(v, own, public, other or [])
         out.append(v)
     return out

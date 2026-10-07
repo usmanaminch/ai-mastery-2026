@@ -8,17 +8,19 @@ from .analyze import ORDER, Verdict
 
 
 def render(verdicts: list[Verdict], meta: dict) -> str:
-    prio = [v for v in verdicts if v.priority != "low"]
+    prio = [v for v in verdicts if v.verdict]
+    skipped = len(verdicts) - len(prio)
     lines = ["# Exposure-to-detection coverage", ""]
     lines += [f"- {k}: {v}" for k, v in meta.items()]
-    lines += ["", f"**{len(verdicts)}** CVE exposures in, **{len(prio)}** prioritised "
-              f"({sum(v.priority == 'exploited' for v in prio)} confirmed exploited, "
-              f"{sum(v.priority == 'likely' for v in prio)} likely by probability). "
-              "The rest are listed by count only; patch them on your normal cycle.", "",
+    lines += ["", f"**{len(verdicts)}** CVE exposures in: {sum(v.priority == 'exploited' for v in verdicts)} confirmed "
+              f"exploited, {sum(v.priority == 'likely' for v in verdicts)} likely by probability, "
+              f"{sum(v.priority == 'low' for v in verdicts)} not known to be exploited. Every exposure gets a verdict; "
+              "exploitation sets the order, because what isn't exploited today may be tomorrow."
+              + (f" ({skipped} low-priority exposures counted only: --exploited-only.)" if skipped else ""), "",
               "| Verdict | Exposures |", "|---|---|"]
     c = Counter(v.verdict for v in prio)
     lines += [f"| {k} | {c.get(k, 0)} |" for k in ORDER]
-    lines += ["", "## Prioritised exposures", "",
+    lines += ["", "## Exposures, exploited first", "",
               "| Asset | CVE | Product | Priority | Verdict | Rules |", "|---|---|---|---|---|---|"]
     key = lambda v: (ORDER.index(v.verdict), v.priority != "exploited", -(v.probability or 0))
     for v in sorted(prio, key=key):
@@ -64,6 +66,6 @@ def write(verdicts: list[Verdict], meta: dict, out_dir: Path) -> dict:
              "verdict": v.verdict, "rules": [f"{r.ruleset}:{r.path}" for r in v.rules],
              "rule_files": [{"file": r.file, "format": r.fmt, "ruleset": r.ruleset} for r in v.rules]} for v in verdicts]
     (out_dir / "exposures.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")
-    prio = [v for v in verdicts if v.priority != "low"]
-    return {"exposures": len(verdicts), "prioritised": len(prio),
+    prio = [v for v in verdicts if v.verdict]
+    return {"exposures": len(verdicts), "judged": len(prio),
             "verdicts": dict(Counter(v.verdict for v in prio))}

@@ -191,7 +191,7 @@ Answers, for every CVE in what you run: **is it being exploited, and can you det
 | Inventory CSV | `--inventory` | `asset,vendor,product,version,logs`; matched by product name, **version not checked** |
 | Any scanner's CSV export | `--mapped-csv CSV MAPPING` | Tenable, Qualys, Wiz, Rapid7...: a YAML file names the columns |
 | CISA KEV | `--kev` | `known_exploited_vulnerabilities.json` from cisagov/kev-data |
-| FIRST EPSS | `--epss` | Daily CSV from first.org; CVEs above `--likely` (default 0.1) are prioritised |
+| FIRST EPSS | `--epss` | Daily CSV from first.org; CVEs above `--likely` (default 0.1) move up the queue |
 | Paid threat intel | `--feed EXPORT MAPPING` | CSV or JSON export plus a field mapping |
 | Rulesets | `--own-rules`, `--public-rules` | Any Sigma folders; repeatable |
 | Other-format rules | `--other-rules` | Splunk `security_content/detections`, Elastic `detection-rules/rules`, Google SecOps `chronicle/detection-rules/rules`; matched by CVE only |
@@ -223,7 +223,7 @@ Example Corp is fictional. Its inventory, rules and exports exist only to exerci
 
 ## Draft rules for the gaps
 
-`exposure_to_sigma.draft` takes the `exposures.json` above. For each prioritised **Gap** it asks the model you
+`exposure_to_sigma.draft` takes the `exposures.json` above. For each **Gap** it asks the model you
 choose to draft a scoped Sigma rule; for each **Public rule in another format** it asks it to translate that rule.
 Assets that send logs come first.
 
@@ -235,6 +235,11 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   --review --review-model claude-opus-5-5
 ```
 
+- **Every vulnerability, exploited first.** Every exposure gets a verdict and every gap gets a draft, because what
+  isn't exploited today may be tomorrow. CISA KEV and EPSS only set the order (and `--max` caps a run), so nobody
+  has to triage before a rule is written. Rules for CVEs not known to be exploited are capped at level medium, with a
+  note to raise it if the CVE reaches KEV. `--exploited-only` (on both commands) restores the old behaviour. The
+  inventory path only matches KEV CVEs; feed Trivy, Grype or a scanner export to cover everything else.
 - **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), up to three
   pages NVD links to, exploit write-ups first (`--fetch-refs`), and anything you add to
   `out/drafts/advisories/<CVE>.txt` (a vendor advisory, a paid intel write-up). Everything is cached. It is told

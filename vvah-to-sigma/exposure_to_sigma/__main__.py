@@ -30,6 +30,8 @@ def main() -> None:
                     help="non-Sigma detection repos: Splunk security_content/detections, elastic/detection-rules/rules, "
                          "chronicle/detection-rules (matched by CVE only)")
     ap.add_argument("--likely", type=float, default=0.1, help="EPSS threshold to prioritise unconfirmed CVEs")
+    ap.add_argument("--exploited-only", action="store_true",
+                    help="judge only exploited or likely CVEs (default: every CVE, ordered by exploitation)")
     ap.add_argument("--out", type=Path, default=Path("out"))
     a = ap.parse_args()
 
@@ -56,7 +58,7 @@ def main() -> None:
     own = [Ruleset(f"yours:{p.name}", p) for p in a.own_rules]
     public = [Ruleset(f"public:{p.name}", p) for p in a.public_rules]
     other = [ForeignRuleset(f"other:{p.name}", p) for p in a.other_rules]
-    verdicts = analyze(exposures, feeds, own, public, a.likely, other)
+    verdicts = analyze(exposures, feeds, own, public, a.likely, other, a.exploited_only)
     meta = {"CISA KEV catalog": kev.version,
             "Feeds": ", ".join(getattr(f, "source", f.name) for f in feeds),
             "Rulesets": ", ".join(f"{r.name} ({len(r.rules)} rules)" for r in own + public + other) or "none"}
