@@ -16,10 +16,21 @@ built, and shipped, with honest write-ups of what worked and what didn't.
 | P3 | **Frontier AI Intelligence RAG** | Source-grounded AI assistant for a regulated SOC — hybrid BM25 + vector retrieval, every answer cites its sources | ✅ Live | [Summary](https://usmanc.com/frontier-rag.html) · [App](https://usman-frontier-rag.streamlit.app) |
 | P4 | **UrduGPT — LLM from scratch** | Character-level transformer built and inspected by hand; an interpretability case study on a low-resource language | ✅ Done | [Summary](https://usmanc.com/urdu-gpt.html) |
 | P5 | **Urdu Fine-tuning Pipeline** | End-to-end fine-tuning infrastructure: local MLX prototype → containerized GCP / Vertex AI production pipeline | ✅ Done | [Summary](https://usmanc.com/urdu-finetune.html) |
-| P6 | **EdgePatch — Air-Gapped Patch Evaluation** | Offline, deterministic gate for AI-generated C patches in disconnected environments | ✅ v1 done | [Write-up](https://usmanc.com/edgepatch.html) · [Code](./p6-edgepatch) |
-| P7 | **Open Source + Publication** | OSS release, benchmark results against real CVEs, published write-ups | 🔜 Next | |
+| P6 | **EdgePatch — Air-Gapped Patch Evaluation** | Offline, deterministic gate for AI-generated C patches in disconnected environments | ✅ v1 done | [Write-up](https://usmanc.com/edgepatch.html) · [Code](https://github.com/usmanaminch/edgepatch) |
+| P7 | **Vulnerability to Detection** | Gives every vulnerability, in custom or vendor code, a SIEM detection rule for the window before the patch: coverage checks, model-drafted or translated Sigma rules, agentic checks to speed up approval | ✅ v1 done | [Write-up](https://usmanc.com/vulnerability-to-detection.html) · [Code](./vvah-to-sigma) |
 
-## P6 — EdgePatch (current)
+## P7 — Vulnerability to Detection (current)
+
+AI scanners are finding vulnerabilities faster than teams can patch them. Until the fix is live, a SIEM
+detection rule is how the SOC sees an exploitation attempt, and writing it is left to the customer.
+`vvah-to-sigma` builds that rule with open tools: vulnerabilities from Visa's VVAH scanner (custom code) or
+Trivy, Grype and scanner exports (vendor code) are checked against existing rules in SigmaHQ, Splunk, Elastic
+and Google SecOps; a model drafts or translates the missing ones; automated checks and an AI reviewer speed up
+approval; and each rule retires once the patch is proven.
+
+Full write-up: **[usmanc.com/vulnerability-to-detection.html](https://usmanc.com/vulnerability-to-detection.html)** · Code and results: [`vvah-to-sigma/`](./vvah-to-sigma)
+
+## P6 — EdgePatch
 
 EdgePatch evaluates LLM-generated C vulnerability patches **offline**, before they go
 into production. A model proposes a fix — from a local model, a secure enclave, or a
