@@ -5,54 +5,67 @@ and for the vendor products you run. AI does the drafting; automated checks and 
 
 ```mermaid
 flowchart LR
-  subgraph Own["Your code"]
-    A[VVAH scan] --> B[vvah_to_sigma] --> C[Scoped rules<br>+ coverage.md]
+  subgraph Find["1 · Find"]
+    A[Custom code:<br>VVAH or any SARIF scanner]
+    B[Vendor code:<br>Trivy, Grype, inventory,<br>scanner exports]
   end
-  subgraph Vendor["Vendor and dependency code"]
-    D[Trivy / Grype / inventory<br>/ scanner exports] --> E[exposure_to_sigma]
-    F[CISA KEV, EPSS,<br>paid intel] --> E
-    G[Sigma, Splunk, Elastic,<br>SecOps rulesets] --> E
-    E --> H{Verdict per exposure}
-    H -->|Gap or other format| I[draft: your model<br>drafts or translates]
-    I --> J[Checks: grounding,<br>logs, sigma check]
-    J --> R[AI review: a second<br>model, --review]
-    R --> K[Approval]
-  end
-  K --> L[Approved rules]
-  C --> L
+  A --> T[vvah_to_sigma:<br>rule template per weakness,<br>scoped to the route]
+  B --> C[2 · Check coverage:<br>your rules, SigmaHQ,<br>Splunk, Elastic, SecOps]
+  C -->|rule exists and fires| DEP
+  C -->|log not collected| LOG[Collect the log]
+  C -->|no log signature| PAT[Patch only]
+  C -->|gap or other format| D[3 · Draft or translate:<br>your model]
+  D --> E[4 · Automated checks:<br>grounding, logs, syntax]
+  E --> F[5 · AI review:<br>a second model]
+  F -.-> P6[6 · Prove it: replay the attack<br>in a dev SIEM, extension]
+  F --> AP[Approval]
+  P6 -.-> AP
+  T --> AP
+  AP --> DEP[7 · Deploy:<br>sigma-cli to your SIEM]
+  DEP --> RET[8 · Retire once<br>the patch is proven]
 ```
+
+Every vulnerability gets an answer: a rule, a log to start collecting, or "patch only". Exploitation data
+(CISA KEV, EPSS) sets the order of the work, not what gets a rule.
 
 | Your code | Vendor code |
 |---|---|
-| `vvah_to_sigma`: findings from Visa's VVAH scanner become scoped Sigma rules | `exposure_to_sigma`: exploited CVEs in what you run, checked against your rules, public rules and the logs you collect; `exposure_to_sigma.draft` drafts the missing rules |
+| `vvah_to_sigma`: vulnerabilities from Visa's VVAH scanner become scoped Sigma rules | `exposure_to_sigma`: CVEs in what you run, checked against your rules, public rules and the logs you collect; `exposure_to_sigma.draft` drafts or translates the missing rules |
 
 ## Results so far
 
 Measured on two test targets. Example Corp is fictional; its inventory exists to exercise every path.
 
-**PyGoat (your code).** VVAH confirmed 63 findings. 18 are covered by 5 scoped rules, 8 sit behind
+**PyGoat (your code).** VVAH confirmed 63 vulnerabilities. 18 are covered by 5 scoped rules, 8 sit behind
 POST bodies that web logs don't record, 17 need behavioral baselines, 20 have no request-time signal.
 
-**Example Corp (vendor code), 48 exploited CVEs on assets that send logs**, drafted by Claude Opus 5:
+**Example Corp (vendor code), 48 exploited CVEs on assets that send logs**, drafted by Claude Opus 5.
+The first three rows are the drafter's own outcomes. The rest are review verdicts on the 25 rules it wrote,
+from two reviews: a session review by an AI reviewer whose edits the author approved (the rules in
+[`reviewed-rules/`](examples/example-corp/reviewed-rules/)), and the package's automated reviewer
+(`--review`, a different model).
 
-| Outcome | CVEs |
+| Drafter outcome | CVEs |
 |---|---|
-| Detection rule approved after review (8 as drafted, 11 with edits) | 19 |
-| Hunting query (matches normal traffic; not an alert) | 2 |
-| Drafted, rejected in review | 4 |
 | Correctly classified: no signature (DoS) or behavioral | 5 |
 | Public text too thin: listed in `needs-input.md` | 16 |
 | Model declined (inputs contained exploit write-ups) | 2 |
+| Rule drafted | 25 |
 
-What moved the numbers was input, not the model: with NVD text alone, 0 of 10 CVEs got a rule.
-Translating existing Splunk and Elastic detections, and reading Nuclei scanner checks, did the rest.
-Passing the automated checks is not approval: of the 19 drafts that passed every check, 8 still needed
-edits, 2 became hunting queries and 1 was rejected. That review was done by an AI reviewer (Claude, in a
-working session) and the edits were approved by the author. Rerun with the package's own reviewer
-(`--review`, a different model), it agreed on 10 of 25 verdicts, caught every problem the session review found,
-was stricter on most of the rest, and also flagged hosts already patched and CVEs matched to the wrong product.
-Of the 19 that passed every automated check, it would ship 3 as written.
-Reviewed rules and notes: [`examples/example-corp/reviewed-rules/`](examples/example-corp/reviewed-rules/).
+| Review verdict on the 25 rules | Session review (approved) | Automated `--review` |
+|---|---|---|
+| Keep as drafted | 8 | 3 |
+| Keep with edits | 11 | 11 |
+| Hunting query, not an alert | 2 | 4 |
+| Reject | 4 | 7 |
+
+The automated checks (grounding, log source, `sigma check`) are a gate, not approval: of the 19 drafts that
+passed all of them, review still sent most back for edits. The automated reviewer caught every problem the
+session review found (a rule that fired on every failed VPN login, a generic "Java spawns a shell" rule with a
+CVE name on it, a translation stricter than its source, web rules on firewall logs with no URLs) and some it
+missed (hosts already patched, CVEs matched to the wrong product line). The two reviews agreed on 10 of 25
+verdicts, which is why replaying the attack is the natural next layer. Details:
+[`REVIEW.md`](examples/example-corp/reviewed-rules/REVIEW.md).
 
 **Model choice:** use the best model you have access to. Security-specialized tiers offered to vetted
 defenders refuse less on exploit material and should do better here. See [`model-profiles/`](model-profiles/README.md).
