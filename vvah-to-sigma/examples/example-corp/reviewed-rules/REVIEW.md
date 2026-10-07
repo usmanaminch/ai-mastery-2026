@@ -1,6 +1,9 @@
-# Human review of drafts5 (Opus, 48 CVEs, 25 rules)
+# Review of drafts5 (Opus, 48 CVEs, 25 rules)
 
-Reviewer verdicts on the 25 drafted rules. "Ready for review" from the mechanical checks is not approval.
+Reviewer verdicts on the 25 drafted rules. The review was done by an AI reviewer (Claude, in a working
+session, reading each rule against its source text the way a detection engineer would); the author approved
+the verdicts and edits. `python -m exposure_to_sigma.draft ... --review` now runs the same step. "Ready for
+review" from the automated checks is not approval.
 
 | Verdict | Count | CVEs |
 |---|---|---|

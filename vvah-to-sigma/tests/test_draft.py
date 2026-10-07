@@ -232,3 +232,40 @@ def test_recheck_regrades_without_calling_a_model(tmp_path):
     rule_path.write_text(yaml.safe_dump(rule))
     again = D.recheck(out, {gap.cve: gap}, lambda g: adv)
     assert again[0].ungrounded == [] and again[0].status == "ready for review"
+
+
+REVIEW_REPLY = {"verdict": "hunt", "confidence": "high",
+                "issues": [{"type": "noise", "detail": "Matches every logout page view, not only the exploit."}],
+                "change": "Keep as a hunting query."}
+
+
+def test_ai_review_records_a_verdict_and_survives_recheck(tmp_path):
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    adv = D.advisory_for(gap, {}, F / "advisories", fetch=False)
+    out = tmp_path / "run"
+    d = D.draft_one(gap, FakeClient(RULE_REPLY), "drafter", adv, out / "rules")
+    reviewer = FakeClient(REVIEW_REPLY)
+    D.review_one(d, reviewer, "reviewer", out, adv)
+    assert d.review["verdict"] == "hunt" and d.review["issues"][0]["type"] == "noise"
+    assert "RULE:" in reviewer.prompts[0] and "logoutconfirm" in reviewer.prompts[0]
+    assert "evil_param" in reviewer.prompts[0]          # the reviewer sees the automated check results
+    D.write_outputs([d], {"Model": "m"}, out, F / "advisories")
+    md = (out / "drafts.md").read_text()
+    assert "| hunting query |" in md and "AI review (reviewer): hunting query" in md
+    again = D.recheck(out, {gap.cve: gap}, lambda g: adv)
+    assert again[0].review["verdict"] == "hunt"
+
+
+def test_review_skips_non_rules_and_handles_refusal(tmp_path):
+    gap = D.load_gaps(_exposures(tmp_path, ["webserver"]))[0]
+    out = tmp_path / "run"
+    none = D.Draft(gap, "insufficient_info")
+    c = FakeClient(REVIEW_REPLY)
+    D.review_one(none, c, "r", out, "")
+    assert none.review == {} and c.prompts == []
+
+    class Refuser(FakeClient):
+        last_stop = "refusal"
+    d = D.draft_one(gap, FakeClient(RULE_REPLY), "m", "advisory", out / "rules")
+    D.review_one(d, Refuser({}), "r", out, "advisory")
+    assert d.review["verdict"] == "refused"

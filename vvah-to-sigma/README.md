@@ -1,7 +1,7 @@
 # vvah-to-sigma
 
 Detection for the window between "we know we're vulnerable" and "the fix is deployed", for your own code
-and for the vendor products you run. AI does the drafting; checks and a human review decide what ships.
+and for the vendor products you run. AI does the drafting; automated checks and an AI review speed up approval; a person approves what ships.
 
 ```mermaid
 flowchart LR
@@ -15,9 +15,10 @@ flowchart LR
     E --> H{Verdict per exposure}
     H -->|Gap or other format| I[draft: your model<br>drafts or translates]
     I --> J[Checks: grounding,<br>logs, sigma check]
-    J --> K[Human review]
+    J --> R[AI review: a second<br>model, --review]
+    R --> K[Approval]
   end
-  K --> L[Reviewed rules]
+  K --> L[Approved rules]
   C --> L
 ```
 
@@ -36,7 +37,7 @@ POST bodies that web logs don't record, 17 need behavioral baselines, 20 have no
 
 | Outcome | CVEs |
 |---|---|
-| Detection rule approved after human review (8 as drafted, 11 with edits) | 19 |
+| Detection rule approved after review (8 as drafted, 11 with edits) | 19 |
 | Hunting query (matches normal traffic; not an alert) | 2 |
 | Drafted, rejected in review | 4 |
 | Correctly classified: no signature (DoS) or behavioral | 5 |
@@ -46,7 +47,9 @@ POST bodies that web logs don't record, 17 need behavioral baselines, 20 have no
 What moved the numbers was input, not the model: with NVD text alone, 0 of 10 CVEs got a rule.
 Translating existing Splunk and Elastic detections, and reading Nuclei scanner checks, did the rest.
 Passing the automated checks is not approval: of the 19 drafts that passed every check, 8 still needed
-edits, 2 became hunting queries and 1 was rejected. Reviewed rules and notes: [`examples/example-corp/reviewed-rules/`](examples/example-corp/reviewed-rules/).
+edits, 2 became hunting queries and 1 was rejected. That review was done by an AI reviewer (Claude, in a
+working session) and the edits were approved by the author; `--review` now makes the same step repeatable.
+Reviewed rules and notes: [`examples/example-corp/reviewed-rules/`](examples/example-corp/reviewed-rules/).
 
 **Model choice:** use the best model you have access to. Security-specialized tiers offered to vetted
 defenders refuse less on exploit material and should do better here. See [`model-profiles/`](model-profiles/README.md).
@@ -225,7 +228,8 @@ Assets that send logs come first.
 python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-refs --only-logged \
   --nuclei /tmp/nuclei-templates \
-  --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts
+  --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts \
+  --review --review-model claude-opus-5-5
 ```
 
 - **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), up to three
@@ -250,8 +254,15 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   listed as *ungrounded*, HTTP methods and status codes are reported separately as context, not indicators. `--recheck` reruns all checks on an earlier run's rules (after you edit one, or add text to `advisories/`) without calling a model. The rule's log source is checked against what the affected assets send. `sigma check`
   runs when sigma-cli is installed. The model also says whether the CWE matches the text, which catches
   mislabels like a denial-of-service bug tagged as a buffer overflow.
+- **AI review speeds up approval.** `--review` sends each rule, its source text and the check results to a second
+  model that reviews it the way a detection engineer would: does it fire on normal traffic, is it really about this
+  CVE or a generic rule with a CVE name, is a translation stricter or looser than its source, do the asset's logs
+  carry the fields it needs, are there logic errors. It answers keep, edit, hunt or reject with the issues found, in
+  `drafts.md` and `drafts.json`. It never edits a rule. Use a different model from the drafter
+  (`--review-model`, `--review-provider`) for a more independent opinion, and `--recheck --review` to review an
+  earlier run without redrafting. These are the problems that passed every automated check in the Example Corp run.
 - **Drafts only.** Rules are written as `status: experimental` with a deterministic ID per CVE. Nothing here
-  tests them against attack or benign logs; `drafts.md` is a review sheet for a detection engineer.
+  tests them against attack or benign logs yet; `drafts.md` is the sheet a person approves from.
 - **Your model: use the best one you have access to.** Security-specialized model tiers, offered to vetted defenders
   through verified-access programs, refuse far less on exploit material and should do better here. General models
   work, but expect more `insufficient_info` and some `refused`. `--provider anthropic` reads `ANTHROPIC_API_KEY`. `--provider openai` works with any
