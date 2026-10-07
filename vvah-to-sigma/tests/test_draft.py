@@ -287,9 +287,8 @@ def test_every_gap_is_drafted_exploited_first(tmp_path):
     assert [g.cve for g in D.load_gaps(_with_low_gap(tmp_path), exploited_only=True)] == ["CVE-2099-0001"]
 
 
-def test_unexploited_rule_level_is_capped(tmp_path):
+
+def test_rule_level_does_not_depend_on_exploitation(tmp_path):
+    # The rule fires on an exploit attempt; an attempt is serious whether or not the CVE is on KEV yet.
     low = D.load_gaps(_with_low_gap(tmp_path))[1]
-    rule = D.finalize(RULE_REPLY["rule"], low, "m")
-    assert rule["level"] == "medium" and "CISA KEV" in rule["description"]
-    hot = D.load_gaps(_with_low_gap(tmp_path))[0]
-    assert D.finalize(RULE_REPLY["rule"], hot, "m")["level"] == "critical"
+    assert D.finalize(RULE_REPLY["rule"], low, "m")["level"] == "critical"

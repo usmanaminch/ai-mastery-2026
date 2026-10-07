@@ -237,8 +237,8 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
 
 - **Every vulnerability, exploited first.** Every exposure gets a verdict and every gap gets a draft, because what
   isn't exploited today may be tomorrow. CISA KEV and EPSS only set the order (and `--max` caps a run), so nobody
-  has to triage before a rule is written. Rules for CVEs not known to be exploited are capped at level medium, with a
-  note to raise it if the CVE reaches KEV. `--exploited-only` (on both commands) restores the old behaviour. The
+  has to triage before a rule is written. A rule's severity doesn't depend on exploitation status: it fires only on an
+  attempt, and an attempt is serious either way. `--exploited-only` (on both commands) restores the old behaviour. The
   inventory path only matches KEV CVEs; feed Trivy, Grype or a scanner export to cover everything else.
 - **Grounded in text, not memory.** The model sees CISA KEV's description, NVD's (`--fetch-nvd`), up to three
   pages NVD links to, exploit write-ups first (`--fetch-refs`), and anything you add to

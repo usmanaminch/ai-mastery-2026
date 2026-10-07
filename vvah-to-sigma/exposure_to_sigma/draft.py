@@ -462,10 +462,6 @@ def finalize(rule: dict, gap: Gap, model: str) -> dict:
         src = gap.sources[0]
         desc += (f"\nTranslated from {src.get('ruleset')} {Path(src.get('file', '')).name} ({src.get('format')}); "
                  "keep that project's license notice when redistributing.")
-    level = rule.get("level") if rule.get("level") in ("low", "medium", "high", "critical") else "medium"
-    if gap.priority != "exploited" and level in ("high", "critical"):
-        level = "medium"
-        desc += "\nNot known to be exploited when drafted: level capped at medium. Raise it if the CVE appears on CISA KEV."
     desc += (f"\nDRAFT written by {model} from public text for {gap.cve}. "
              "Not tested against attack or benign logs. Review before deploying; retire after patching.")
     tags = [t for t in rule.get("tags", []) if re.fullmatch(r"attack\.[a-z0-9_.]+", str(t))]
@@ -481,7 +477,7 @@ def finalize(rule: dict, gap: Gap, model: str) -> dict:
         "logsource": {k: v for k, v in (rule.get("logsource") or {}).items() if v},
         "detection": rule.get("detection") or {},
         "falsepositives": rule.get("falsepositives") or ["Unknown; review required"],
-        "level": level,
+        "level": rule.get("level") if rule.get("level") in ("low", "medium", "high", "critical") else "medium",
     }
     return out
 
