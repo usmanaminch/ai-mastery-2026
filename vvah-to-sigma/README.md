@@ -2,27 +2,33 @@
 
 Detection for the window between "we know we're vulnerable" and "the fix is deployed", for your own code
 and for the vendor products you run. AI does the drafting; automated checks and an AI review speed up approval; a person approves what ships.
+Write-up: [From Vulnerability to Detection](https://usmanc.com/vulnerability-to-detection.html).
 
 ```mermaid
 flowchart LR
-  subgraph Find["1 · Find"]
-    A[Custom code:<br>VVAH or any SARIF scanner]
-    B[Vendor code:<br>Trivy, Grype, inventory,<br>scanner exports]
+  subgraph Own["Your code"]
+    A[VVAH or any<br>SARIF scanner] --> T[vvah_to_sigma:<br>rule template per weakness,<br>scoped to the route]
   end
-  A --> T[vvah_to_sigma:<br>rule template per weakness,<br>scoped to the route]
-  B --> C[2 · Check coverage:<br>your rules, SigmaHQ,<br>Splunk, Elastic, SecOps]
+  subgraph Vendor["Vendor and dependency code"]
+    B[Trivy / Grype / inventory<br>/ scanner exports] --> C[exposure_to_sigma:<br>check coverage against your rules,<br>SigmaHQ, Splunk, Elastic, SecOps]
+    K[CISA KEV, EPSS:<br>set the order] --> C
+    C -->|gap or other format| D[draft: your model<br>drafts or translates]
+    C -->|log not collected| LOG[Collect the log]
+    C -->|no log signature| PAT[Patch only]
+  end
+  subgraph Verify["Verify"]
+    E[Automated checks:<br>grounding, logs, syntax] --> F[AI review:<br>a second model, --review]
+    F -.-> P6[Prove it: replay the attack<br>in a dev SIEM, extension]
+    F --> AP[Approval]
+    P6 -.-> AP
+  end
+  subgraph Operate["Operate"]
+    DEP[Deploy:<br>sigma-cli to your SIEM] --> RET[Retire once the<br>patch is proven]
+  end
+  D --> E
   C -->|rule exists and fires| DEP
-  C -->|log not collected| LOG[Collect the log]
-  C -->|no log signature| PAT[Patch only]
-  C -->|gap or other format| D[3 · Draft or translate:<br>your model]
-  D --> E[4 · Automated checks:<br>grounding, logs, syntax]
-  E --> F[5 · AI review:<br>a second model]
-  F -.-> P6[6 · Prove it: replay the attack<br>in a dev SIEM, extension]
-  F --> AP[Approval]
-  P6 -.-> AP
   T --> AP
-  AP --> DEP[7 · Deploy:<br>sigma-cli to your SIEM]
-  DEP --> RET[8 · Retire once<br>the patch is proven]
+  AP --> DEP
 ```
 
 Every vulnerability gets an answer: a rule, a log to start collecting, or "patch only". Exploitation data
@@ -40,7 +46,7 @@ Measured on two test targets. Example Corp is fictional; its inventory exists to
 POST bodies that web logs don't record, 17 need behavioral baselines, 20 have no request-time signal.
 
 **Example Corp (vendor code), 48 exploited CVEs on assets that send logs**, drafted by Claude Opus 5.
-The first three rows are the drafter's own outcomes. The rest are review verdicts on the 25 rules it wrote,
+The first table is the drafter's own outcomes. The second is the review verdicts on the 25 rules it wrote,
 from two reviews: a session review by an AI reviewer whose edits the author approved (the rules in
 [`reviewed-rules/`](examples/example-corp/reviewed-rules/)), and the package's automated reviewer
 (`--review`, a different model).
@@ -191,7 +197,7 @@ Answers, for every CVE in what you run: **is it being exploited, and can you det
 | Public rule available: deploy it | A public rule names it and reads a log you collect | Deploy; retire after patching |
 | Public rule in another format: translate it | No Sigma rule names it, but Splunk, Elastic or SecOps content does | Deploy it natively, or let the drafter translate it |
 | Generic coverage likely (heuristic) | No rule names it, but a rule for the same weakness class reads a log you collect | Test before relying on it |
-| Rule exists, logs not collected | The rule can never fire here | Fix the log pipeline, not the rule |
+| Your or public rule exists, but its logs are not collected | The rule can never fire here | Fix the log pipeline, not the rule |
 | No log signature (e.g. denial of service) | Nothing a rule could match | Patch |
 | Gap | Nothing names it, nothing generic applies | Draft a scoped rule |
 
@@ -244,7 +250,7 @@ Assets that send logs come first.
 python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   --kev /tmp/kev-data/known_exploited_vulnerabilities.json --fetch-refs --only-logged \
   --nuclei /tmp/nuclei-templates \
-  --provider anthropic --model claude-sonnet-4-6 --max 10 --out out/drafts \
+  --provider anthropic --model claude-opus-5 --max 10 --out out/drafts \
   --review --review-model claude-opus-5-5
 ```
 
@@ -297,6 +303,11 @@ python -m exposure_to_sigma.draft out/example-corp/exposures.json \
   CSV over-reports. Feed it scanner output for version-accurate results.
 - **"Generic coverage likely" is a heuristic** from CWE tags and rule titles. CWE tags can mislead: NVD tags
   some Django denial-of-service bugs as buffer overflows. Treat it as a lead, not a guarantee.
-- **Native SIEM rules (SPL, YARA-L, KQL) are not analysed.** Only Sigma folders. Reading what an untagged
-  native query detects is a separate problem.
+- **Native rules (Splunk, Elastic, SecOps) are matched by CVE only.** Their query logic and the logs they read are
+  not analysed; the drafter translates them to Sigma so the usual checks can run.
+- **The inventory path only finds CVEs on CISA's list.** To cover every vulnerability, feed Trivy, Grype or a
+  scanner export.
+- **The custom-code side doesn't check existing coverage yet.** It writes a rule for every detectable weakness.
+- **Retiring is a note, not an action.** Each rule says when to retire it; re-running shows what is patched.
+- **No rule is tested against a replayed attack yet.** That is the natural next layer.
 - Test fixtures include rules copied from SigmaHQ under the Detection Rule License 1.1 (see the NOTICE there).
